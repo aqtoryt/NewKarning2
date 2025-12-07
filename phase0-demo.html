@@ -357,6 +357,15 @@
                             <span id="beforeKerningGapValue" style="min-width: 60px; text-align: right; font-weight: 600;">3px</span>
                         </div>
                     </div>
+                    <div class="control-group" id="phase0WidthAnchorGroup" style="grid-column: 1 / -1; display: none;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="phase0WidthAnchorCheckbox" checked>
+                            <span>Phase0幅アンカー（カーニング前の幅に合わせる）</span>
+                        </label>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                            無効にすると、個別の補正値調整が反映されます（幅は一致しない場合があります）
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -568,6 +577,7 @@
         
         // グローバル状態
         let phaseMode = "phase0";  // "phase0" or "phase1" or "compare"
+        let phase0WidthAnchorEnabled = true;  // Phase0幅アンカーの有効/無効
         let phase2Enabled = false;  // Phase2の全体最適化を有効にするかどうか
         let centerOfMassAdjustmentEnabled = true;  // 重心補正を有効にするかどうか（Phase2）
         const CENTER_OF_MASS_ADJUSTMENT_STRENGTH = 0.3;  // 重心補正の強度（0.0-1.0、大きいほど強く調整）
@@ -1281,16 +1291,20 @@
         // ============================================
         
         let kerningCategories = null;
+        let pairAdjustments = null;
         
         async function loadKerningCategories() {
             try {
                 const response = await fetch('kerning_categories.json');
                 const data = await response.json();
                 kerningCategories = data.kerning_categories;
+                pairAdjustments = data.pair_adjustments || null;
                 console.log('カーニングカテゴリーを読み込みました:', kerningCategories);
+                console.log('ペア補正値を読み込みました:', pairAdjustments);
             } catch (e) {
                 console.warn('カーニングカテゴリーの読み込みに失敗しました:', e);
                 kerningCategories = null;
+                pairAdjustments = null;
             }
         }
         
@@ -1312,27 +1326,114 @@
             return null;
         }
         
-        // 文字から直接ペアカテゴリを取得
+        // 文字の大文字・小文字・数字を判別（JSON配列ベース）
+        function getCharCaseType(char) {
+            if (!kerningCategories || !char) return null;
+            
+            for (const category of kerningCategories) {
+                // 大文字かチェック
+                if (category.uppercase.includes(char) || 
+                    category.uppercase_full.includes(char)) {
+                    return "UPPERCASE";
+                }
+                // 小文字かチェック
+                if (category.lowercase.includes(char) || 
+                    category.lowercase_full.includes(char)) {
+                    return "LOWERCASE";
+                }
+                // 数字かチェック
+                if (category.numbers.includes(char) || 
+                    category.numbers_full.includes(char)) {
+                    return "NUMBER";
+                }
+            }
+            
+            return null;
+        }
+        
+        // 文字から直接ペアカテゴリを取得（大文字・小文字を考慮）
         function getPairCategoryFromChars(leftChar, rightChar) {
             const catA = getCharKerningCategory(leftChar);
             const catB = getCharKerningCategory(rightChar);
             
             if (!catA || !catB) return null;
             
+            // 大文字・小文字を判定
+            const leftCase = getCharCaseType(leftChar);
+            const rightCase = getCharCaseType(rightChar);
+            
             // 特別な組み合わせ: Outward（A）と Inward（T, V, W, Y）の組み合わせ → より詰める
             if ((catA === "Outward" && catB === "Inward") ||
                 (catA === "Inward" && catB === "Outward")) {
-                return "OUTWARD_INWARD";  // A|V, A|W, A|Y, T|A, W|A, Y|Aなど
+                // 大文字・小文字の組み合わせに応じたペアカテゴリ名を生成
+                const caseSuffix = getCaseSuffix(leftCase, rightCase);
+                return `OUTWARD_INWARD${caseSuffix}`;
             }
             
             // 同じカテゴリー同士
             if (catA === catB) {
-                return `${catA.toUpperCase()}_${catB.toUpperCase()}`;  // 例: "OUTWARD_OUTWARD", "INWARD_INWARD"
+                const caseSuffix = getCaseSuffix(leftCase, rightCase);
+                return `${catA.toUpperCase()}_${catB.toUpperCase()}${caseSuffix}`;
             }
             
             // その他の組み合わせ（アルファベット順で統一）
             const sorted = [catA, catB].sort();
-            return `${sorted[0].toUpperCase()}_${sorted[1].toUpperCase()}`;  // 例: "ENCLOSED_OUTWARD", "PARALLEL_SIDED"
+            const caseSuffix = getCaseSuffix(leftCase, rightCase);
+            return `${sorted[0].toUpperCase()}_${sorted[1].toUpperCase()}${caseSuffix}`;
+        }
+        
+        // 大文字・小文字の組み合わせからサフィックスを生成
+        function getCaseSuffix(leftCase, rightCase) {
+            if (leftCase === "UPPERCASE" && rightCase === "UPPERCASE") {
+                return "_UPPER_UPPER";
+            } else if (leftCase === "LOWERCASE" && rightCase === "LOWERCASE") {
+                return "_LOWER_LOWER";
+            } else if (leftCase === "UPPERCASE" && rightCase === "LOWERCASE") {
+                return "_UPPER_LOWER";
+            } else if (leftCase === "LOWERCASE" && rightCase === "UPPERCASE") {
+                return "_LOWER_UPPER";
+            } else {
+                // 数字やその他の場合は空文字（フォールバック用）
+                return "";
+            }
+        }
+        
+        // JSONからペア補正値を取得
+        function getPairAdjustmentFromJSON(pairCat) {
+            if (!pairAdjustments || !pairCat) return null;
+            
+            // ペアカテゴリ名からベース名とケース情報を分離
+            const basePairCat = pairCat.replace(/_UPPER_UPPER|_LOWER_LOWER|_UPPER_LOWER|_LOWER_UPPER$/, "");
+            const hasCaseSuffix = basePairCat !== pairCat;
+            
+            // JSONからベース名で検索
+            if (pairAdjustments[basePairCat]) {
+                const adj = pairAdjustments[basePairCat];
+                let adjustment = null;
+                
+                // ケース情報に応じた補正値を取得
+                if (hasCaseSuffix) {
+                    if (pairCat.includes("_UPPER_UPPER")) {
+                        adjustment = adj.uppercase_uppercase;
+                    } else if (pairCat.includes("_LOWER_LOWER")) {
+                        adjustment = adj.lowercase_lowercase;
+                    } else if (pairCat.includes("_UPPER_LOWER")) {
+                        adjustment = adj.uppercase_lowercase;
+                    } else if (pairCat.includes("_LOWER_UPPER")) {
+                        adjustment = adj.lowercase_uppercase;
+                    }
+                } else {
+                    // ケース情報がない場合は、大文字同士をデフォルトとして使用
+                    adjustment = adj.uppercase_uppercase;
+                }
+                
+                // 補正値が見つかった場合は返す（nullでも明示的に定義されている）
+                if (adjustment !== undefined) {
+                    return adjustment;
+                }
+            }
+            
+            return null;
         }
         
         // ============================================
@@ -1561,7 +1662,48 @@
             
             // ペアカテゴリ補正（カテゴリーJSONを使用）
             const pairCat = getPairCategory(leftFeatures.charType, rightFeatures.charType, leftChar, rightChar);
-            const pairAdj = pairCategoryAdjust[pairCat] || 0;
+            
+            // まずJSONから補正値を取得を試みる
+            let pairAdj = getPairAdjustmentFromJSON(pairCat);
+            
+            // デバッグログ追加（i|t, t|s用 - 半角・全角両対応）
+            if ((leftChar === 'i' && rightChar === 't') || 
+                (leftChar === 't' && rightChar === 's') ||
+                (leftChar === 'ｉ' && rightChar === 'ｔ') || 
+                (leftChar === 'ｔ' && rightChar === 'ｓ') ||
+                pairCat && (pairCat.includes('PARALLEL_INWARD') || pairCat.includes('INWARD_SIDED'))) {
+                console.log(`[DEBUG] ${leftChar}|${rightChar}:`);
+                console.log(`  pairCat: ${pairCat}`);
+                console.log(`  JSONから取得したpairAdj: ${pairAdj}`);
+                console.log(`  pairAdjustments存在確認:`, pairAdjustments ? "存在" : "null");
+                if (pairAdjustments) {
+                    const basePairCat = pairCat.replace(/_UPPER_UPPER|_LOWER_LOWER|_UPPER_LOWER|_LOWER_UPPER$/, "");
+                    console.log(`  basePairCat: ${basePairCat}`);
+                    console.log(`  pairAdjustments[${basePairCat}]:`, pairAdjustments[basePairCat]);
+                    if (pairAdjustments[basePairCat]) {
+                        console.log(`  pairAdjustments[${basePairCat}].lowercase_lowercase:`, pairAdjustments[basePairCat].lowercase_lowercase);
+                    }
+                }
+            }
+            
+            // JSONから取得できない場合は、既存のpairCategoryAdjustを使用（フォールバック）
+            if (pairAdj === null || pairAdj === undefined) {
+                // サフィックスを削除して既存のテーブルを検索
+                const basePairCat = pairCat.replace(/_UPPER_UPPER|_LOWER_LOWER|_UPPER_LOWER|_LOWER_UPPER$/, "");
+                pairAdj = pairCategoryAdjust[basePairCat] || pairCategoryAdjust[pairCat] || 0;
+                
+                // デバッグログ追加（半角・全角両対応）
+                if ((leftChar === 'i' && rightChar === 't') || 
+                    (leftChar === 't' && rightChar === 's') ||
+                    (leftChar === 'ｉ' && rightChar === 'ｔ') || 
+                    (leftChar === 'ｔ' && rightChar === 'ｓ') ||
+                    pairCat && (pairCat.includes('PARALLEL_INWARD') || pairCat.includes('INWARD_SIDED'))) {
+                    console.log(`  フォールバック処理実行`);
+                    console.log(`  basePairCat: ${basePairCat}`);
+                    console.log(`  pairCategoryAdjust[${basePairCat}]:`, pairCategoryAdjust[basePairCat]);
+                    console.log(`  フォールバック後のpairAdj: ${pairAdj}`);
+                }
+            }
             
             // 黒密度補正
             const densityKey = leftFeatures.density + "-" + rightFeatures.density;
@@ -2625,7 +2767,7 @@
                 phase1TotalWidth = totalWidth;
                 
                 // Phase0モードで、カーニング後の幅をカーニング前の幅に合わせる
-                if (phaseMode === "phase0" && !isComputingPhase0Width) {
+                if (phaseMode === "phase0" && !isComputingPhase0Width && phase0WidthAnchorEnabled) {
                     const kerningTotalWidth = totalWidth; // カーニング後の幅
                     
                     // ギャップ数が0より大きい場合のみ適用
@@ -2714,7 +2856,7 @@
             };
             
             // 評価データを準備
-            const shouldApplyWidthAnchor = (phaseMode === "phase1" && unlearnedPairAlgorithm !== "phase0") || phaseMode === "phase0";
+            const shouldApplyWidthAnchor = (phaseMode === "phase1" && unlearnedPairAlgorithm !== "phase0") || (phaseMode === "phase0" && phase0WidthAnchorEnabled);
             const deltaW = phaseMode === "phase1" ? (widthWithoutKerning - phase1TotalWidth) : 
                           phaseMode === "phase0" ? (widthWithoutKerning - phase0TotalWidth) : 0;
             const adjustPerGap = shouldApplyWidthAnchor && gaps.length > 0 && Math.abs(deltaW) > 0.001 ? 
@@ -3577,6 +3719,10 @@
             if (phase2Group) {
                 phase2Group.style.display = (phaseMode === "phase1") ? "flex" : "none";
             }
+            const phase0WidthAnchorGroup = document.getElementById('phase0WidthAnchorGroup');
+            if (phase0WidthAnchorGroup) {
+                phase0WidthAnchorGroup.style.display = (phaseMode === "phase0") ? "flex" : "none";
+            }
             const centerOfMassGroup = document.getElementById('centerOfMassGroup');
             if (centerOfMassGroup) {
                 centerOfMassGroup.style.display = (phaseMode === "phase1" && phase2Enabled) ? "flex" : "none";
@@ -3599,6 +3745,15 @@
         if (unlearnedPairAlgorithmSelect) {
             unlearnedPairAlgorithmSelect.addEventListener('change', function() {
                 unlearnedPairAlgorithm = this.value;
+                updateDisplay();
+            });
+        }
+        
+        // Phase0幅アンカーの有効/無効
+        const phase0WidthAnchorCheckbox = document.getElementById('phase0WidthAnchorCheckbox');
+        if (phase0WidthAnchorCheckbox) {
+            phase0WidthAnchorCheckbox.addEventListener('change', function() {
+                phase0WidthAnchorEnabled = this.checked;
                 updateDisplay();
             });
         }
@@ -3746,6 +3901,10 @@
             const blendRatioGroup = document.getElementById('blendRatioGroup');
             if (blendRatioGroup) {
                 blendRatioGroup.style.display = (phaseMode === "phase1") ? "flex" : "none";
+            }
+            const phase0WidthAnchorGroup = document.getElementById('phase0WidthAnchorGroup');
+            if (phase0WidthAnchorGroup) {
+                phase0WidthAnchorGroup.style.display = (phaseMode === "phase0") ? "flex" : "none";
             }
             
             // タブの表示/非表示を初期化

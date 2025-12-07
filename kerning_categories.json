@@ -55,6 +55,158 @@
       "feature": "片側開放",
       "feature_en": "Single side open"
     }
-  ]
+  ],
+  "pair_adjustments": {
+    "OUTWARD_OUTWARD": {
+      "uppercase_uppercase": -0.4,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "INWARD_INWARD": {
+      "uppercase_uppercase": -0.5,
+      "lowercase_lowercase": -0.6,
+      "uppercase_lowercase": -0.55,
+      "lowercase_uppercase": -0.55
+    },
+    "PARALLEL_PARALLEL": {
+      "uppercase_uppercase": -0.3,
+      "lowercase_lowercase": -0.32,
+      "uppercase_lowercase": -0.32,
+      "lowercase_uppercase": -0.32
+    },
+    "ENCLOSED_ENCLOSED": {
+      "uppercase_uppercase": -0.2,
+      "lowercase_lowercase": -0.3,
+      "uppercase_lowercase": -0.25,
+      "lowercase_uppercase": -0.25
+    },
+    "SIDED_SIDED": {
+      "uppercase_uppercase": -0.3,
+      "lowercase_lowercase": -0.35,
+      "uppercase_lowercase": -0.32,
+      "lowercase_uppercase": -0.32
+    },
+    "OUTWARD_INWARD": {
+      "uppercase_uppercase": -0.6,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "INWARD_OUTWARD": {
+      "uppercase_uppercase": -0.6,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "ENCLOSED_INWARD": {
+      "uppercase_uppercase": -0.35,
+      "lowercase_lowercase": -0.35,
+      "uppercase_lowercase": -0.4,
+      "lowercase_uppercase": -0.4
+    },
+    "INWARD_ENCLOSED": {
+      "uppercase_uppercase": -0.35,
+      "lowercase_lowercase": -0.35,
+      "uppercase_lowercase": -0.4,
+      "lowercase_uppercase": -0.4
+    },
+    "ENCLOSED_OUTWARD": {
+      "uppercase_uppercase": -0.3,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "OUTWARD_ENCLOSED": {
+      "uppercase_uppercase": -0.3,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "ENCLOSED_PARALLEL": {
+      "uppercase_uppercase": -0.25,
+      "lowercase_lowercase": -0.30,
+      "uppercase_lowercase": -0.27,
+      "lowercase_uppercase": -0.27
+    },
+    "PARALLEL_ENCLOSED": {
+      "uppercase_uppercase": -0.25,
+      "lowercase_lowercase": -0.32,
+      "uppercase_lowercase": -0.27,
+      "lowercase_uppercase": -0.27
+    },
+    "ENCLOSED_SIDED": {
+      "uppercase_uppercase": -0.25,
+      "lowercase_lowercase": -0.3,
+      "uppercase_lowercase": -0.27,
+      "lowercase_uppercase": -0.27
+    },
+    "SIDED_ENCLOSED": {
+      "uppercase_uppercase": -0.25,
+      "lowercase_lowercase": -0.3,
+      "uppercase_lowercase": -0.27,
+      "lowercase_uppercase": -0.27
+    },
+    "INWARD_PARALLEL": {
+      "uppercase_uppercase": -0.4,
+      "lowercase_lowercase": -0.30,
+      "uppercase_lowercase": -0.45,
+      "lowercase_uppercase": -0.45
+    },
+    "PARALLEL_INWARD": {
+      "uppercase_uppercase": -0.4,
+      "lowercase_lowercase": -0.30,
+      "uppercase_lowercase": -0.45,
+      "lowercase_uppercase": -0.45
+    },
+    "INWARD_SIDED": {
+      "uppercase_uppercase": -0.4,
+      "lowercase_lowercase": -0.30,
+      "uppercase_lowercase": -0.45,
+      "lowercase_uppercase": -0.45
+    },
+    "SIDED_INWARD": {
+      "uppercase_uppercase": -0.4,
+      "lowercase_lowercase": -0.5,
+      "uppercase_lowercase": -0.45,
+      "lowercase_uppercase": -0.45
+    },
+    "OUTWARD_PARALLEL": {
+      "uppercase_uppercase": -0.35,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "PARALLEL_OUTWARD": {
+      "uppercase_uppercase": -0.35,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "OUTWARD_SIDED": {
+      "uppercase_uppercase": -0.3,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "SIDED_OUTWARD": {
+      "uppercase_uppercase": -0.3,
+      "lowercase_lowercase": null,
+      "uppercase_lowercase": null,
+      "lowercase_uppercase": null
+    },
+    "PARALLEL_SIDED": {
+      "uppercase_uppercase": -0.3,
+      "lowercase_lowercase": -0.35,
+      "uppercase_lowercase": -0.32,
+      "lowercase_uppercase": -0.32
+    },
+    "SIDED_PARALLEL": {
+      "uppercase_uppercase": -0.3,
+      "lowercase_lowercase": -0.35,
+      "uppercase_lowercase": -0.32,
+      "lowercase_uppercase": -0.32
+    }
+  }
 }
 

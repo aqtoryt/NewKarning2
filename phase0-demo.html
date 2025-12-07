@@ -998,6 +998,29 @@
 
         // 5.1 ペアカテゴリごとの補正値
         const pairCategoryAdjust = {
+            // カーニングカテゴリーから生成されたペアカテゴリ（手動設定）
+            // 特別な組み合わせ（より詰める）
+            OUTWARD_INWARD: -0.6,  // A|V, A|W, A|Y, T|A, W|A, Y|Aなど
+            
+            // 同じカテゴリー同士
+            OUTWARD_OUTWARD: -0.4,    // A|A
+            INWARD_INWARD: -0.5,      // T|T, V|V, W|W, Y|Y
+            PARALLEL_PARALLEL: -0.3,   // H|H, I|I, M|M
+            ENCLOSED_ENCLOSED: -0.2,   // O|O, B|B
+            SIDED_SIDED: -0.3,         // C|C, E|E
+            
+            // 異なるカテゴリーの組み合わせ（アルファベット順）
+            ENCLOSED_INWARD: -0.35,
+            ENCLOSED_OUTWARD: -0.3,
+            ENCLOSED_PARALLEL: -0.25,
+            ENCLOSED_SIDED: -0.25,
+            INWARD_PARALLEL: -0.4,
+            INWARD_SIDED: -0.4,
+            OUTWARD_PARALLEL: -0.35,
+            OUTWARD_SIDED: -0.3,
+            PARALLEL_SIDED: -0.3,
+            
+            // 既存の補正値（日本語文字用）
             VERTICAL_VERTICAL: +0.4,
             VERTICAL_CURVE: +0.1,
             CURVE_CURVE: -0.2,
@@ -1026,7 +1049,16 @@
         }
 
         // ペアカテゴリを取得
-        function getPairCategory(typeA, typeB) {
+        function getPairCategory(typeA, typeB, leftChar, rightChar) {
+            // まず、カーニングカテゴリーからペアカテゴリを取得（アルファベット・数字のみ）
+            if (leftChar && rightChar) {
+                const pairCat = getPairCategoryFromChars(leftChar, rightChar);
+                if (pairCat) {
+                    return pairCat;  // 例: "OUTWARD_INWARD", "INWARD_INWARD"など
+                }
+            }
+            
+            // フォールバック: 既存の判定ロジック（日本語文字など）
             const isLatin = (type) => type === "LATIN_UPPER" || type === "LATIN_LOWER";
             const isDiagonal = (type) => type === "DIAGONAL";
             const isVertical = (type) => type === "VERTICAL_HEAVY" || type === "VERTICAL_LIGHT";
@@ -1044,6 +1076,65 @@
             return "MIXED";
         }
 
+        // ============================================
+        // カーニングカテゴリーJSON読み込み
+        // ============================================
+        
+        let kerningCategories = null;
+        
+        async function loadKerningCategories() {
+            try {
+                const response = await fetch('kerning_categories.json');
+                const data = await response.json();
+                kerningCategories = data.kerning_categories;
+                console.log('カーニングカテゴリーを読み込みました:', kerningCategories);
+            } catch (e) {
+                console.warn('カーニングカテゴリーの読み込みに失敗しました:', e);
+                kerningCategories = null;
+            }
+        }
+        
+        // 文字からカテゴリー名を取得
+        function getCharKerningCategory(char) {
+            if (!kerningCategories || !char) return null;
+            
+            for (const category of kerningCategories) {
+                if (category.uppercase.includes(char) ||
+                    category.lowercase.includes(char) ||
+                    category.numbers.includes(char) ||
+                    category.uppercase_full.includes(char) ||
+                    category.lowercase_full.includes(char) ||
+                    category.numbers_full.includes(char)) {
+                    return category.name;
+                }
+            }
+            
+            return null;
+        }
+        
+        // 文字から直接ペアカテゴリを取得
+        function getPairCategoryFromChars(leftChar, rightChar) {
+            const catA = getCharKerningCategory(leftChar);
+            const catB = getCharKerningCategory(rightChar);
+            
+            if (!catA || !catB) return null;
+            
+            // 特別な組み合わせ: Outward（A）と Inward（T, V, W, Y）の組み合わせ → より詰める
+            if ((catA === "Outward" && catB === "Inward") ||
+                (catA === "Inward" && catB === "Outward")) {
+                return "OUTWARD_INWARD";  // A|V, A|W, A|Y, T|A, W|A, Y|Aなど
+            }
+            
+            // 同じカテゴリー同士
+            if (catA === catB) {
+                return `${catA.toUpperCase()}_${catB.toUpperCase()}`;  // 例: "OUTWARD_OUTWARD", "INWARD_INWARD"
+            }
+            
+            // その他の組み合わせ（アルファベット順で統一）
+            const sorted = [catA, catB].sort();
+            return `${sorted[0].toUpperCase()}_${sorted[1].toUpperCase()}`;  // 例: "ENCLOSED_OUTWARD", "PARALLEL_SIDED"
+        }
+        
         // ============================================
         // Phase1モデル読み込み
         // ============================================
@@ -1221,7 +1312,10 @@
         // Phase0カーニング関数
         // ============================================
         
-        function getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, styleId = "default", globalTracking = 0) {
+        // テスト用フラグ: 文字幅の違いを考慮しない（フォントサイズ基準で計算）
+        const TEST_IGNORE_CHAR_WIDTH = true;  // true: 文字幅を無視, false: 通常の計算
+        
+        function getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, styleId = "default", globalTracking = 0, beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP) {
             // 既存のcomputeKerningPositionsロジックを使用
             // 2文字のペアに対してカーニング値を計算
             const fontFamily = fontFamilyMap[fontName] || "Gothic";
@@ -1239,18 +1333,40 @@
             // Phase1のgap_norm_avgの平均は約0.35（文字幅の35%）
             // これをベースラインとして使用
             if (base === 0) {
-                // 文字幅に対する比率として0.35をデフォルト値とする
-                // ただし、fontSizeに対する比率として扱うため、avgWidth/baseWidthPxでスケール
-                base = 0.35 * (avgWidth / baseWidthPx);
+                if (TEST_IGNORE_CHAR_WIDTH) {
+                    // テスト用: 文字幅を考慮せず、固定値を使用
+                    base = 0.35;
+                } else {
+                    // 通常の計算: 文字幅に対する比率として0.35をデフォルト値とする
+                    // ただし、fontSizeに対する比率として扱うため、avgWidth/baseWidthPxでスケール
+                    base = 0.35 * (avgWidth / baseWidthPx);
+                }
             }
+            // 以前の実装（beforeKerningGapを使用）:
+            // if (base === 0) {
+            //     if (TEST_IGNORE_CHAR_WIDTH) {
+            //         // テスト用: 文字幅を考慮せず、beforeKerningGapを基準に使用
+            //         base = beforeKerningGap / baseWidthPx;
+            //     } else {
+            //         // 通常の計算: beforeKerningGapを基準に、文字幅に対する比率で調整
+            //         base = (beforeKerningGap / baseWidthPx) * (avgWidth / baseWidthPx);
+            //     }
+            // } else {
+            //     // baseが設定されている場合でも、beforeKerningGapに応じてスケール
+            //     // デフォルトのbeforeKerningGap（3px）を基準として、現在のbeforeKerningGapでスケール
+            //     const defaultBeforeKerningGap = DEFAULT_BEFORE_KERNING_GAP;
+            //     const scaleFactor = beforeKerningGap / defaultBeforeKerningGap;
+            //     base = base * scaleFactor;
+            // }
             
-            // ペアカテゴリ補正
-            const pairCat = getPairCategory(leftFeatures.charType, rightFeatures.charType);
+            // ペアカテゴリ補正（カテゴリーJSONを使用）
+            const pairCat = getPairCategory(leftFeatures.charType, rightFeatures.charType, leftChar, rightChar);
             const pairAdj = pairCategoryAdjust[pairCat] || 0;
             
             // 黒密度補正
             const densityKey = leftFeatures.density + "-" + rightFeatures.density;
-            const densAdj = densityAdjust[densityKey] || 0;
+            const densAdj = 0;  // 密度補正を無効化
+            // const densAdj = densityAdjust[densityKey] || 0;  // 元のコードをコメントアウト
             
             // デバッグログ（WAVE文字列の場合）
             if (leftChar === 'W' && rightChar === 'A' || 
@@ -1263,10 +1379,40 @@
                 console.log(`  gap計算前: ${base.toFixed(4)} * ${baseWidthPx} + ${pairAdj} * ${avgWidth.toFixed(2)} + ${densAdj} * ${avgWidth.toFixed(2)} + ${globalTracking}`);
             }
             
+            // デバッグログ（W|A, A|V, V|Aの場合 - 半角・全角両対応）
+            if ((leftChar === 'W' && rightChar === 'A') || 
+                (leftChar === 'A' && rightChar === 'V') || 
+                (leftChar === 'V' && rightChar === 'A') ||
+                (leftChar === 'Ｗ' && rightChar === 'Ａ') || 
+                (leftChar === 'Ａ' && rightChar === 'Ｖ') || 
+                (leftChar === 'Ｖ' && rightChar === 'Ａ')) {
+                console.log(`[Phase0] ${leftChar}|${rightChar}:`);
+                console.log(`  fontFamily: ${fontFamily}, styleId: ${styleId}`);
+                console.log(`  base: ${base.toFixed(4)}, pairAdj: ${pairAdj}, densAdj: ${densAdj}`);
+                console.log(`  avgWidth: ${avgWidth.toFixed(2)}px, baseWidthPx: ${baseWidthPx}, globalTracking: ${globalTracking}`);
+                console.log(`  leftChar.width: ${leftFeatures.width.toFixed(2)}px, rightChar.width: ${rightFeatures.width.toFixed(2)}px`);
+                console.log(`  leftChar.inkRight: ${(leftFeatures.inkRight !== undefined ? leftFeatures.inkRight.toFixed(2) : 'N/A')}px`);
+                console.log(`  rightChar.inkLeft: ${(rightFeatures.inkLeft !== undefined ? rightFeatures.inkLeft.toFixed(2) : 'N/A')}px`);
+                console.log(`  leftChar.density: ${leftFeatures.density}, rightChar.density: ${rightFeatures.density}`);
+                console.log(`  pairCategory: ${pairCat}`);
+                if (TEST_IGNORE_CHAR_WIDTH) {
+                    console.log(`  gap計算式: ${base.toFixed(4)} * ${baseWidthPx} + (${pairAdj} + ${densAdj}) * ${baseWidthPx} + ${globalTracking}`);
+                } else {
+                    console.log(`  gap計算式: ${base.toFixed(4)} * ${baseWidthPx} + (${pairAdj} + ${densAdj}) * ${avgWidth.toFixed(2)} + ${globalTracking}`);
+                }
+            }
+            
             // 最終ギャップ
             // baseはfontSizeに対する比率、pairAdjとdensAdjは文字幅に対する比率として扱う
             // globalTrackingはpx単位
-            let gap = base * baseWidthPx + (pairAdj + densAdj) * avgWidth + globalTracking;
+            let gap;
+            if (TEST_IGNORE_CHAR_WIDTH) {
+                // テスト用: 文字幅の違いを考慮しない（フォントサイズ基準）
+                gap = base * baseWidthPx + (pairAdj + densAdj) * baseWidthPx + globalTracking;
+            } else {
+                // 通常の計算（文字幅を考慮）
+                gap = base * baseWidthPx + (pairAdj + densAdj) * avgWidth + globalTracking;
+            }
             
             // 最小・最大のガード
             const minGap = -0.2 * baseWidthPx;
@@ -1280,8 +1426,20 @@
                 leftChar === 'A' && rightChar === 'V' || 
                 leftChar === 'V' && rightChar === 'E') {
                 console.log(`  gap計算後: ${gapBeforeClamp.toFixed(3)}px`);
+            }
+            
+            // デバッグログ（W|A, A|V, V|Aの場合 - 計算後、半角・全角両対応）
+            if ((leftChar === 'W' && rightChar === 'A') || 
+                (leftChar === 'A' && rightChar === 'V') || 
+                (leftChar === 'V' && rightChar === 'A') ||
+                (leftChar === 'Ｗ' && rightChar === 'Ａ') || 
+                (leftChar === 'Ａ' && rightChar === 'Ｖ') || 
+                (leftChar === 'Ｖ' && rightChar === 'Ａ')) {
+                console.log(`  gap計算後: ${gapBeforeClamp.toFixed(3)}px`);
                 console.log(`  minGap: ${minGap.toFixed(3)}px, maxGap: ${maxGap.toFixed(3)}px`);
-                console.log(`  gap（クランプ後）: ${gap.toFixed(3)}px`);
+                console.log(`  gap（clamp後）: ${gap.toFixed(3)}px`);
+                const visualGap = gap + (leftFeatures.inkRight !== undefined ? leftFeatures.inkRight : 0) + (rightFeatures.inkLeft !== undefined ? rightFeatures.inkLeft : 0);
+                console.log(`  視覚的な間隔（gap + inkRight + inkLeft）: ${visualGap.toFixed(3)}px`);
             }
             
             return gap;
@@ -1291,7 +1449,7 @@
         // Phase1カーニング関数
         // ============================================
         
-        function getKerningPhase1(leftChar, rightChar, fontName, baseWidthPx, globalTracking = 0) {
+        function getKerningPhase1(leftChar, rightChar, fontName, baseWidthPx, globalTracking = 0, beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP) {
             if (!phase1Model) {
                 return null;
             }
@@ -1356,7 +1514,7 @@
                 } else if (unlearnedPairAlgorithm === "phase0_scaled") {
                     // アルゴリズム3: Phase0のルールベース × 係数（文字列全体の幅に応じた調整）
                     // Phase0で計算したgapを取得
-                    const phase0Gap = getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, "default", 0);
+                    const phase0Gap = getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, "default", 0, beforeKerningGap);
                     
                     // 係数を計算（文字列全体の幅に応じたバランス調整）
                     // 文字列全体の幅を考慮して、学習済みデータとPhase0のバランスを取る
@@ -1531,7 +1689,7 @@
                 // Phase1の学習値に対して、Phase0のLATIN_PAIR補正を追加で適用
                 // （Phase1の学習値が広すぎる場合の補正として機能）
                 // leftFeaturesとrightFeaturesは既に1437-1438行目で宣言されているため、それを使用
-                const pairCat = getPairCategory(leftFeatures.charType, rightFeatures.charType);
+                const pairCat = getPairCategory(leftFeatures.charType, rightFeatures.charType, leftChar, rightChar);
                 
                 // LATIN_PAIRの場合、Phase0の補正を追加で適用
                 if (pairCat === "LATIN_PAIR") {
@@ -1569,7 +1727,7 @@
             
             // Phase1の学習値に対して、Phase0のLATIN_PAIR補正を追加で適用
             // （Phase1の学習値が広すぎる場合の補正として機能）
-            const pairCat = getPairCategory(leftFeaturesFallback.charType, rightFeaturesFallback.charType);
+            const pairCat = getPairCategory(leftFeaturesFallback.charType, rightFeaturesFallback.charType, leftChar, rightChar);
             if (pairCat === "LATIN_PAIR") {
                 const pairAdj = pairCategoryAdjust[pairCat] || 0;
                 const pairAdjustment = pairAdj * avgWidth;
@@ -1584,13 +1742,13 @@
         // モードに応じたラッパー関数
         // ============================================
         
-        function getKerning(leftChar, rightChar, fontName, baseWidthPx, styleId = "default", globalTracking = 0) {
+        function getKerning(leftChar, rightChar, fontName, baseWidthPx, styleId = "default", globalTracking = 0, beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP) {
             // Phase0の値を常に計算（ブレンドに必要）
-            const phase0Gap = getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, styleId, globalTracking);
+            const phase0Gap = getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, styleId, globalTracking, beforeKerningGap);
             
             // Phase1モードでモデルがロード済みの場合
             if (phaseMode === "phase1" && phase1Model) {
-                const phase1Gap = getKerningPhase1(leftChar, rightChar, fontName, baseWidthPx, globalTracking);
+                const phase1Gap = getKerningPhase1(leftChar, rightChar, fontName, baseWidthPx, globalTracking, beforeKerningGap);
                 
                 // Phase1の値が見つかった場合（学習済みペア、または未学習ペアの処理方法で計算された値）
                 if (phase1Gap !== null) {
@@ -1856,8 +2014,11 @@
             
             // 2文字ペアの連続パターンを検出（T|A、W|Aのような同じペアカテゴリが連続）
             for (let i = 0; i < gaps.length - 1 && i + 2 < features.length; i++) {
-                const pair1 = getPairCategory(features[i]?.charType, features[i + 1]?.charType);
-                const pair2 = getPairCategory(features[i + 1]?.charType, features[i + 2]?.charType);
+                const leftChar1 = chars[i];
+                const rightChar1 = chars[i + 1];
+                const rightChar2 = chars[i + 2];
+                const pair1 = getPairCategory(features[i]?.charType, features[i + 1]?.charType, leftChar1, rightChar1);
+                const pair2 = getPairCategory(features[i + 1]?.charType, features[i + 2]?.charType, rightChar1, rightChar2);
                 
                 // 同じペアカテゴリが連続する場合
                 if (pair1 && pair2 && pair1 === pair2) {
@@ -2106,12 +2267,12 @@
                 isLearned.push(pairIsLearned);
 
                 // Phase0とPhase1のギャップを個別に計算（評価用）
-                const phase0Gap = getKerningPhase0(leftChar, rightChar, fontId, fontSize, styleId, globalTracking);
+                const phase0Gap = getKerningPhase0(leftChar, rightChar, fontId, fontSize, styleId, globalTracking, beforeKerningGap);
                 phase0Gaps.push(phase0Gap);
                 
                 let phase1GapValue = phase0Gap;  // デフォルトはPhase0
                 if (phaseMode === "phase1" && phase1Model) {
-                    const phase1Gap = getKerningPhase1(leftChar, rightChar, fontId, fontSize, globalTracking);
+                    const phase1Gap = getKerningPhase1(leftChar, rightChar, fontId, fontSize, globalTracking, beforeKerningGap);
                     if (phase1Gap !== null) {
                         // ブレンドを適用する前のPhase1の値を保存
                         phase1GapValue = phase1Gap;
@@ -2120,7 +2281,7 @@
                 phase1Gaps.push(phase1GapValue);
 
                 // getKerning関数を使用（Phase0/Phase1自動切り替え、ブレンド適用済み）
-                let gap = getKerning(leftChar, rightChar, fontId, fontSize, styleId, globalTracking);
+                let gap = getKerning(leftChar, rightChar, fontId, fontSize, styleId, globalTracking, beforeKerningGap);
                 
                 // 最小・最大のガード
                 const minGap = -0.2 * fontSize;
@@ -2129,23 +2290,6 @@
                 if (gap > maxGap) gap = maxGap;
 
                 // 次の文字のX座標を計算（インク領域基準）
-                if (leftChar === 'N' && rightChar === 'I') {
-                    console.log('N|I 位置計算:');
-                    console.log('  現在のx座標:', x.toFixed(2), 'px');
-                    console.log('  N.actualBoundingBoxRight:', (A.actualBoundingBoxRight !== undefined ? A.actualBoundingBoxRight : 'undefined'));
-                    console.log('  N.actualBoundingBoxLeft:', (A.actualBoundingBoxLeft !== undefined ? A.actualBoundingBoxLeft : 'undefined'));
-                    console.log('  N.inkLeft:', getInkLeft(A).toFixed(2), 'px');
-                    console.log('  N.inkRight:', getInkRight(A).toFixed(2), 'px');
-                    console.log('  N.width (measureText):', A.width.toFixed(2), 'px');
-                    console.log('  gap:', gap.toFixed(3), 'px');
-                    console.log('  I.actualBoundingBoxRight:', (B.actualBoundingBoxRight !== undefined ? B.actualBoundingBoxRight : 'undefined'));
-                    console.log('  I.actualBoundingBoxLeft:', (B.actualBoundingBoxLeft !== undefined ? B.actualBoundingBoxLeft : 'undefined'));
-                    console.log('  I.inkLeft:', getInkLeft(B).toFixed(2), 'px');
-                    console.log('  I.inkRight:', getInkRight(B).toFixed(2), 'px');
-                    console.log('  I.width (measureText):', B.width.toFixed(2), 'px');
-                }
-                
-                // 現在のx座標を保存（デバッグ用）
                 const prevX = x;
                 const currentRightEdge = prevX + getInkRight(A);
                 const nextLeftEdge = currentRightEdge + gap;
@@ -2154,30 +2298,19 @@
                 positions.push(x);
                 gaps.push(gap);
                 
-                // デバッグ情報（N|Iペアの場合）
-                if (leftChar === 'N' && rightChar === 'I') {
-                    console.log('  Nの幅（measureText）:', A.width.toFixed(2), 'px');
-                    console.log('  gap:', gap.toFixed(3), 'px');
-                    const dbgRight = currentRightEdge;
-                    const dbgLeft = nextLeftEdge;
-                    console.log('  Nの右端（インク基準）:', dbgRight.toFixed(2), 'px');
-                    console.log('  Iの左端（インク基準）:', dbgLeft.toFixed(2), 'px');
-                    console.log('  実際のgap（Iの左端 - Nの右端）:', (dbgLeft - dbgRight).toFixed(3), 'px');
-                    console.log('  次のx座標:', x.toFixed(2), 'px');
-                    console.log('  Iの幅（measureText）:', B.width.toFixed(2), 'px');
-                }
-                
                 // デバッグ情報（Phase0の計算値も保持）
-                const pairCat = getPairCategory(A.charType, B.charType);
+                const pairCat = getPairCategory(A.charType, B.charType, leftChar, rightChar);
                 const pairAdj = pairCategoryAdjust[pairCat] || 0;
                 const densityKey = A.density + "-" + B.density;
                 const densAdj = densityAdjust[densityKey] || 0;
                 pairAdjusts.push(pairAdj);
                 densityAdjusts.push(densAdj);
                 pairCategories.push(pairCat);
+                
             }
 
             // 文字列全体の幅を計算（最後の文字の右端までの距離）
+            // カーニング前と同じ計算方法を使用: (最後の文字の位置 + 最後の文字のinkRight) - (startX - 最初の文字のinkLeft)
             let totalWidth = 0;
             if (positions.length > 0 && features.length > 0) {
                 const lastPos = positions[positions.length - 1];
@@ -2190,7 +2323,13 @@
                     if (feature && Number.isFinite(feature.width)) return feature.width;
                     return fontSize * 0.6;
                 };
-                totalWidth = lastPos + getInkRight(lastFeature) - startX;
+                // 【修正】カーニング前と同じ計算方法に統一（最初の文字のinkLeftを考慮）
+                const firstInkLeft = getInkLeft(features[0]);
+                const lastInkRight = getInkRight(lastFeature);
+                totalWidth = (lastPos + lastInkRight) - (startX - firstInkLeft);
+                
+                // 【元のコード（参考用）】最初の文字のinkLeftを考慮していない計算方法
+                // totalWidth = lastPos + getInkRight(lastFeature) - startX;
             }
             
             // カーニング前の幅を計算（bboxベース + 文字間調整）
@@ -2267,50 +2406,68 @@
                     }
                     
                     // 調整後の文字列全体の幅を再計算
+                    // カーニング前と同じ計算方法を使用: (最後の文字の位置 + 最後の文字のinkRight) - (startX - 最初の文字のinkLeft)
                     if (positions.length > 0 && features.length > 0) {
                         const lastPos = positions[positions.length - 1];
                         const lastFeature = features[features.length - 1];
-                        phase1TotalWidth = lastPos + getInkRight(lastFeature) - startX;
+                        const firstInkLeft = getInkLeft(features[0]);
+                        const lastInkRight = getInkRight(lastFeature);
+                        phase1TotalWidth = (lastPos + lastInkRight) - (startX - firstInkLeft);
                     }
                     
-                        // デバッグ情報を出力
-                        console.log(`[幅アンカー(Phase1)] カーニング前幅: ${widthWithoutKerning.toFixed(2)}px, Phase1幅(調整前): ${totalWidth.toFixed(2)}px, 差分: ${deltaW.toFixed(2)}px, 調整値/ギャップ: ${adjustPerGap.toFixed(3)}px`);
-                        console.log(`[幅アンカー(Phase1)] ギャップ調整例: [0] ${gapsBefore[0].toFixed(3)}px → ${gaps[0].toFixed(3)}px (調整: ${adjustPerGap.toFixed(3)}px)`);
                     }
                 } else {
                     // 「Phase0のルールベースにフォールバック」の場合は幅アンカーを適用しない
-                    console.log(`[幅アンカー] スキップ: 「Phase0のルールベースにフォールバック」が選択されているため`);
                 }
             } else {
                 // Phase0モードの場合、または既にPhase0の幅計算中の場合
                 phase0TotalWidth = totalWidth;
                 phase1TotalWidth = totalWidth;
                 
-                // Phase0モードでも、カーニング後の幅をカーニング前の幅に合わせる
+                // Phase0モードで、カーニング後の幅をカーニング前の幅に合わせる
                 if (phaseMode === "phase0" && !isComputingPhase0Width) {
                     const kerningTotalWidth = totalWidth; // カーニング後の幅
-                    const deltaW = widthWithoutKerning - kerningTotalWidth;
                     
                     // ギャップ数が0より大きい場合のみ適用
-                    if (gaps.length > 0 && Math.abs(deltaW) > 0.001) {
+                    if (gaps.length > 0 && kerningTotalWidth > 0.001 && Math.abs(widthWithoutKerning - kerningTotalWidth) > 0.001) {
+                        // 【修正】幅の差分を計算（カーニング前の幅 - カーニング後の幅）
+                        const deltaW = widthWithoutKerning - kerningTotalWidth;
+                        
                         // 1ギャップあたりの調整値を計算（正の値でカーニング前の幅に近づける）
                         const adjustPerGap = deltaW / gaps.length;
                         
-                        // デバッグ: 調整前のギャップ値を記録
-                        const gapsBefore = [...gaps];
+                        // すべてのギャップに調整値を加算（文字間隔を決めるアルゴリズムは変えない）
+                        const minGap = -0.2 * fontSize;
+                        const maxGap = 0.8 * fontSize;
                         
-                        // すべてのギャップに調整値を加算
                         for (let i = 0; i < gaps.length; i++) {
                             gaps[i] += adjustPerGap;
                             
                             // 調整後のギャップが最小・最大の範囲内に収まるように制限
-                            const minGap = -0.2 * fontSize;
-                            const maxGap = 0.8 * fontSize;
-                            if (gaps[i] < minGap) gaps[i] = minGap;
-                            if (gaps[i] > maxGap) gaps[i] = maxGap;
+                            if (gaps[i] < minGap) {
+                                gaps[i] = minGap;
+                            } else if (gaps[i] > maxGap) {
+                                gaps[i] = maxGap;
+                            }
                         }
                         
                         // 調整後のギャップで位置を再計算
+                        const getInkLeft = (feature) => {
+                            if (feature && Number.isFinite(feature.inkLeft)) return feature.inkLeft;
+                            if (feature && Number.isFinite(feature.actualBoundingBoxLeft)) {
+                                return -feature.actualBoundingBoxLeft;
+                            }
+                            return 0;
+                        };
+                        const getInkRight = (feature) => {
+                            if (feature && Number.isFinite(feature.inkRight)) return feature.inkRight;
+                            if (feature && Number.isFinite(feature.actualBoundingBoxRight)) {
+                                return feature.actualBoundingBoxRight;
+                            }
+                            if (feature && Number.isFinite(feature.width)) return feature.width;
+                            return fontSize * 0.6;
+                        };
+                        
                         x = startX;
                         if (features.length > 0) {
                             x = startX - getInkLeft(features[0]);
@@ -2328,17 +2485,17 @@
                         }
                         
                         // 調整後の文字列全体の幅を再計算
+                        // カーニング前の幅計算と同じ方法を使用: (x + lastInkRight) - (startX - firstInkLeft)
                         if (positions.length > 0 && features.length > 0) {
                             const lastPos = positions[positions.length - 1];
                             const lastFeature = features[features.length - 1];
-                            totalWidth = lastPos + getInkRight(lastFeature) - startX;
+                            const firstInkLeft = getInkLeft(features[0]);
+                            const lastInkRight = getInkRight(lastFeature);
+                            // カーニング前と同じ計算方法: (最後の文字の位置 + 最後の文字のinkRight) - (startX - 最初の文字のinkLeft)
+                            totalWidth = (lastPos + lastInkRight) - (startX - firstInkLeft);
                             phase0TotalWidth = totalWidth;
                             phase1TotalWidth = totalWidth;
                         }
-                        
-                        // デバッグ情報を出力
-                        console.log(`[幅アンカー(Phase0)] カーニング前幅: ${widthWithoutKerning.toFixed(2)}px, カーニング後幅(調整前): ${kerningTotalWidth.toFixed(2)}px, 差分: ${deltaW.toFixed(2)}px, 調整値/ギャップ: ${adjustPerGap.toFixed(3)}px`);
-                        console.log(`[幅アンカー(Phase0)] ギャップ調整例: [0] ${gapsBefore[0].toFixed(3)}px → ${gaps[0].toFixed(3)}px (調整: ${adjustPerGap.toFixed(3)}px)`);
                     }
                 }
             }
@@ -3241,6 +3398,9 @@
 
         // ページ読み込み時にPhase1モデルを読み込み、フォント検出を実行
         document.addEventListener('DOMContentLoaded', function() {
+            // カーニングカテゴリーJSONを読み込む
+            loadKerningCategories();
+            
             // 初期表示時に未学習ペアアルゴリズムのセレクトボックスと可視化チェックボックス、ブレンド比率スライダーの表示/非表示を設定
             const unlearnedPairAlgorithmGroup = document.getElementById('unlearnedPairAlgorithmGroup');
             if (unlearnedPairAlgorithmGroup) {
@@ -3267,6 +3427,9 @@
             // DOMContentLoadedを待つ
         } else {
             // 既に読み込み済み
+            // カーニングカテゴリーJSONを読み込む
+            loadKerningCategories();
+            
             // 初期表示時に未学習ペアアルゴリズムのセレクトボックスと可視化チェックボックスの表示/非表示を設定
             const unlearnedPairAlgorithmGroup = document.getElementById('unlearnedPairAlgorithmGroup');
             if (unlearnedPairAlgorithmGroup) {

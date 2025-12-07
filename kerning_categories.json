@@ -1,0 +1,60 @@
+{
+  "kerning_categories": [
+    {
+      "name": "Outward",
+      "uppercase": ["A"],
+      "lowercase": [],
+      "numbers": [],
+      "uppercase_full": ["Ａ"],
+      "lowercase_full": [],
+      "numbers_full": [],
+      "feature": "外向き斜線",
+      "feature_en": "Diagonal outward"
+    },
+    {
+      "name": "Inward",
+      "uppercase": ["T", "V", "W", "Y"],
+      "lowercase": ["t", "v", "w", "y"],
+      "numbers": ["7"],
+      "uppercase_full": ["Ｔ", "Ｖ", "Ｗ", "Ｙ"],
+      "lowercase_full": ["ｔ", "ｖ", "ｗ", "ｙ"],
+      "numbers_full": ["７"],
+      "feature": "内向き斜線・下部空間",
+      "feature_en": "Diagonal inward with bottom space"
+    },
+    {
+      "name": "Parallel",
+      "uppercase": ["H", "I", "M", "N", "U", "X", "Z"],
+      "lowercase": ["h", "i", "l", "m", "n", "u", "x", "z"],
+      "numbers": ["1"],
+      "uppercase_full": ["Ｈ", "Ｉ", "Ｍ", "Ｎ", "Ｕ", "Ｘ", "Ｚ"],
+      "lowercase_full": ["ｈ", "ｉ", "ｌ", "ｍ", "ｎ", "ｕ", "ｘ", "ｚ"],
+      "numbers_full": ["１"],
+      "feature": "平行直線",
+      "feature_en": "Parallel straight lines"
+    },
+    {
+      "name": "Enclosed",
+      "uppercase": ["B", "D", "O", "P", "Q"],
+      "lowercase": ["a", "b", "d", "e", "g", "o", "p", "q"],
+      "numbers": ["0", "6", "8", "9"],
+      "uppercase_full": ["Ｂ", "Ｄ", "Ｏ", "Ｐ", "Ｑ"],
+      "lowercase_full": ["ａ", "ｂ", "ｄ", "ｅ", "ｇ", "ｏ", "ｐ", "ｑ"],
+      "numbers_full": ["０", "６", "８", "９"],
+      "feature": "閉鎖曲線",
+      "feature_en": "Enclosed curves"
+    },
+    {
+      "name": "Sided",
+      "uppercase": ["C", "E", "F", "G", "J", "K", "L", "R", "S"],
+      "lowercase": ["c", "f", "j", "k", "r", "s"],
+      "numbers": ["2", "3", "4", "5"],
+      "uppercase_full": ["Ｃ", "Ｅ", "Ｆ", "Ｇ", "Ｊ", "Ｋ", "Ｌ", "Ｒ", "Ｓ"],
+      "lowercase_full": ["ｃ", "ｆ", "ｊ", "ｋ", "ｒ", "ｓ"],
+      "numbers_full": ["２", "３", "４", "５"],
+      "feature": "片側開放",
+      "feature_en": "Single side open"
+    }
+  ]
+}
+

@@ -4083,15 +4083,6 @@
       "text_total_width_avg": 302.628763633974,
       "count": 16
     },
-    "Ｗ|Ａ": {
-      "gap_norm_avg": 0.1377333783665008,
-      "gap_norm_left_avg": 0.13073826845554548,
-      "gap_norm_right_avg": 0.14505457057034102,
-      "gap_actual_avg": 4.039712580719889,
-      "font_size_avg": 42.28623423696176,
-      "text_total_width_avg": 292.22948975022916,
-      "count": 20
-    },
     "Ｏ|Ｈ": {
       "gap_norm_avg": 0.7245917324692353,
       "gap_norm_left_avg": 0.6390221076638385,

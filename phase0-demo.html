@@ -398,6 +398,15 @@
                             <span id="blendRatioDescription"></span>
                         </div>
                     </div>
+                    <div class="control-group" id="phase1WidthAnchorGroup" style="grid-column: 1 / -1; display: none;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="phase1WidthAnchorCheckbox" checked>
+                            <span>Phase1幅アンカー（カーニング前の幅に合わせる）</span>
+                        </label>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                            無効にすると、個別の補正値調整が反映されます（幅は一致しない場合があります）
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -578,6 +587,7 @@
         // グローバル状態
         let phaseMode = "phase0";  // "phase0" or "phase1" or "compare"
         let phase0WidthAnchorEnabled = true;  // Phase0幅アンカーの有効/無効
+        let phase1WidthAnchorEnabled = true;  // Phase1幅アンカーの有効/無効
         let phase2Enabled = false;  // Phase2の全体最適化を有効にするかどうか
         let centerOfMassAdjustmentEnabled = true;  // 重心補正を有効にするかどうか（Phase2）
         const CENTER_OF_MASS_ADJUSTMENT_STRENGTH = 0.3;  // 重心補正の強度（0.0-1.0、大きいほど強く調整）
@@ -2673,7 +2683,8 @@
                 // 注意: 「Phase0のルールベースにフォールバック」の場合は適用しない
                 // （未学習ペアは既にPhase0を使用しているため、幅アンカーは不要）
                 // 「未学習ペアに平均値を使用」と「Phase0 × 係数」の場合のみ適用
-                const shouldApplyWidthAnchor = unlearnedPairAlgorithm !== "phase0";
+                // ただし、幅アンカーが無効化されている場合は適用しない
+                const shouldApplyWidthAnchor = phase1WidthAnchorEnabled && unlearnedPairAlgorithm !== "phase0";
                 
                 if (shouldApplyWidthAnchor) {
                     // Phase1のカーニング後の幅をカーニング前の幅に合わせる
@@ -2681,21 +2692,37 @@
                     
                     // ギャップ数が0より大きい場合のみ適用
                     if (gaps.length > 0 && Math.abs(deltaW) > 0.001) {
-                    // 1ギャップあたりの調整値を計算（正の値でカーニング前の幅に近づける）
-                    const adjustPerGap = deltaW / gaps.length;
+                    // 比例按分: 各ギャップの現在の値に比例して調整値を按分
+                    // 全ギャップの絶対値の合計を計算
+                    const totalGapSum = gaps.reduce((sum, gap) => sum + Math.abs(gap), 0);
                     
                     // デバッグ: 調整前のギャップ値を記録
                     const gapsBefore = [...gaps];
                     
-                    // すべてのギャップに調整値を加算
-                    for (let i = 0; i < gaps.length; i++) {
-                        gaps[i] += adjustPerGap;
-                        
-                        // 調整後のギャップが最小・最大の範囲内に収まるように制限
-                        const minGap = -0.2 * fontSize;
-                        const maxGap = 0.8 * fontSize;
-                        if (gaps[i] < minGap) gaps[i] = minGap;
-                        if (gaps[i] > maxGap) gaps[i] = maxGap;
+                    if (totalGapSum > 0.001) {
+                        // 比例按分: 各ギャップの現在の値に比例して調整
+                        for (let i = 0; i < gaps.length; i++) {
+                            const gapRatio = Math.abs(gaps[i]) / totalGapSum;
+                            gaps[i] += deltaW * gapRatio;
+                            
+                            // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                            const minGap = -0.2 * fontSize;
+                            const maxGap = 0.8 * fontSize;
+                            if (gaps[i] < minGap) gaps[i] = minGap;
+                            if (gaps[i] > maxGap) gaps[i] = maxGap;
+                        }
+                    } else {
+                        // 全ギャップが0に近い場合は均等按分にフォールバック
+                        const adjustPerGap = deltaW / gaps.length;
+                        for (let i = 0; i < gaps.length; i++) {
+                            gaps[i] += adjustPerGap;
+                            
+                            // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                            const minGap = -0.2 * fontSize;
+                            const maxGap = 0.8 * fontSize;
+                            if (gaps[i] < minGap) gaps[i] = minGap;
+                            if (gaps[i] > maxGap) gaps[i] = maxGap;
+                        }
                     }
                     
                     // 調整後のギャップで位置を再計算
@@ -2743,21 +2770,38 @@
                         // 【修正】幅の差分を計算（カーニング前の幅 - カーニング後の幅）
                         const deltaW = widthWithoutKerning - kerningTotalWidth;
                         
-                        // 1ギャップあたりの調整値を計算（正の値でカーニング前の幅に近づける）
-                        const adjustPerGap = deltaW / gaps.length;
+                        // 比例按分: 各ギャップの現在の値に比例して調整値を按分
+                        // 全ギャップの絶対値の合計を計算
+                        const totalGapSum = gaps.reduce((sum, gap) => sum + Math.abs(gap), 0);
                         
-                        // すべてのギャップに調整値を加算（文字間隔を決めるアルゴリズムは変えない）
                         const minGap = -0.2 * fontSize;
                         const maxGap = 0.8 * fontSize;
                         
-                        for (let i = 0; i < gaps.length; i++) {
-                            gaps[i] += adjustPerGap;
-                            
-                            // 調整後のギャップが最小・最大の範囲内に収まるように制限
-                            if (gaps[i] < minGap) {
-                                gaps[i] = minGap;
-                            } else if (gaps[i] > maxGap) {
-                                gaps[i] = maxGap;
+                        if (totalGapSum > 0.001) {
+                            // 比例按分: 各ギャップの現在の値に比例して調整（文字間隔を決めるアルゴリズムは変えない）
+                            for (let i = 0; i < gaps.length; i++) {
+                                const gapRatio = Math.abs(gaps[i]) / totalGapSum;
+                                gaps[i] += deltaW * gapRatio;
+                                
+                                // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                                if (gaps[i] < minGap) {
+                                    gaps[i] = minGap;
+                                } else if (gaps[i] > maxGap) {
+                                    gaps[i] = maxGap;
+                                }
+                            }
+                        } else {
+                            // 全ギャップが0に近い場合は均等按分にフォールバック
+                            const adjustPerGap = deltaW / gaps.length;
+                            for (let i = 0; i < gaps.length; i++) {
+                                gaps[i] += adjustPerGap;
+                                
+                                // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                                if (gaps[i] < minGap) {
+                                    gaps[i] = minGap;
+                                } else if (gaps[i] > maxGap) {
+                                    gaps[i] = maxGap;
+                                }
                             }
                         }
                         
@@ -2824,7 +2868,7 @@
             };
             
             // 評価データを準備
-            const shouldApplyWidthAnchor = (phaseMode === "phase1" && unlearnedPairAlgorithm !== "phase0") || (phaseMode === "phase0" && phase0WidthAnchorEnabled);
+            const shouldApplyWidthAnchor = (phaseMode === "phase1" && phase1WidthAnchorEnabled && unlearnedPairAlgorithm !== "phase0") || (phaseMode === "phase0" && phase0WidthAnchorEnabled);
             const deltaW = phaseMode === "phase1" ? (widthWithoutKerning - phase1TotalWidth) : 
                           phaseMode === "phase0" ? (widthWithoutKerning - phase0TotalWidth) : 0;
             const adjustPerGap = shouldApplyWidthAnchor && gaps.length > 0 && Math.abs(deltaW) > 0.001 ? 
@@ -3683,6 +3727,10 @@
             if (blendRatioGroup) {
                 blendRatioGroup.style.display = (phaseMode === "phase1") ? "flex" : "none";
             }
+            const phase1WidthAnchorGroup = document.getElementById('phase1WidthAnchorGroup');
+            if (phase1WidthAnchorGroup) {
+                phase1WidthAnchorGroup.style.display = (phaseMode === "phase1") ? "flex" : "none";
+            }
             const phase2Group = document.getElementById('phase2Group');
             if (phase2Group) {
                 phase2Group.style.display = (phaseMode === "phase1") ? "flex" : "none";
@@ -3722,6 +3770,15 @@
         if (phase0WidthAnchorCheckbox) {
             phase0WidthAnchorCheckbox.addEventListener('change', function() {
                 phase0WidthAnchorEnabled = this.checked;
+                updateDisplay();
+            });
+        }
+        
+        // Phase1幅アンカーの有効/無効
+        const phase1WidthAnchorCheckbox = document.getElementById('phase1WidthAnchorCheckbox');
+        if (phase1WidthAnchorCheckbox) {
+            phase1WidthAnchorCheckbox.addEventListener('change', function() {
+                phase1WidthAnchorEnabled = this.checked;
                 updateDisplay();
             });
         }
@@ -3870,6 +3927,10 @@
             if (blendRatioGroup) {
                 blendRatioGroup.style.display = (phaseMode === "phase1") ? "flex" : "none";
             }
+            const phase1WidthAnchorGroup = document.getElementById('phase1WidthAnchorGroup');
+            if (phase1WidthAnchorGroup) {
+                phase1WidthAnchorGroup.style.display = (phaseMode === "phase1") ? "flex" : "none";
+            }
             const phase0WidthAnchorGroup = document.getElementById('phase0WidthAnchorGroup');
             if (phase0WidthAnchorGroup) {
                 phase0WidthAnchorGroup.style.display = (phaseMode === "phase0") ? "flex" : "none";
@@ -3917,6 +3978,10 @@
             const showUnlearnedPairsGroup = document.getElementById('showUnlearnedPairsGroup');
             if (showUnlearnedPairsGroup) {
                 showUnlearnedPairsGroup.style.display = (phaseMode === "phase1") ? "flex" : "none";
+            }
+            const phase1WidthAnchorGroup = document.getElementById('phase1WidthAnchorGroup');
+            if (phase1WidthAnchorGroup) {
+                phase1WidthAnchorGroup.style.display = (phaseMode === "phase1") ? "flex" : "none";
             }
             
             // タブの表示/非表示を初期化

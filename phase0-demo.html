@@ -1296,20 +1296,24 @@
         // ============================================
         
         let kerningCategories = null;
-        let pairAdjustments = null;
+        let pairAdjustmentsBase = null;     // kerning_categories.json の pair_adjustments（共通ベース）
+        let pairAdjustmentsOverrides = null; // kerning_categories.json の font_overrides（フォント別上書き）
         
         async function loadKerningCategories() {
             try {
                 const response = await fetch('kerning_categories.json');
                 const data = await response.json();
                 kerningCategories = data.kerning_categories;
-                pairAdjustments = data.pair_adjustments || null;
+                pairAdjustmentsBase = data.pair_adjustments || null;
+                pairAdjustmentsOverrides = data.font_overrides || null;
                 console.log('カーニングカテゴリーを読み込みました:', kerningCategories);
-                console.log('ペア補正値を読み込みました:', pairAdjustments);
+                console.log('ペア補正値（ベース）を読み込みました:', pairAdjustmentsBase);
+                console.log('ペア補正値（フォント別上書き）を読み込みました:', pairAdjustmentsOverrides);
             } catch (e) {
                 console.warn('カーニングカテゴリーの読み込みに失敗しました:', e);
                 kerningCategories = null;
-                pairAdjustments = null;
+                pairAdjustmentsBase = null;
+                pairAdjustmentsOverrides = null;
             }
         }
         
@@ -1404,16 +1408,49 @@
         }
         
         // JSONからペア補正値を取得
-        function getPairAdjustmentFromJSON(pairCat) {
-            if (!pairAdjustments || !pairCat) return null;
+        function getPairAdjustmentsForFont(fontName) {
+            if (!pairAdjustmentsOverrides || !fontName) return null;
+            
+            // 優先順位:
+            // 1) フォント名そのまま
+            // 2) 長音符/全角ハイフンの表記揺れを正規化したフォント名
+            // 3) フォントファミリー（Mincho/Gothic/...）キー
+            const direct = pairAdjustmentsOverrides[fontName];
+            if (direct && typeof direct === 'object') return direct.pair_adjustments || null;
+            
+            const normalizedName = fontName.replace(/ー/g, '-').replace(/－/g, '-');
+            if (normalizedName !== fontName) {
+                const normalized = pairAdjustmentsOverrides[normalizedName];
+                if (normalized && typeof normalized === 'object') return normalized.pair_adjustments || null;
+            }
+            
+            // normalizeFontName は既に Phase1 側で使っているので流用
+            const familyKey = normalizeFontName(fontName);
+            const byFamily = pairAdjustmentsOverrides[familyKey];
+            if (byFamily && typeof byFamily === 'object') return byFamily.pair_adjustments || null;
+            
+            return null;
+        }
+        
+        // JSONからペア補正値を取得（ベース＋フォント別上書き対応）
+        function getPairAdjustmentFromJSON(pairCat, fontName) {
+            if (!pairCat) return null;
             
             // ペアカテゴリ名からベース名とケース情報を分離
             const basePairCat = pairCat.replace(/_UPPER_UPPER|_LOWER_LOWER|_UPPER_LOWER|_LOWER_UPPER$/, "");
             const hasCaseSuffix = basePairCat !== pairCat;
+          
+            // 参照元（フォント別上書き → ベース）の順で探す
+            const sources = [];
+            const fontAdjustments = fontName ? getPairAdjustmentsForFont(fontName) : null;
+            if (fontAdjustments) sources.push(fontAdjustments);
+            if (pairAdjustmentsBase) sources.push(pairAdjustmentsBase);
             
-            // JSONからベース名で検索
-            if (pairAdjustments[basePairCat]) {
-                const adj = pairAdjustments[basePairCat];
+            for (const source of sources) {
+                if (!source || typeof source !== 'object') continue;
+                if (!source[basePairCat]) continue;
+                
+                const adj = source[basePairCat];
                 let adjustment = null;
                 
                 // ケース情報に応じた補正値を取得
@@ -1679,7 +1716,7 @@
             const pairCat = getPairCategory(leftFeatures.charType, rightFeatures.charType, leftChar, rightChar);
             
             // まずJSONから補正値を取得を試みる
-            let pairAdj = getPairAdjustmentFromJSON(pairCat);
+            let pairAdj = getPairAdjustmentFromJSON(pairCat, fontName);
             
             // JSONから取得できない場合は、既存のpairCategoryAdjustを使用（フォールバック）
             if (pairAdj === null || pairAdj === undefined) {
@@ -2625,9 +2662,14 @@
                 
                 // デバッグ情報（Phase0の計算値も保持）
                 const pairCat = getPairCategory(A.charType, B.charType, leftChar, rightChar);
-                const pairAdj = pairCategoryAdjust[pairCat] || 0;
+                // 表示用の「ペア補正」は、実際に参照される順序（JSON→フォールバック）で取得
+                let pairAdj = getPairAdjustmentFromJSON(pairCat, fontId);
+                if (pairAdj === null || pairAdj === undefined) {
+                    const basePairCat = pairCat.replace(/_UPPER_UPPER|_LOWER_LOWER|_UPPER_LOWER|_LOWER_UPPER$/, "");
+                    pairAdj = pairCategoryAdjust[basePairCat] || pairCategoryAdjust[pairCat] || 0;
+                }
                 const densityKey = A.density + "-" + B.density;
-                const densAdj = densityAdjust[densityKey] || 0;
+                const densAdj = 0; // Phase0側で密度補正は無効化している（表示も実態に合わせる）
                 pairAdjusts.push(pairAdj);
                 densityAdjusts.push(densAdj);
                 pairCategories.push(pairCat);
@@ -3576,13 +3618,13 @@
             document.getElementById('infoCharTypes').textContent = charTypes;
 
             const pairInfo = result.pairCategories.map((cat, i) => 
-                `${text[i]}-${text[i+1]}: ${cat} (${result.pairAdjusts[i].toFixed(2)}px)`
+                `${text[i]}-${text[i+1]}: ${cat} (${result.pairAdjusts[i].toFixed(2)})`
             ).join(', ');
             document.getElementById('infoPairAdjusts').textContent = pairInfo || '-';
 
             const densityInfo = result.features.slice(0, -1).map((f, i) => {
                 const next = result.features[i + 1];
-                return `${f.density}-${next.density} (${result.densityAdjusts[i].toFixed(2)}px)`;
+                return `${f.density}-${next.density} (${result.densityAdjusts[i].toFixed(2)})`;
             }).join(', ');
             document.getElementById('infoDensityAdjusts').textContent = densityInfo || '-';
 

@@ -124,13 +124,13 @@
       "lowercase_uppercase": null
     },
     "ENCLOSED_PARALLEL": {
-      "uppercase_uppercase": -0.25,
+      "uppercase_uppercase": -0.30,
       "lowercase_lowercase": -0.30,
       "uppercase_lowercase": -0.27,
       "lowercase_uppercase": -0.27
     },
     "PARALLEL_ENCLOSED": {
-      "uppercase_uppercase": -0.25,
+      "uppercase_uppercase": -0.30,
       "lowercase_lowercase": -0.32,
       "uppercase_lowercase": -0.27,
       "lowercase_uppercase": -0.27
@@ -154,7 +154,7 @@
       "lowercase_uppercase": -0.45
     },
     "PARALLEL_INWARD": {
-      "uppercase_uppercase": -0.4,
+      "uppercase_uppercase": -0.35,
       "lowercase_lowercase": -0.30,
       "uppercase_lowercase": -0.45,
       "lowercase_uppercase": -0.45
@@ -196,17 +196,18 @@
       "lowercase_uppercase": null
     },
     "PARALLEL_SIDED": {
-      "uppercase_uppercase": -0.3,
+      "uppercase_uppercase": -0.33,
       "lowercase_lowercase": -0.35,
       "uppercase_lowercase": -0.32,
       "lowercase_uppercase": -0.32
     },
     "SIDED_PARALLEL": {
-      "uppercase_uppercase": -0.3,
+      "uppercase_uppercase": -0.33,
       "lowercase_lowercase": -0.35,
       "uppercase_lowercase": -0.32,
       "lowercase_uppercase": -0.32
     }
-  }
+  },
+  "font_overrides": {}
 }
 

@@ -1,0 +1,241 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" style="background:#f8f9fa">
+  <defs>
+    <style>
+      .title { font-family: 'Noto Sans JP', sans-serif; font-size: 32px; font-weight: 700; fill: #1a1a1a; }
+      .section-title { font-family: 'Noto Sans JP', sans-serif; font-size: 22px; font-weight: 600; fill: #2c3e50; }
+      .label { font-family: 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 500; fill: #666; }
+      .annotation { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; fill: #e74c3c; font-weight: 600; }
+      .nameplate-frame { fill: none; stroke: #363639; stroke-width: 1.5; }
+      .japanese-kanji { font-family: 'Noto Serif JP', serif; font-weight: 900; fill: #231f20; }
+      .english-letter { font-family: 'Arial', sans-serif; font-weight: 400; fill: #231f20; letter-spacing: 0.05em; }
+      .grid-line { stroke: #d0d0d0; stroke-width: 1; stroke-dasharray: 4,4; opacity: 0.5; }
+      .measurement-line { stroke: #3498db; stroke-width: 2; }
+      .measurement-text { font-family: 'Noto Sans JP', sans-serif; font-size: 11px; fill: #3498db; font-weight: 600; }
+      .arrow { stroke: #e74c3c; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .badge { font-family: 'Noto Sans JP', sans-serif; font-size: 12px; font-weight: 700; fill: white; }
+      .area-highlight { fill: rgba(52, 152, 219, 0.1); stroke: #3498db; stroke-width: 1; stroke-dasharray: 3,3; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#e74c3c"/>
+    </marker>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <!-- Main Title -->
+  <text x="800" y="50" class="title" text-anchor="middle">製品13347502の自動レイアウト調整：金子 → 佐々木</text>
+  <text x="800" y="80" class="label" text-anchor="middle" fill="#666">実データ（CSV + SVG）に基づく正確な配置シミュレーション</text>
+  
+  <!-- Left Section: Original Layout -->
+  <g id="before-section">
+    <rect x="50" y="110" width="700" height="70" fill="#fff3cd" rx="8"/>
+    <text x="400" y="150" class="section-title" text-anchor="middle">【調整前】オリジナルテンプレート（金子/KANEKO）</text>
+    
+    <!-- Nameplate Canvas -->
+    <g transform="translate(50, 200)">
+      <rect x="0" y="0" width="700" height="333" class="nameplate-frame" rx="4" fill="white" filter="url(#shadow)"/>
+      
+      <!-- Grid reference -->
+      <line x1="350" y1="0" x2="350" y2="333" class="grid-line"/>
+      <line x1="0" y1="166" x2="700" y2="166" class="grid-line"/>
+      
+      <!-- Area highlights -->
+      <rect x="420" y="30" width="260" height="150" class="area-highlight" rx="4"/>
+      <text x="550" y="20" class="measurement-text">漢字エリア（右上）</text>
+      
+      <rect x="20" y="230" width="350" height="80" class="area-highlight" rx="4"/>
+      <text x="195" y="325" class="measurement-text">英字エリア（左下、横一列）</text>
+      
+      <!-- Japanese Characters - 金子 (右上に縦配置) -->
+      <text x="450" y="80" class="japanese-kanji" font-size="95">金</text>
+      <text x="570" y="170" class="japanese-kanji" font-size="95">子</text>
+      
+      <!-- English Letters - KANEKO (左下に横一列配置) -->
+      <text x="58" y="280" class="english-letter" font-size="28">K</text>
+      <text x="113" y="280" class="english-letter" font-size="28">A</text>
+      <text x="166" y="280" class="english-letter" font-size="28">N</text>
+      <text x="224" y="280" class="english-letter" font-size="28">E</text>
+      <text x="284" y="280" class="english-letter" font-size="28">K</text>
+      <text x="335" y="280" class="english-letter" font-size="28">O</text>
+      
+      <!-- Baseline indicator for English -->
+      <line x1="58" y1="285" x2="380" y2="285" stroke="#3498db" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.4"/>
+      
+      <!-- Measurements - 漢字間隔 -->
+      <line x1="540" y1="90" x2="540" y2="160" class="measurement-line"/>
+      <line x1="535" y1="90" x2="545" y2="90" class="measurement-line"/>
+      <line x1="535" y1="160" x2="545" y2="160" class="measurement-line"/>
+      <text x="560" y="130" class="measurement-text">70px</text>
+      
+      <!-- Measurements - 漢字サイズ -->
+      <line x1="430" y1="30" x2="480" y2="30" class="measurement-line"/>
+      <line x1="430" y1="25" x2="430" y2="35" class="measurement-line"/>
+      <line x1="480" y1="25" x2="480" y2="35" class="measurement-line"/>
+      <text x="455" y="20" class="measurement-text">95px</text>
+      
+      <!-- Measurements - 英字サイズ -->
+      <line x1="58" y1="250" x2="90" y2="250" class="measurement-line"/>
+      <line x1="58" y1="245" x2="58" y2="255" class="measurement-line"/>
+      <line x1="90" y1="245" x2="90" y2="255" class="measurement-line"/>
+      <text x="74" y="240" class="measurement-text">28px</text>
+    </g>
+    
+    <!-- Info badge -->
+    <rect x="150" y="560" width="500" height="32" fill="#3498db" rx="6"/>
+    <text x="400" y="582" class="badge" text-anchor="middle">2文字（右上縦配置）+ 6文字英字（左下横一列）/ 対角線レイアウト</text>
+  </g>
+  
+  <!-- Right Section: Adjusted Layout -->
+  <g id="after-section">
+    <rect x="850" y="110" width="700" height="70" fill="#d4edda" rx="8"/>
+    <text x="1200" y="150" class="section-title" text-anchor="middle">【調整後】3文字対応（佐々木/SASAKI）</text>
+    
+    <!-- Nameplate Canvas -->
+    <g transform="translate(850, 200)">
+      <rect x="0" y="0" width="700" height="333" class="nameplate-frame" rx="4" fill="white" filter="url(#shadow)"/>
+      
+      <!-- Grid reference -->
+      <line x1="350" y1="0" x2="350" y2="333" class="grid-line"/>
+      <line x1="0" y1="166" x2="700" y2="166" class="grid-line"/>
+      
+      <!-- Area highlights -->
+      <rect x="380" y="30" width="300" height="150" class="area-highlight" rx="4"/>
+      <text x="530" y="20" class="measurement-text">漢字エリア（3文字配置）</text>
+      
+      <rect x="20" y="230" width="350" height="80" class="area-highlight" rx="4"/>
+      <text x="195" y="325" class="measurement-text">英字エリア（SASAKI、横一列）</text>
+      
+      <!-- Japanese Characters - 佐々木 (3 characters, scaled down to ~78px) -->
+      <text x="410" y="75" class="japanese-kanji" font-size="78">佐</text>
+      <text x="500" y="120" class="japanese-kanji" font-size="78">々</text>
+      <text x="590" y="165" class="japanese-kanji" font-size="78">木</text>
+      
+      <!-- English Letters - SASAKI (左下に横一列、同じ配置) -->
+      <text x="58" y="280" class="english-letter" font-size="28">S</text>
+      <text x="113" y="280" class="english-letter" font-size="28">A</text>
+      <text x="166" y="280" class="english-letter" font-size="28">S</text>
+      <text x="224" y="280" class="english-letter" font-size="28">A</text>
+      <text x="284" y="280" class="english-letter" font-size="28">K</text>
+      <text x="335" y="280" class="english-letter" font-size="28">I</text>
+      
+      <!-- Baseline indicator for English -->
+      <line x1="58" y1="285" x2="380" y2="285" stroke="#27ae60" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.4"/>
+      
+      <!-- Measurements - 新しい漢字間隔 -->
+      <line x1="485" y1="85" x2="485" y2="155" class="measurement-line"/>
+      <line x1="480" y1="85" x2="490" y2="85" class="measurement-line"/>
+      <line x1="480" y1="155" x2="490" y2="155" class="measurement-line"/>
+      <text x="505" y="125" class="measurement-text">70px</text>
+      
+      <!-- Measurements - 新しい漢字サイズ -->
+      <line x1="395" y1="30" x2="440" y2="30" class="measurement-line"/>
+      <line x1="395" y1="25" x2="395" y2="35" class="measurement-line"/>
+      <line x1="440" y1="25" x2="440" y2="35" class="measurement-line"/>
+      <text x="417" y="20" class="measurement-text">78px</text>
+      
+      <!-- Check mark -->
+      <circle cx="650" cy="50" r="18" fill="#27ae60" opacity="0.9"/>
+      <path d="M 643 50 L 648 55 L 658 43" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    
+    <!-- Info badge -->
+    <rect x="950" y="560" width="500" height="32" fill="#27ae60" rx="6"/>
+    <text x="1200" y="582" class="badge" text-anchor="middle">3文字（78px、-18%縮小）+ 6文字英字（配置変更なし）/ 対角線維持</text>
+  </g>
+  
+  <!-- Comparison Arrows -->
+  <g id="comparison-arrows">
+    <!-- Font size arrow -->
+    <path d="M 755 280 Q 800 260, 845 280" class="arrow"/>
+    <text x="800" y="245" class="annotation" text-anchor="middle" font-size="13">漢字スケール調整</text>
+    <text x="800" y="262" class="annotation" text-anchor="middle" font-size="13">95px → 78px (-18%)</text>
+    
+    <!-- Layout pattern arrow -->
+    <path d="M 755 400 Q 800 410, 845 400" class="arrow"/>
+    <text x="800" y="440" class="annotation" text-anchor="middle" font-size="13">英字配置維持</text>
+    <text x="800" y="457" class="annotation" text-anchor="middle" font-size="13">左下横一列（変更なし）</text>
+  </g>
+  
+  <!-- Bottom Analysis Panel -->
+  <g id="analysis-panel">
+    <rect x="50" y="630" width="1500" height="240" fill="white" stroke="#3498db" stroke-width="2.5" rx="10" filter="url(#shadow)"/>
+    
+    <text x="800" y="670" class="section-title" text-anchor="middle">自動レイアウト調整の詳細分析</text>
+    
+    <!-- Left column -->
+    <g transform="translate(80, 700)">
+      <text x="0" y="0" style="font-family: 'Noto Sans JP'; font-size: 17px; font-weight: 700; fill: #2c3e50;">🔍 検出された配置構造</text>
+      
+      <circle cx="0" cy="30" r="4" fill="#3498db"/>
+      <text x="15" y="35" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">漢字ブロック：</tspan>右上エリア、縦配置（対角線パターン）
+      </text>
+      
+      <circle cx="0" cy="60" r="4" fill="#3498db"/>
+      <text x="15" y="65" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">英字ブロック：</tspan>左下エリア、横一列配置
+      </text>
+      
+      <circle cx="0" cy="90" r="4" fill="#3498db"/>
+      <text x="15" y="95" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">配置思想：</tspan>対角線レイアウト（右上→左下）
+      </text>
+      
+      <circle cx="0" cy="120" r="4" fill="#3498db"/>
+      <text x="15" y="125" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">視覚効果：</tspan>動的なバランス、空間の広がり
+      </text>
+    </g>
+    
+    <!-- Middle column -->
+    <g transform="translate(560, 700)">
+      <text x="0" y="0" style="font-family: 'Noto Sans JP'; font-size: 17px; font-weight: 700; fill: #2c3e50;">⚙️ 実施された自動調整</text>
+      
+      <circle cx="0" cy="30" r="4" fill="#e74c3c"/>
+      <text x="15" y="35" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">文字数変化検知：</tspan>2文字 → 3文字（+50%）
+      </text>
+      
+      <circle cx="0" cy="60" r="4" fill="#e74c3c"/>
+      <text x="15" y="65" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">スケール計算：</tspan>95px → 78px（-17.9%縮小）
+      </text>
+      
+      <circle cx="0" cy="90" r="4" fill="#e74c3c"/>
+      <text x="15" y="95" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">配置再計算：</tspan>3文字が右上エリアに対角線配置
+      </text>
+      
+      <circle cx="0" cy="120" r="4" fill="#e74c3c"/>
+      <text x="15" y="125" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">間隔維持：</tspan>文字間約70pxを保持
+      </text>
+    </g>
+    
+    <!-- Right column -->
+    <g transform="translate(1040, 700)">
+      <text x="0" y="0" style="font-family: 'Noto Sans JP'; font-size: 17px; font-weight: 700; fill: #2c3e50;">✓ 維持されたデザイン</text>
+      
+      <circle cx="0" cy="30" r="4" fill="#27ae60"/>
+      <text x="15" y="35" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">対角線構図：</tspan>右上→左下の配置思想
+      </text>
+      
+      <circle cx="0" cy="60" r="4" fill="#27ae60"/>
+      <text x="15" y="65" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">英字配置：</tspan>左下横一列（変更なし）
+      </text>
+      
+      <circle cx="0" cy="90" r="4" fill="#27ae60"/>
+      <text x="15" y="95" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">視覚バランス：</tspan>全体の余白比率維持
+      </text>
+      
+      <circle cx="0" cy="120" r="4" fill="#27ae60"/>
+      <text x="15" y="125" style="font-family: 'Noto Sans JP'; font-size: 14px; fill: #333;">
+        <tspan font-weight="600">ブランド性：</tspan>デザインの個性を保持
+      </text>
+    </g>
+  </g>
+</svg>

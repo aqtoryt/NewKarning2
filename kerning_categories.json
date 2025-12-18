@@ -88,13 +88,13 @@
       "lowercase_uppercase": -0.32
     },
     "OUTWARD_INWARD": {
-      "uppercase_uppercase": -0.6,
+      "uppercase_uppercase": -0.53,
       "lowercase_lowercase": null,
       "uppercase_lowercase": null,
       "lowercase_uppercase": null
     },
     "INWARD_OUTWARD": {
-      "uppercase_uppercase": -0.6,
+      "uppercase_uppercase": -0.53,
       "lowercase_lowercase": null,
       "uppercase_lowercase": null,
       "lowercase_uppercase": null
@@ -184,13 +184,13 @@
       "lowercase_uppercase": null
     },
     "OUTWARD_SIDED": {
-      "uppercase_uppercase": -0.3,
+      "uppercase_uppercase": -0.4,
       "lowercase_lowercase": null,
       "uppercase_lowercase": null,
       "lowercase_uppercase": null
     },
     "SIDED_OUTWARD": {
-      "uppercase_uppercase": -0.3,
+      "uppercase_uppercase": -0.35,
       "lowercase_lowercase": null,
       "uppercase_lowercase": null,
       "lowercase_uppercase": null

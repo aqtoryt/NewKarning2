@@ -331,6 +331,7 @@
                         <select id="fontSelect">
                             <option value="">読み込み中...</option>
                         </select>
+                        <div id="fontLoadStatus" style="margin-top:6px;font-size:11px;color:#666;line-height:1.4;"></div>
                     </div>
                     <div class="control-group">
                         <label for="fontCustomInput">カスタムフォント名（直接入力可）</label>
@@ -359,7 +360,7 @@
                     </div>
                     <div class="control-group" id="phase0WidthAnchorGroup" style="grid-column: 1 / -1; display: none;">
                         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                            <input type="checkbox" id="phase0WidthAnchorCheckbox" checked>
+                            <input type="checkbox" id="phase0WidthAnchorCheckbox">
                             <span>Phase0幅アンカー（カーニング前の幅に合わせる）</span>
                         </label>
                         <p style="font-size: 12px; color: #666; margin-top: 5px;">
@@ -397,15 +398,6 @@
                         <div style="margin-top: 5px; font-size: 11px; color: #888;">
                             <span id="blendRatioDescription"></span>
                         </div>
-                    </div>
-                    <div class="control-group" id="phase1WidthAnchorGroup" style="grid-column: 1 / -1; display: none;">
-                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                            <input type="checkbox" id="phase1WidthAnchorCheckbox" checked>
-                            <span>Phase1幅アンカー（カーニング前の幅に合わせる）</span>
-                        </label>
-                        <p style="font-size: 12px; color: #666; margin-top: 5px;">
-                            無効にすると、個別の補正値調整が反映されます（幅は一致しない場合があります）
-                        </p>
                     </div>
                 </div>
             </div>
@@ -579,6 +571,9 @@
         // ============================================
         const DEFAULT_BLEND_RATIO_PERCENT = 55;  // ブレンド比率のデフォルト値（0-100の範囲、0 = Phase0のみ、100 = Phase1のみ）
         const DEFAULT_BEFORE_KERNING_GAP = 3;  // カーニング前の文字間のデフォルト値（px）
+        // スライダー値 → 実効px への換算係数（1目盛りあたりの実効変動を小さくしたい場合はここを下げる）
+        // 例: 0.2 ならスライダーを1動かしても実効は0.2pxしか変わらない
+        const BEFORE_KERNING_GAP_SCALE = 0.2;
         
         // ============================================
         // Phase0/Phase1 カーニングエンジン実装
@@ -586,7 +581,7 @@
         
         // グローバル状態
         let phaseMode = "phase0";  // "phase0" or "phase1" or "compare"
-        let phase0WidthAnchorEnabled = true;  // Phase0幅アンカーの有効/無効
+        let phase0WidthAnchorEnabled = false;  // Phase0幅アンカーの有効/無効（デフォルトOFF）
         let phase1WidthAnchorEnabled = true;  // Phase1幅アンカーの有効/無効
         let phase2Enabled = false;  // Phase2の全体最適化を有効にするかどうか
         let centerOfMassAdjustmentEnabled = true;  // 重心補正を有効にするかどうか（Phase2）
@@ -1640,20 +1635,30 @@
             // 平均文字幅を計算
             const avgWidth = (leftFeatures.width + rightFeatures.width) / 2;
             
-            // baseが0の場合は、Phase1の学習データに基づいてデフォルト値を設定
-            // Phase1のgap_norm_avgの平均は約0.35（文字幅の35%）
-            // これをベースラインとして使用
+            // base（基準ギャップ）の決め方
+            // - baseTrackingが設定されていればそれを使う
+            // - 0の場合は Phase1学習データの平均（約0.35）を基準とする
+            // ただしUIの「カーニング前の文字間（beforeKerningGap）」を変えたときに
+            // Phase0の「カーニング後」も連動して変化するべきなので、
+            // 最後に beforeKerningGap / DEFAULT_BEFORE_KERNING_GAP でスケールする。
             if (base === 0) {
+                const DEFAULT_PHASE0_BASE = 0.35; // DEFAULT_BEFORE_KERNING_GAP(=3px) 時の基準
                 if (TEST_IGNORE_CHAR_WIDTH) {
-                    // テスト用: 文字幅を考慮せず、固定値を使用
-                    base = 0.35;
+                    base = DEFAULT_PHASE0_BASE;
                 } else {
-                    // 通常の計算: 文字幅に対する比率として0.35をデフォルト値とする
-                    // ただし、fontSizeに対する比率として扱うため、avgWidth/baseWidthPxでスケール
-                    base = 0.35 * (avgWidth / baseWidthPx);
+                    base = DEFAULT_PHASE0_BASE * (avgWidth / baseWidthPx);
                 }
             }
-            // 以前の実装（beforeKerningGapを使用）:
+
+            // UIの「カーニング前の文字間」の変化を、Phase0の基準ギャップにも反映
+            // 幅アンカーOFFでも見た目が変わるようにするのが目的
+            const defaultBeforeKerningGap = DEFAULT_BEFORE_KERNING_GAP;
+            if (Number.isFinite(beforeKerningGap) && Number.isFinite(defaultBeforeKerningGap) && defaultBeforeKerningGap !== 0) {
+                const scaleFactor = beforeKerningGap / defaultBeforeKerningGap;
+                base = base * scaleFactor;
+            }
+
+            // 以前の実装（beforeKerningGapを直接baseにする案、参考）:
             // if (base === 0) {
             //     if (TEST_IGNORE_CHAR_WIDTH) {
             //         // テスト用: 文字幅を考慮せず、beforeKerningGapを基準に使用
@@ -2714,14 +2719,14 @@
                     } else {
                         // 全ギャップが0に近い場合は均等按分にフォールバック
                         const adjustPerGap = deltaW / gaps.length;
-                        for (let i = 0; i < gaps.length; i++) {
-                            gaps[i] += adjustPerGap;
-                            
-                            // 調整後のギャップが最小・最大の範囲内に収まるように制限
-                            const minGap = -0.2 * fontSize;
-                            const maxGap = 0.8 * fontSize;
-                            if (gaps[i] < minGap) gaps[i] = minGap;
-                            if (gaps[i] > maxGap) gaps[i] = maxGap;
+                    for (let i = 0; i < gaps.length; i++) {
+                        gaps[i] += adjustPerGap;
+                        
+                        // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                        const minGap = -0.2 * fontSize;
+                        const maxGap = 0.8 * fontSize;
+                        if (gaps[i] < minGap) gaps[i] = minGap;
+                        if (gaps[i] > maxGap) gaps[i] = maxGap;
                         }
                     }
                     
@@ -2793,14 +2798,14 @@
                         } else {
                             // 全ギャップが0に近い場合は均等按分にフォールバック
                             const adjustPerGap = deltaW / gaps.length;
-                            for (let i = 0; i < gaps.length; i++) {
-                                gaps[i] += adjustPerGap;
-                                
-                                // 調整後のギャップが最小・最大の範囲内に収まるように制限
-                                if (gaps[i] < minGap) {
-                                    gaps[i] = minGap;
-                                } else if (gaps[i] > maxGap) {
-                                    gaps[i] = maxGap;
+                        for (let i = 0; i < gaps.length; i++) {
+                            gaps[i] += adjustPerGap;
+                            
+                            // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                            if (gaps[i] < minGap) {
+                                gaps[i] = minGap;
+                            } else if (gaps[i] > maxGap) {
+                                gaps[i] = maxGap;
                                 }
                             }
                         }
@@ -3169,6 +3174,14 @@
             "Design": "Design（装飾系・ロゴ風）"
         };
 
+        // フォント読み込み状況の表示
+        function setFontLoadStatus(message, isError = false) {
+            const el = document.getElementById('fontLoadStatus');
+            if (!el) return;
+            el.textContent = message || '';
+            el.style.color = isError ? '#c0392b' : '#666';
+        }
+
         // フォントセレクトボックスを更新する関数
         function updateFontSelect(availableFonts, defaultFonts) {
             const fontSelect = document.getElementById('fontSelect');
@@ -3189,7 +3202,8 @@
                 
                 availableFonts.forEach(font => {
                     try {
-                        const family = fontFamilyMap[font.name] || "Gothic";
+                        // 未知のフォント名も含めて分類できるように正規化関数を使用
+                        const family = normalizeFontName(font.name);
                         if (fontsByFamily[family]) {
                             fontsByFamily[family].push(font);
                         } else {
@@ -3233,7 +3247,7 @@
         }
 
         // 利用可能なフォントを検出してセレクトボックスに追加
-        function populateFontSelect() {
+        async function populateFontSelect() {
             const fontSelect = document.getElementById('fontSelect');
             
             // デフォルトのフォントを追加
@@ -3258,9 +3272,52 @@
             if (defaultFonts.length > 0) {
                 fontSelect.value = defaultFonts[0].name;
             }
+            setFontLoadStatus('フォント一覧を取得中…');
             updateDisplay();
             
-            // 非同期でフォントをチェック（バックグラウンドで実行）
+            // 可能であれば Local Font Access API で「インストール済みフォント（ファミリー）」を列挙
+            // 注意: isSecureContext（https/localhost）かつユーザー許可が必要。file:// では使えないケースが多い。
+            if (typeof window.queryLocalFonts === 'function') {
+                if (!window.isSecureContext) {
+                    setFontLoadStatus('Local Font Access APIは https/localhost などのセキュア環境でのみ使用できます（現在はフォールバック検出）。');
+                } else {
+                    try {
+                        setFontLoadStatus('インストール済みフォントを取得するため、ブラウザの許可を確認してください…');
+                        const localFonts = await window.queryLocalFonts();
+                        
+                        // family を重複排除してセレクトに入れる（style 単位の選択はUIが無いので今回は family で統一）
+                        const familySet = new Set();
+                        for (const f of localFonts || []) {
+                            if (f && typeof f.family === 'string' && f.family.trim()) {
+                                familySet.add(f.family.trim());
+                            }
+                        }
+                        
+                        const families = Array.from(familySet).sort((a, b) => a.localeCompare(b, 'ja'));
+                        
+                        // デフォルト + ローカルフォントをマージ
+                        const mergedFonts = [...defaultFonts];
+                        const defaultNameSet = new Set(defaultFonts.map(f => f.name));
+                        for (const fam of families) {
+                            if (!defaultNameSet.has(fam)) {
+                                mergedFonts.push({ name: fam, display: fam });
+                            }
+                        }
+                        
+                        updateFontSelect(mergedFonts, defaultFonts);
+                        setFontLoadStatus(`インストール済みフォント（ファミリー）を取得しました: ${families.length}件`);
+                        return;
+                    } catch (e) {
+                        console.warn('Local Font Access APIでのフォント取得に失敗しました:', e);
+                        setFontLoadStatus('インストール済みフォント取得が許可されなかったため、フォールバック検出を使用します。', true);
+                        // 以降フォールバックへ
+                    }
+                }
+            } else {
+                setFontLoadStatus('Local Font Access API未対応のため、フォールバック検出を使用します。');
+            }
+            
+            // フォールバック: 非同期でフォントをチェック（バックグラウンドで実行）
             setTimeout(() => {
                 try {
                     const availableFonts = [];
@@ -3310,6 +3367,7 @@
                             } else {
                                 // すべてのフォントをチェック完了したら、セレクトボックスを更新
                                 updateFontSelect(availableFonts, defaultFonts);
+                                setFontLoadStatus(`フォールバック検出で利用可能フォントを更新しました: ${availableFonts.length}件`);
                             }
                         };
                         
@@ -3318,9 +3376,11 @@
                     } else {
                         // commonFontsが定義されていない場合は、デフォルトフォントのみで更新
                         updateFontSelect(availableFonts, defaultFonts);
+                        setFontLoadStatus(`フォールバック検出で利用可能フォントを更新しました: ${availableFonts.length}件`);
                     }
                 } catch (e) {
                     console.error('フォント検出中にエラーが発生しました:', e);
+                    setFontLoadStatus('フォント検出中にエラーが発生しました（デフォルトフォントのみ表示）。', true);
                     // エラーが発生しても、デフォルトフォントは表示されているので問題なし
                 }
             }, 200);
@@ -3857,14 +3917,21 @@
         const beforeKerningGapValue = document.getElementById('beforeKerningGapValue');
         
         if (beforeKerningGapSlider && beforeKerningGapValue) {
-            // スライダーの初期値を設定（定数から）
-            beforeKerningGapSlider.value = DEFAULT_BEFORE_KERNING_GAP;
+            // スライダーの初期値を設定（実効pxが DEFAULT_BEFORE_KERNING_GAP になるように逆算）
+            const scale = (Number.isFinite(BEFORE_KERNING_GAP_SCALE) && BEFORE_KERNING_GAP_SCALE > 0) ? BEFORE_KERNING_GAP_SCALE : 1;
+            const initialSliderValue = DEFAULT_BEFORE_KERNING_GAP / scale;
+            beforeKerningGapSlider.value = String(initialSliderValue);
+            beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP;
             beforeKerningGapValue.textContent = `${DEFAULT_BEFORE_KERNING_GAP}px`;
             
             beforeKerningGapSlider.addEventListener('input', function() {
-                const value = parseFloat(this.value);
-                beforeKerningGap = value;
-                beforeKerningGapValue.textContent = `${value}px`;
+                const raw = parseFloat(this.value);
+                const scale = (Number.isFinite(BEFORE_KERNING_GAP_SCALE) && BEFORE_KERNING_GAP_SCALE > 0) ? BEFORE_KERNING_GAP_SCALE : 1;
+                const px = (Number.isFinite(raw) ? raw : 0) * scale;
+                beforeKerningGap = px;
+                // 表示は実効px（小数点以下は不要なら落とす）
+                const pxText = px.toFixed(2).replace(/\.?0+$/, '');
+                beforeKerningGapValue.textContent = `${pxText}px`;
                 updateDisplay();
             });
         }
@@ -4008,3 +4075,4 @@
     </script>
 </body>
 </html>
+

@@ -270,6 +270,78 @@
             word-break: break-all;
         }
 
+        /* マニュアル調整テーブル */
+        .manual-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .manual-table th, .manual-table td {
+            border-bottom: 1px solid #eee;
+            padding: 8px 10px;
+            vertical-align: middle;
+        }
+        .manual-table th {
+            background: #f3f6f9;
+            color: #2c3e50;
+            font-weight: 700;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .manual-table td input[type="number"] {
+            width: 90px;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .spin-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .spin-btn {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+        .spin-btn:active {
+            transform: translateY(1px);
+        }
+        .manual-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 6px 10px;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn:hover { background: #f6f8fa; }
+        .btn-danger { border-color: #e0b4b4; color: #c0392b; }
+        .btn-danger:hover { background: #fff5f5; }
+        .manual-scroll {
+            max-height: 320px;
+            overflow: auto;
+            border: 1px solid #eee;
+            border-radius: 6px;
+        }
+
         @media (max-width: 768px) {
             .canvas-container {
                 grid-template-columns: 1fr;
@@ -461,6 +533,51 @@
             </div>
         </div>
 
+        <!-- マニュアル調整（Canvas直下） -->
+        <div class="details-area" style="margin-top: 0;">
+            <div class="accordion" id="manualAdjustPanel">
+                <div class="accordion-header" data-accordion="manualAdjust">
+                    <span>✍️ 文字間マニュアル調整（フォント別×ペア別・サイズ追従）</span>
+                </div>
+                <div class="accordion-content expanded">
+                    <div class="accordion-inner">
+                        <div class="info-panel">
+                            <div class="manual-actions">
+                                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                                    <input type="checkbox" id="manualKerningEnabledCheckbox" checked>
+                                    <span>マニュアル調整を有効化（最終ギャップに加算）</span>
+                                </label>
+                                <button class="btn btn-danger" id="manualResetAllBtn" type="button">全リセット</button>
+                                <button class="btn" id="manualExportBtn" type="button">エクスポート（JSON）</button>
+                                <button class="btn" id="manualImportBtn" type="button">インポート（JSON）</button>
+                                <span id="manualStatus" style="font-size:11px;color:#666;"></span>
+                            </div>
+                            <div class="manual-scroll">
+                                <table class="manual-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>ペア</th>
+                                            <th>自動gap(px)</th>
+                                            <th>Δ(px)</th>
+                                            <th>最終gap(px)</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="manualAdjustTableBody">
+                                        <tr><td colspan="6" style="color:#666;padding:12px;">データ準備中…</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p style="margin-top:10px;font-size:11px;color:#888;line-height:1.6;">
+                                保存単位: <strong>フォント名×文字ペア</strong>。調整値は内部的に <strong>fontSize比率</strong> で保持し、フォントサイズ変更に追従します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 詳細情報エリア（折りたたみ可能） -->
         <div class="details-area">
             <!-- 計算詳細 -->
@@ -574,6 +691,7 @@
         // スライダー値 → 実効px への換算係数（1目盛りあたりの実効変動を小さくしたい場合はここを下げる）
         // 例: 0.2 ならスライダーを1動かしても実効は0.2pxしか変わらない
         const BEFORE_KERNING_GAP_SCALE = 0.2;
+        const MANUAL_KERNING_STORAGE_KEY = "manualKerningAdjustments_v1";
         
         // ============================================
         // Phase0/Phase1 カーニングエンジン実装
@@ -605,6 +723,33 @@
         let isComputingPhase0Width = false;  // Phase0の幅計算中フラグ（無限ループ防止用）
         let blendRatio = DEFAULT_BLEND_RATIO_PERCENT / 100.0;  // Phase0とPhase1のブレンド比率（0.0 = Phase0のみ、1.0 = Phase1のみ、0.5 = 50%ずつ）
         let beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP;  // カーニング前の文字間（px）
+        let manualKerningEnabled = true; // マニュアル調整を最終ギャップに適用するか
+        // { [fontKey: string]: { [pairKey: string]: { delta_norm: number } } }
+        let manualKerningAdjustments = {};
+        // マニュアル調整のスピン（＋/－）長押し制御
+        let manualSpinSuppressPanelUpdate = false; // 押下中にテーブルを再描画するとpointerupを取り逃すため抑制
+        let manualSpinHoldTimeoutId = null;
+        let manualSpinIntervalId = null;
+        let manualSpinIsActive = false;
+
+        function stopManualSpin({ refresh = true } = {}) {
+            if (manualSpinHoldTimeoutId) {
+                clearTimeout(manualSpinHoldTimeoutId);
+                manualSpinHoldTimeoutId = null;
+            }
+            if (manualSpinIntervalId) {
+                clearInterval(manualSpinIntervalId);
+                manualSpinIntervalId = null;
+            }
+            if (manualSpinIsActive) {
+                manualSpinIsActive = false;
+                manualSpinSuppressPanelUpdate = false;
+                if (refresh) {
+                    // 押下中はテーブル更新を止めているため、最後に1回だけ全体を更新
+                    updateDisplay();
+                }
+            }
+        }
 
         // 一般的なフォントリスト（日本語・英語）
         const commonFonts = [
@@ -1315,6 +1460,226 @@
                 pairAdjustmentsBase = null;
                 pairAdjustmentsOverrides = null;
             }
+        }
+
+        // ============================================
+        // マニュアル調整（フォント別×ペア別、サイズ追従）
+        // ============================================
+        function loadManualKerningAdjustments() {
+            try {
+                const raw = localStorage.getItem(MANUAL_KERNING_STORAGE_KEY);
+                if (!raw) return {};
+                const parsed = JSON.parse(raw);
+                if (!parsed || typeof parsed !== "object") return {};
+                return parsed;
+            } catch (e) {
+                console.warn("マニュアル調整の読み込みに失敗しました:", e);
+                return {};
+            }
+        }
+        function saveManualKerningAdjustments() {
+            try {
+                localStorage.setItem(MANUAL_KERNING_STORAGE_KEY, JSON.stringify(manualKerningAdjustments));
+            } catch (e) {
+                console.warn("マニュアル調整の保存に失敗しました:", e);
+            }
+        }
+        function normalizeFontKeyForManual(fontName) {
+            if (!fontName) return "";
+            // フォント別保存が前提だが、表記揺れだけは吸収
+            return String(fontName).replace(/ー/g, "-").replace(/－/g, "-").trim();
+        }
+        function getManualDeltaNorm(fontId, pairKey) {
+            const key = normalizeFontKeyForManual(fontId);
+            if (!key || !pairKey) return 0;
+            const fontMap = manualKerningAdjustments[key];
+            if (!fontMap || typeof fontMap !== "object") return 0;
+            const rec = fontMap[pairKey];
+            const dn = rec && typeof rec.delta_norm === "number" ? rec.delta_norm : 0;
+            return Number.isFinite(dn) ? dn : 0;
+        }
+        function setManualDeltaPx(fontId, pairKey, deltaPx, fontSize) {
+            const key = normalizeFontKeyForManual(fontId);
+            if (!key || !pairKey) return;
+            const fs = Number.isFinite(fontSize) && fontSize > 0 ? fontSize : 1;
+            const px = Number.isFinite(deltaPx) ? deltaPx : 0;
+            const deltaNorm = px / fs;
+            if (!manualKerningAdjustments[key] || typeof manualKerningAdjustments[key] !== "object") {
+                manualKerningAdjustments[key] = {};
+            }
+            // ほぼ0は削除してデータ肥大化を防ぐ
+            if (Math.abs(deltaNorm) < 1e-6) {
+                delete manualKerningAdjustments[key][pairKey];
+            } else {
+                manualKerningAdjustments[key][pairKey] = { delta_norm: deltaNorm };
+            }
+            saveManualKerningAdjustments();
+        }
+        function resetAllManualForFont(fontId) {
+            const key = normalizeFontKeyForManual(fontId);
+            if (!key) return;
+            delete manualKerningAdjustments[key];
+            saveManualKerningAdjustments();
+        }
+        function applyManualAdjustmentsToGaps({ gaps, positions, features, chars, fontSize, fontId }) {
+            if (!manualKerningEnabled) return { applied: false, deltasPx: [] };
+            if (!gaps || gaps.length === 0) return { applied: false, deltasPx: [] };
+            const fs = Number.isFinite(fontSize) && fontSize > 0 ? fontSize : 1;
+            const deltasPx = [];
+            for (let i = 0; i < gaps.length; i++) {
+                const pairKey = `${chars[i]}|${chars[i + 1]}`;
+                const dn = getManualDeltaNorm(fontId, pairKey);
+                const dp = dn * fs;
+                deltasPx.push(dp);
+                gaps[i] += dp;
+                const minGap = -0.2 * fontSize;
+                const maxGap = 0.8 * fontSize;
+                if (gaps[i] < minGap) gaps[i] = minGap;
+                if (gaps[i] > maxGap) gaps[i] = maxGap;
+            }
+
+            // 位置を再計算（最初の文字の位置は保持）
+            if (positions && positions.length > 0 && features && features.length > 0) {
+                const getInkLeft = (feature) => {
+                    if (feature && Number.isFinite(feature.inkLeft)) return feature.inkLeft;
+                    if (feature && Number.isFinite(feature.actualBoundingBoxLeft)) return feature.actualBoundingBoxLeft;
+                    return 0;
+                };
+                const getInkRight = (feature) => {
+                    if (feature && Number.isFinite(feature.inkRight)) return feature.inkRight;
+                    if (feature && Number.isFinite(feature.actualBoundingBoxRight)) return feature.actualBoundingBoxRight;
+                    if (feature && Number.isFinite(feature.width)) return feature.width;
+                    return fontSize * 0.6;
+                };
+                const firstPos = positions[0];
+                let x = firstPos;
+                for (let i = 0; i < gaps.length; i++) {
+                    const currentInkRight = getInkRight(features[i]);
+                    const nextInkLeft = getInkLeft(features[i + 1]);
+                    x = x + currentInkRight + gaps[i] - nextInkLeft;
+                    positions[i + 1] = x;
+                }
+            }
+            return { applied: true, deltasPx };
+        }
+
+        function updateManualAdjustPanel(result, text, fontId, fontSize) {
+            const tbody = document.getElementById("manualAdjustTableBody");
+            const status = document.getElementById("manualStatus");
+            if (!tbody) return;
+            const chars = Array.from(text || "");
+            if (!result || !result.gaps || chars.length < 2) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:#666;padding:12px;">文字数が2文字以上のときに表示します。</td></tr>`;
+                if (status) status.textContent = "";
+                return;
+            }
+            const fs = Number.isFinite(fontSize) && fontSize > 0 ? fontSize : 1;
+            const autoGaps = Array.isArray(result.autoGaps) ? result.autoGaps : result.gaps;
+            const finalGaps = result.gaps;
+            const rows = [];
+            for (let i = 0; i < finalGaps.length; i++) {
+                const pairKey = `${chars[i]}|${chars[i + 1]}`;
+                const dn = getManualDeltaNorm(fontId, pairKey);
+                const dp = dn * fs;
+                const auto = autoGaps[i] ?? finalGaps[i];
+                const fin = finalGaps[i];
+                rows.push(`
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td style="font-weight:700;">${pairKey}</td>
+                        <td>${Number.isFinite(auto) ? auto.toFixed(2) : "-"}</td>
+                        <td>
+                            <div class="spin-control">
+                                <button class="btn spin-btn" type="button" data-spin="-1" data-pairkey="${pairKey.replace(/"/g, "&quot;")}" aria-label="減らす">−</button>
+                                <input type="number"
+                                       data-pairkey="${pairKey.replace(/"/g, "&quot;")}"
+                                       value="${Number.isFinite(dp) ? dp.toFixed(2).replace(/\.?0+$/, '') : '0'}"
+                                       step="0.1" />
+                                <button class="btn spin-btn" type="button" data-spin="1" data-pairkey="${pairKey.replace(/"/g, "&quot;")}" aria-label="増やす">＋</button>
+                            </div>
+                        </td>
+                        <td>${Number.isFinite(fin) ? fin.toFixed(2) : "-"}</td>
+                        <td><button class="btn btn-danger" type="button" data-reset="${pairKey.replace(/"/g, "&quot;")}">リセット</button></td>
+                    </tr>
+                `);
+            }
+            tbody.innerHTML = rows.join("") || `<tr><td colspan="6" style="color:#666;padding:12px;">対象ペアがありません。</td></tr>`;
+
+            if (status) {
+                const key = normalizeFontKeyForManual(fontId);
+                const count = manualKerningAdjustments[key] ? Object.keys(manualKerningAdjustments[key]).length : 0;
+                status.textContent = `フォント: ${key} / 保存済み調整: ${count}件`;
+            }
+
+            // 入力イベント（委譲）
+            tbody.querySelectorAll('input[type="number"][data-pairkey]').forEach(inp => {
+                inp.addEventListener("input", (e) => {
+                    const pk = e.target.getAttribute("data-pairkey");
+                    const v = parseFloat(e.target.value);
+                    setManualDeltaPx(fontId, pk, v, fontSize);
+                    updateDisplay();
+                });
+            });
+
+            // ＋/－ボタン：1回押下で1step、1秒以上長押しで連続増減。離したら即停止。
+            // 注意: 押下中にupdateDisplay()でテーブルを再描画するとpointerupを取り逃すため、
+            // 押下中はmanualSpinSuppressPanelUpdate=trueでテーブル更新を抑制し、離したら1回だけ更新する。
+            const STEP = 0.1;
+            const HOLD_TO_REPEAT_MS = 1000;
+            tbody.querySelectorAll('button[data-spin][data-pairkey]').forEach(btn => {
+                const spinDir = parseInt(btn.getAttribute("data-spin"), 10) || 0;
+                const pk = btn.getAttribute("data-pairkey");
+                const findInput = () => tbody.querySelector(`input[type="number"][data-pairkey="${pk.replace(/"/g, '\\"')}"]`);
+                
+                const applyOnce = () => {
+                    const input = findInput();
+                    if (!input) return;
+                    const cur = parseFloat(input.value);
+                    const next = (Number.isFinite(cur) ? cur : 0) + spinDir * STEP;
+                    input.value = next.toFixed(2).replace(/\.?0+$/, '');
+                    setManualDeltaPx(fontId, pk, next, fontSize);
+                    // 押下中はテーブル再描画を抑制しつつ、見た目（Canvas）は更新したいので描画だけ更新
+                    // ただし既存の更新経路を流用するため updateDisplay() を呼ぶ（manualSpinSuppressPanelUpdate が効く）
+                    updateDisplay();
+                };
+                
+                btn.addEventListener("pointerdown", (e) => {
+                    e.preventDefault();
+                    // 既存のスピンがあれば停止（他ボタンの連続を止める）
+                    stopManualSpin({ refresh: false });
+                    manualSpinIsActive = true;
+                    manualSpinSuppressPanelUpdate = true;
+                    btn.setPointerCapture?.(e.pointerId);
+
+                    // まず1回だけ反映
+                    applyOnce();
+
+                    // 1秒以上長押しで連続開始
+                    manualSpinHoldTimeoutId = setTimeout(() => {
+                        manualSpinIntervalId = setInterval(() => {
+                            applyOnce();
+                        }, 50);
+                    }, HOLD_TO_REPEAT_MS);
+                });
+                const stopNow = () => stopManualSpin({ refresh: true });
+                btn.addEventListener("pointerup", stopNow);
+                btn.addEventListener("pointercancel", stopNow);
+                btn.addEventListener("lostpointercapture", stopNow);
+                // フォーカス喪失でも止める
+                window.addEventListener("blur", () => stopManualSpin({ refresh: true }), { once: true });
+
+                // クリック単発も念のため
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                });
+            });
+            tbody.querySelectorAll('button[data-reset]').forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const pk = e.target.getAttribute("data-reset");
+                    setManualDeltaPx(fontId, pk, 0, fontSize);
+                    updateDisplay();
+                });
+            });
         }
         
         // 文字からカテゴリー名を取得
@@ -2589,6 +2954,7 @@
             }
             const positions = [x];
             const gaps = [];
+            const autoGaps = [];
             const pairAdjusts = [];
             const densityAdjusts = [];
             const pairCategories = [];
@@ -2650,6 +3016,8 @@
                 const maxGap = 0.8 * fontSize;
                 if (gap < minGap) gap = minGap;
                 if (gap > maxGap) gap = maxGap;
+
+                autoGaps.push(gap);
 
                 // 次の文字のX座標を計算（インク領域基準）
                 const prevX = x;
@@ -3025,10 +3393,36 @@
                     phase1TotalWidth = lastPos + getInkRight(lastFeature) - startX;
                 }
             }
+
+            // ============================================
+            // マニュアル調整（最終仕上げ）
+            // ============================================
+            const manualResult = applyManualAdjustmentsToGaps({
+                gaps,
+                positions,
+                features,
+                chars,
+                fontSize,
+                fontId
+            });
+            // マニュアル適用後の幅を再計算
+            if (manualResult.applied && positions.length > 0 && features.length > 0) {
+                const getInkRight = (feature) => {
+                    if (feature && Number.isFinite(feature.inkRight)) return feature.inkRight;
+                    if (feature && Number.isFinite(feature.actualBoundingBoxRight)) return feature.actualBoundingBoxRight;
+                    if (feature && Number.isFinite(feature.width)) return feature.width;
+                    return fontSize * 0.6;
+                };
+                const lastPos = positions[positions.length - 1];
+                const lastFeature = features[features.length - 1];
+                const startX = positions[0] - (features[0].inkLeft || features[0].actualBoundingBoxLeft || 0);
+                phase1TotalWidth = lastPos + getInkRight(lastFeature) - startX;
+            }
             
             return {
                 positions,
                 gaps,
+                autoGaps,
                 pairAdjusts,
                 densityAdjusts,
                 pairCategories,
@@ -3053,6 +3447,11 @@
                     centerOfMassAdjustment: centerOfMassAdjustmentResult,
                     stdDevSmoothing: stdDevSmoothingResult,
                     tripletAdjustment: tripletAdjustmentResult
+                    ,manualKerning: {
+                        enabled: manualKerningEnabled,
+                        applied: manualResult.applied,
+                        deltasPx: manualResult.deltasPx
+                    }
                 }
             };
         }
@@ -3581,6 +3980,11 @@
                 
                 // 評価パネル更新（Phase1の結果を使用）
                 updateEvaluationPanel(resultPhase1);
+
+                // マニュアル調整パネル更新（Phase1の結果を使用）
+                if (!manualSpinSuppressPanelUpdate) {
+                    updateManualAdjustPanel(resultPhase1, text, fontId, fontSize);
+                }
                 
                 // モードを元に戻す
                 phaseMode = currentPhaseMode;
@@ -3604,6 +4008,11 @@
                 
                 // 評価パネル更新
                 updateEvaluationPanel(result);
+                
+                // マニュアル調整パネル更新
+                if (!manualSpinSuppressPanelUpdate) {
+                    updateManualAdjustPanel(result, text, fontId, fontSize);
+                }
             }
         }
 
@@ -4053,6 +4462,57 @@
             }).catch(() => {
                 populateFontSelect();
             });
+
+            // マニュアル調整を読み込み
+            manualKerningAdjustments = loadManualKerningAdjustments();
+            const manualEnabled = document.getElementById('manualKerningEnabledCheckbox');
+            if (manualEnabled) {
+                manualEnabled.checked = manualKerningEnabled;
+                manualEnabled.addEventListener('change', function() {
+                    manualKerningEnabled = this.checked;
+                    updateDisplay();
+                });
+            }
+            const resetAllBtn = document.getElementById('manualResetAllBtn');
+            if (resetAllBtn) {
+                resetAllBtn.addEventListener('click', function() {
+                    const fontSelect = document.getElementById('fontSelect');
+                    const fontCustomInput = document.getElementById('fontCustomInput');
+                    let fontId = fontSelect ? fontSelect.value : '';
+                    if (fontCustomInput && fontCustomInput.value.trim()) fontId = fontCustomInput.value.trim();
+                    resetAllManualForFont(fontId);
+                    updateDisplay();
+                });
+            }
+            const exportBtn = document.getElementById('manualExportBtn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    try {
+                        const json = JSON.stringify(manualKerningAdjustments, null, 2);
+                        navigator.clipboard?.writeText(json);
+                        const st = document.getElementById('manualStatus');
+                        if (st) st.textContent = 'エクスポートしました（クリップボードへコピー）。';
+                    } catch (e) {
+                        alert('エクスポートに失敗しました（クリップボード未対応の可能性）。');
+                    }
+                });
+            }
+            const importBtn = document.getElementById('manualImportBtn');
+            if (importBtn) {
+                importBtn.addEventListener('click', function() {
+                    const raw = prompt('インポートするJSONを貼り付けてください');
+                    if (!raw) return;
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (!parsed || typeof parsed !== 'object') throw new Error('invalid');
+                        manualKerningAdjustments = parsed;
+                        saveManualKerningAdjustments();
+                        updateDisplay();
+                    } catch (e) {
+                        alert('JSONの形式が不正です。');
+                    }
+                });
+            }
             
             // キャンバスエリアがファーストビューで見えるようにスクロール（必要に応じて）
             setTimeout(() => {
@@ -4101,6 +4561,57 @@
             }).catch(() => {
                 populateFontSelect();
             });
+
+            // マニュアル調整を読み込み（DOMContentLoadedを待たないフォールバック）
+            manualKerningAdjustments = loadManualKerningAdjustments();
+            const manualEnabled = document.getElementById('manualKerningEnabledCheckbox');
+            if (manualEnabled) {
+                manualEnabled.checked = manualKerningEnabled;
+                manualEnabled.addEventListener('change', function() {
+                    manualKerningEnabled = this.checked;
+                    updateDisplay();
+                });
+            }
+            const resetAllBtn = document.getElementById('manualResetAllBtn');
+            if (resetAllBtn) {
+                resetAllBtn.addEventListener('click', function() {
+                    const fontSelect = document.getElementById('fontSelect');
+                    const fontCustomInput = document.getElementById('fontCustomInput');
+                    let fontId = fontSelect ? fontSelect.value : '';
+                    if (fontCustomInput && fontCustomInput.value.trim()) fontId = fontCustomInput.value.trim();
+                    resetAllManualForFont(fontId);
+                    updateDisplay();
+                });
+            }
+            const exportBtn = document.getElementById('manualExportBtn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    try {
+                        const json = JSON.stringify(manualKerningAdjustments, null, 2);
+                        navigator.clipboard?.writeText(json);
+                        const st = document.getElementById('manualStatus');
+                        if (st) st.textContent = 'エクスポートしました（クリップボードへコピー）。';
+                    } catch (e) {
+                        alert('エクスポートに失敗しました（クリップボード未対応の可能性）。');
+                    }
+                });
+            }
+            const importBtn = document.getElementById('manualImportBtn');
+            if (importBtn) {
+                importBtn.addEventListener('click', function() {
+                    const raw = prompt('インポートするJSONを貼り付けてください');
+                    if (!raw) return;
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (!parsed || typeof parsed !== 'object') throw new Error('invalid');
+                        manualKerningAdjustments = parsed;
+                        saveManualKerningAdjustments();
+                        updateDisplay();
+                    } catch (e) {
+                        alert('JSONの形式が不正です。');
+                    }
+                });
+            }
             
             // キャンバスエリアがファーストビューで見えるようにスクロール（必要に応じて）
             setTimeout(() => {

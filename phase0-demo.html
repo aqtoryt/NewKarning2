@@ -638,7 +638,7 @@
                                 <div class="info-panel">
                                     <div class="manual-actions">
                                         <button class="btn" id="patternTabSaveOverridesBtn"
-                                            type="button">kerning_categories.json をエクスポート</button>
+                                            type="button">対象フォントの補正のみエクスポート（JSON）</button>
                                         <span id="patternTabManualStatus" style="font-size:11px;color:#666;"></span>
                                     </div>
                                     <div class="manual-filter-row" style="display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:10px;">
@@ -4622,15 +4622,27 @@
             }
             const keyForJson = getDisplayNameForFont(fontId);
             try {
-                const res = await fetch('kerning_categories.json');
-                const data = await res.json();
-                data.font_overrides = data.font_overrides || {};
-                const existing = data.font_overrides[keyForJson] || {};
-                data.font_overrides[keyForJson] = { ...existing, pair_adjustments: patternTabFontOverrides ? { ...patternTabFontOverrides } : {} };
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const a = document.createElement('a');
+                if (!pairAdjustmentsOverrides) await loadKerningCategories();
+                var original = getPairAdjustmentsForFont(fontId);
+                if (!original || typeof original !== 'object') original = {};
+                var merged = {};
+                Object.keys(original).forEach(function (pk) {
+                    var o = original[pk];
+                    if (o && typeof o.delta_norm === 'number') merged[pk] = { delta_norm: o.delta_norm };
+                });
+                if (patternTabFontOverrides && typeof patternTabFontOverrides === 'object') {
+                    Object.keys(patternTabFontOverrides).forEach(function (pk) {
+                        var v = patternTabFontOverrides[pk];
+                        if (v && typeof v.delta_norm === 'number' && Number.isFinite(v.delta_norm)) merged[pk] = { delta_norm: v.delta_norm };
+                    });
+                }
+                var exportObj = {};
+                exportObj[keyForJson] = { pair_adjustments: merged };
+                var jsonStr = JSON.stringify(exportObj, null, 2);
+                var blob = new Blob([jsonStr], { type: 'application/json' });
+                var a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
-                a.download = 'kerning_categories.json';
+                a.download = 'font_overrides_' + (keyForJson.replace(/[/\\?*:"<>|]/g, '_')) + '.json';
                 a.click();
                 URL.revokeObjectURL(a.href);
             } catch (e) {

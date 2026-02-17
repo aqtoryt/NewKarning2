@@ -4360,6 +4360,44 @@
         }
         let patternTabFontOverridesKey = null;  // 現在 patternTabFontOverrides がどのフォント用か
 
+        /** パターン一覧のキャンバスのみ再描画（テーブルは触らない。スクロール・入力がリセットされない） */
+        function redrawPatternTabCanvases() {
+            const container = document.getElementById('patternCanvasList');
+            if (!container) return;
+            const fontId = getPatternTabFontId();
+            const styleId = getPatternTabStyleId();
+            const fontSize = getPatternTabFontSize();
+            const overrides = fontId ? getPatternTabOverridesForFont(fontId) : null;
+            const getDeltaNorm = (fid, pairKey) => {
+                if (!overrides || !overrides[pairKey]) return 0;
+                const rec = overrides[pairKey];
+                const dn = rec && typeof rec.delta_norm === 'number' ? rec.delta_norm : 0;
+                return Number.isFinite(dn) ? dn : 0;
+            };
+            const savedPhaseMode = phaseMode;
+            const savedBeforeKerningGap = beforeKerningGap;
+            const savedPhase0WidthAnchor = phase0WidthAnchorEnabled;
+            phaseMode = patternTabPhaseMode;
+            beforeKerningGap = patternTabBeforeKerningGap;
+            phase0WidthAnchorEnabled = patternTabPhase0WidthAnchorEnabled;
+            const canvases = container.querySelectorAll('canvas[data-pattern-text]');
+            canvases.forEach(function (can) {
+                const text = can.dataset.patternText;
+                const ctx = can.getContext('2d');
+                if (fontId && text) {
+                    const result = computeKerningPositions(text, fontId, fontSize, styleId, patternTabGlobalTracking, getDeltaNorm, 8);
+                    drawTextWithKerning(ctx, text, fontId, fontSize, styleId, result);
+                } else {
+                    ctx.fillStyle = '#999';
+                    ctx.font = '14px sans-serif';
+                    ctx.fillText('フォントを選択してください', 10, 40);
+                }
+            });
+            phaseMode = savedPhaseMode;
+            beforeKerningGap = savedBeforeKerningGap;
+            phase0WidthAnchorEnabled = savedPhase0WidthAnchor;
+        }
+
         async function refreshPatternTab() {
             const container = document.getElementById('patternCanvasList');
             const tbody = document.getElementById('patternTabManualTableBody');
@@ -4501,14 +4539,17 @@
                         const deltaNorm = (Number.isFinite(v) ? v : 0) / (fs > 0 ? fs : 1);
                         if (Math.abs(deltaNorm) < 1e-6) delete patternTabFontOverrides[pk];
                         else patternTabFontOverrides[pk] = { delta_norm: deltaNorm };
-                        refreshPatternTab();
+                        redrawPatternTabCanvases();
                     });
+                    inp.addEventListener('change', () => { redrawPatternTabCanvases(); });
                 });
                 tbody.querySelectorAll('button[data-reset]').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const pk = btn.getAttribute('data-reset');
+                        const inp = tbody.querySelector(`input[data-pairkey="${pk.replace(/"/g, '\\"')}"]`);
                         if (patternTabFontOverrides && pk) delete patternTabFontOverrides[pk];
-                        refreshPatternTab();
+                        if (inp) inp.value = '0';
+                        redrawPatternTabCanvases();
                     });
                 });
                 tbody.querySelectorAll('button[data-spin]').forEach(btn => {
@@ -4525,7 +4566,7 @@
                         const deltaNorm = next / (fs > 0 ? fs : 1);
                         if (Math.abs(deltaNorm) < 1e-6) delete patternTabFontOverrides[pk];
                         else patternTabFontOverrides[pk] = { delta_norm: deltaNorm };
-                        refreshPatternTab();
+                        redrawPatternTabCanvases();
                     });
                 });
             }

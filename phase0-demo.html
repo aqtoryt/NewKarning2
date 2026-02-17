@@ -618,7 +618,7 @@
                         </label>
                     </div>
                 </div>
-                <div id="patternCanvasListContainer" style="margin-top: 16px;">
+                <div id="patternCanvasListContainer" style="margin-top: 16px; height: 420px; overflow-y: auto; overflow-x: hidden; border: 1px solid #ddd; border-radius: 6px; background: #fafafa;">
                     <div id="patternCanvasList"></div>
                 </div>
                 <div class="details-area" style="margin-top: 16px;">
@@ -897,6 +897,28 @@
         let patternTabGlobalTracking = 0;
         // 対象フォントの font_overrides 編集用（pairKey -> { delta_norm }）。kerning_categories から読み込み、Save で全体エクスポートに反映
         let patternTabFontOverrides = null;  // { [pairKey: string]: { delta_norm: number } } または null
+        // フォント名（select の value）→ display 名。補正の取得・保存は display を font_overrides のキーとして使用
+        const DEFAULT_FONTS_LIST = [
+            { name: "08丸三-明朝体", display: "08丸三-明朝体" },
+            { name: "游明朝", display: "游明朝" },
+            { name: "游ゴシック", display: "游ゴシック" },
+            { name: "ヒラギノ明朝 ProN", display: "ヒラギノ明朝 ProN" },
+            { name: "ヒラギノ角ゴ ProN", display: "ヒラギノ角ゴ ProN" },
+            { name: "メイリオ", display: "メイリオ" },
+            { name: "Arial", display: "Arial" },
+            { name: "73綜藝体", display: "綜藝体" },
+            { name: "Zen Kaku Gothic New", display: "Zen角ゴシック体" },
+            { name: "73綜藝体-細P", display: "綜藝体-細" },
+            { name: "15新篆書体", display: "新てん書体" },
+            { name: "11新楷書体", display: "新楷書体" },
+            { name: "01オリジナル体", display: "オリジナル書体" },
+            { name: "07クラフト体", display: "クラフト体" },
+            { name: "05 D F 流隷体", display: "流隷体" },
+            { name: "03隷書体", display: "隷書体" },
+            { name: "10丸三-丸ゴシック", display: "丸ゴシック体" },
+        ];
+        let fontNameToDisplayMap = {};
+        DEFAULT_FONTS_LIST.forEach(f => { fontNameToDisplayMap[f.name] = f.display; });
 
         function stopManualSpin({ refresh = true } = {}) {
             if (manualSpinHoldTimeoutId) {
@@ -1939,24 +1961,27 @@
             }
         }
 
-        // JSONからペア補正値を取得
+        /** フォント名（select の value）から font_overrides 用の表示名（display）を返す。未登録なら fontName をそのまま返す。 */
+        function getDisplayNameForFont(fontName) {
+            if (!fontName) return '';
+            return fontNameToDisplayMap[fontName] || fontName;
+        }
+
+        // JSONからペア補正値を取得（font_overrides のキーには display を使用）
         function getPairAdjustmentsForFont(fontName) {
             if (!pairAdjustmentsOverrides || !fontName) return null;
 
-            // 優先順位:
-            // 1) フォント名そのまま
-            // 2) 長音符/全角ハイフンの表記揺れを正規化したフォント名
-            // 3) フォントファミリー（Mincho/Gothic/...）キー
-            const direct = pairAdjustmentsOverrides[fontName];
+            const keyForJson = getDisplayNameForFont(fontName) || fontName;
+            // 優先順位: 1) display 名 2) 表記揺れ正規化 3) フォントファミリー
+            const direct = pairAdjustmentsOverrides[keyForJson];
             if (direct && typeof direct === 'object') return direct.pair_adjustments || null;
 
-            const normalizedName = fontName.replace(/ー/g, '-').replace(/－/g, '-');
-            if (normalizedName !== fontName) {
+            const normalizedName = keyForJson.replace(/ー/g, '-').replace(/－/g, '-');
+            if (normalizedName !== keyForJson) {
                 const normalized = pairAdjustmentsOverrides[normalizedName];
                 if (normalized && typeof normalized === 'object') return normalized.pair_adjustments || null;
             }
 
-            // normalizeFontName は既に Phase1 側で使っているので流用
             const familyKey = normalizeFontName(fontName);
             const byFamily = pairAdjustmentsOverrides[familyKey];
             if (byFamily && typeof byFamily === 'object') return byFamily.pair_adjustments || null;
@@ -3795,6 +3820,7 @@
 
             // セレクトボックスを更新（利用可能なフォントが見つかった場合のみ）
             if (availableFonts.length > 0) {
+                availableFonts.forEach(font => { fontNameToDisplayMap[font.name] = font.display; });
                 fontSelect.innerHTML = '';
 
                 // フォントをファミリーごとに分類
@@ -3857,21 +3883,12 @@
         // 利用可能なフォントを検出してセレクトボックスに追加
         async function populateFontSelect() {
             const fontSelect = document.getElementById('fontSelect');
-
-            // デフォルトのフォントを追加
-            const defaultFonts = [
-                { name: "08丸三-明朝体", display: "08丸三-明朝体" },
-                { name: "游明朝", display: "游明朝" },
-                { name: "游ゴシック", display: "游ゴシック" },
-                { name: "ヒラギノ明朝 ProN", display: "ヒラギノ明朝 ProN" },
-                { name: "ヒラギノ角ゴ ProN", display: "ヒラギノ角ゴ ProN" },
-                { name: "メイリオ", display: "メイリオ" },
-                { name: "Arial", display: "Arial" },
-            ];
+            const defaultFonts = DEFAULT_FONTS_LIST;
 
             // まずデフォルトフォントを即座に表示（フォント検出を待たない）
             fontSelect.innerHTML = '';
             defaultFonts.forEach(font => {
+                fontNameToDisplayMap[font.name] = font.display;
                 const option = document.createElement('option');
                 option.value = font.name;
                 option.textContent = font.display;
@@ -3931,17 +3948,8 @@
                 try {
                     const availableFonts = [];
 
-                    // デフォルトフォントを先にチェック
-                    defaultFonts.forEach(font => {
-                        try {
-                            if (isFontAvailable(font.name)) {
-                                availableFonts.push(font);
-                            }
-                        } catch (e) {
-                            // エラーが発生してもフォントを追加（フォールバック）
-                            availableFonts.push(font);
-                        }
-                    });
+                    // デフォルトフォントは常に一覧に含める（綜藝体など display で補正を参照するフォントが消えないようにする）
+                    defaultFonts.forEach(font => { availableFonts.push(font); });
 
                     // すべてのフォントをバッチ処理でチェック
                     if (typeof commonFonts !== 'undefined' && Array.isArray(commonFonts)) {
@@ -4542,12 +4550,13 @@
                 alert('対象フォントを選択してください。');
                 return;
             }
+            const keyForJson = getDisplayNameForFont(fontId);
             try {
                 const res = await fetch('kerning_categories.json');
                 const data = await res.json();
                 data.font_overrides = data.font_overrides || {};
-                const existing = data.font_overrides[fontId] || {};
-                data.font_overrides[fontId] = { ...existing, pair_adjustments: patternTabFontOverrides ? { ...patternTabFontOverrides } : {} };
+                const existing = data.font_overrides[keyForJson] || {};
+                data.font_overrides[keyForJson] = { ...existing, pair_adjustments: patternTabFontOverrides ? { ...patternTabFontOverrides } : {} };
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);

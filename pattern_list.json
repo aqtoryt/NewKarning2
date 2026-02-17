@@ -1,0 +1,52 @@
+{
+  "groups": [
+    {
+      "name": "母音",
+      "items": [
+        "aiueo", "aiauaeao", "iaiuieio", "uauiueuo", "eaeieueo", "oaoiouoe",
+        "AIUEO", "AIAUAEAO", "IAIUIEIO", "UAUIUEUO", "EAEIEUEO", "OAOIOUOE",
+        "AiUeO", "AiAuAeAo", "IaIuIeIo", "UaUiUeUo", "EaEiEuEo", "OaOiOuOe"
+      ]
+    },
+    {
+      "name": "50音（ヘボン式）",
+      "items": [
+        "kakikukekok", "sashisusesos", "tachitsutetot", "naninunenon", "hahifuhehoh", "mamimumemom", "yayuyoy", "rarirureror", "wawow", "n",
+        "KAKIKUKEKOK", "SASHISUSESOS", "TACHITSUTETOT", "NANINUNENON", "HAHIFUHEHOH", "MAMIMUMEMOM", "YAYUYOY", "RARIRUREROR", "WAWOW", "N",
+        "KaKiKuKeKoK", "SaShiSuSeSoS", "TaChiTsuTeToT", "NaNiNuNeNoN", "HaHiFuHeHoH", "MaMiMuMeMoM", "YaYuYoY", "RaRiRuReRoR", "WaWoW", "N"
+      ]
+    },
+    {
+      "name": "50音（訓令式）",
+      "items": [
+        "kakikukekok", "sasisusesos", "tatitutetot", "naninunenon", "hahihuhehoh", "mamimumemom", "yayuyoy", "rarirureror", "wawow", "n",
+        "KAKIKUKEKOK", "SASISUSESOS", "TATITUTETOT", "NANINUNENON", "HAHIHUHEHOH", "MAMIMUMEMOM", "YAYUYOY", "RARIRUREROR", "WAWOW", "N",
+        "KaKiKuKeKoK", "SaSiSuSeSoS", "TaTiTuTeToT", "NaNiNuNeNoN", "HaHiHuHeHoH", "MaMiMuMeMoM", "YaYuYoY", "RaRiRuReRoR", "WaWoW", "N"
+      ]
+    },
+    {
+      "name": "濁音（ヘボン式）",
+      "items": [
+        "gagigugegog", "zajizuzezoz", "dajizudedod", "babibubebob",
+        "GAGIGUGEGOG", "ZAJIZUZEZOZ", "DAJIZUDEDOD", "BABIBUBEBOB",
+        "GaGiGuGeGoG", "ZaJiZuZeZoZ", "DaJiZuDeDoD", "BaBiBuBeBoB"
+      ]
+    },
+    {
+      "name": "濁音（訓令式）",
+      "items": [
+        "gagigugegog", "zazizuzezoz", "dadidudedod", "babibubebob",
+        "GAGIGUGEGOG", "ZAZIZUZEZOZ", "DADIDUDEDOD", "BABIBUBEBOB",
+        "GaGiGuGeGoG", "ZaZiZuZeZoZ", "DaDiDuDeDoD", "BaBiBuBeBoB"
+      ]
+    },
+    {
+      "name": "半濁音",
+      "items": [
+        "papipupepop",
+        "PAPIPUPEPOP",
+        "PaPiPuPePoP"
+      ]
+    }
+  ]
+}

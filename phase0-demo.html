@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +24,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
 
@@ -119,14 +120,16 @@
             margin-bottom: 5px;
         }
 
-        input, select {
+        input,
+        select {
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             outline: none;
             border-color: #3498db;
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
@@ -279,11 +282,14 @@
             border-radius: 6px;
             overflow: hidden;
         }
-        .manual-table th, .manual-table td {
+
+        .manual-table th,
+        .manual-table td {
             border-bottom: 1px solid #eee;
             padding: 8px 10px;
             vertical-align: middle;
         }
+
         .manual-table th {
             background: #f3f6f9;
             color: #2c3e50;
@@ -293,6 +299,7 @@
             top: 0;
             z-index: 1;
         }
+
         .manual-table td input[type="number"] {
             width: 90px;
             padding: 6px 8px;
@@ -300,11 +307,13 @@
             border-radius: 4px;
             font-size: 12px;
         }
+
         .spin-control {
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
+
         .spin-btn {
             width: 28px;
             height: 28px;
@@ -314,9 +323,11 @@
             justify-content: center;
             user-select: none;
         }
+
         .spin-btn:active {
             transform: translateY(1px);
         }
+
         .manual-actions {
             display: flex;
             flex-wrap: wrap;
@@ -324,6 +335,7 @@
             align-items: center;
             margin-bottom: 10px;
         }
+
         .btn {
             padding: 6px 10px;
             border: 1px solid #d0d7de;
@@ -332,9 +344,20 @@
             cursor: pointer;
             font-size: 12px;
         }
-        .btn:hover { background: #f6f8fa; }
-        .btn-danger { border-color: #e0b4b4; color: #c0392b; }
-        .btn-danger:hover { background: #fff5f5; }
+
+        .btn:hover {
+            background: #f6f8fa;
+        }
+
+        .btn-danger {
+            border-color: #e0b4b4;
+            color: #c0392b;
+        }
+
+        .btn-danger:hover {
+            background: #fff5f5;
+        }
+
         .manual-scroll {
             max-height: 320px;
             overflow: auto;
@@ -367,6 +390,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- ヘッダー -->
@@ -381,6 +405,7 @@
                 <button class="tab-button" data-tab="phase1" id="tabPhase1">Phase1設定</button>
                 <button class="tab-button" data-tab="phase2" id="tabPhase2">Phase2設定</button>
                 <button class="tab-button" data-tab="advanced" id="tabAdvanced">詳細設定</button>
+                <button class="tab-button" data-tab="patterns" id="tabPatterns">パターン一覧</button>
             </div>
 
             <!-- タブ1: 基本設定 -->
@@ -403,7 +428,8 @@
                         <select id="fontSelect">
                             <option value="">読み込み中...</option>
                         </select>
-                        <div id="fontLoadStatus" style="margin-top:6px;font-size:11px;color:#666;line-height:1.4;"></div>
+                        <div id="fontLoadStatus" style="margin-top:6px;font-size:11px;color:#666;line-height:1.4;">
+                        </div>
                     </div>
                     <div class="control-group">
                         <label for="fontCustomInput">カスタムフォント名（直接入力可）</label>
@@ -426,8 +452,10 @@
                     <div class="control-group" style="grid-column: 1 / -1;">
                         <label for="beforeKerningGapSlider">カーニング前の文字間（px）</label>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="range" id="beforeKerningGapSlider" min="0" max="100" value="3" step="1" style="flex: 1;">
-                            <span id="beforeKerningGapValue" style="min-width: 60px; text-align: right; font-weight: 600;">3px</span>
+                            <input type="range" id="beforeKerningGapSlider" min="0" max="100" value="3" step="1"
+                                style="flex: 1;">
+                            <span id="beforeKerningGapValue"
+                                style="min-width: 60px; text-align: right; font-weight: 600;">3px</span>
                         </div>
                     </div>
                     <div class="control-group" id="phase0WidthAnchorGroup" style="grid-column: 1 / -1; display: none;">
@@ -445,7 +473,8 @@
             <!-- タブ2: Phase1設定 -->
             <div class="tab-content" id="tabContentPhase1">
                 <div class="controls">
-                    <div class="control-group" id="unlearnedPairAlgorithmGroup" style="grid-column: 1 / -1; display: none;">
+                    <div class="control-group" id="unlearnedPairAlgorithmGroup"
+                        style="grid-column: 1 / -1; display: none;">
                         <label for="unlearnedPairAlgorithmSelect">未学習ペアの処理方法（Phase1モード時）</label>
                         <select id="unlearnedPairAlgorithmSelect">
                             <option value="average">未学習ペアに平均値を使用</option>
@@ -464,8 +493,10 @@
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <span style="min-width: 80px; font-size: 12px; color: #666;">Phase0のみ</span>
                             <input type="range" id="blendRatioSlider" min="0" max="100" step="1" style="flex: 1;">
-                            <span style="min-width: 80px; font-size: 12px; color: #666; text-align: right;">Phase1のみ</span>
-                            <span id="blendRatioValue" style="min-width: 60px; text-align: right; font-weight: 600;"></span>
+                            <span
+                                style="min-width: 80px; font-size: 12px; color: #666; text-align: right;">Phase1のみ</span>
+                            <span id="blendRatioValue"
+                                style="min-width: 60px; text-align: right; font-weight: 600;"></span>
                         </div>
                         <div style="margin-top: 5px; font-size: 11px; color: #888;">
                             <span id="blendRatioDescription"></span>
@@ -510,8 +541,101 @@
                     <div class="control-group" style="grid-column: 1 / -1; display: none;">
                         <label for="trackingSlider">全体トラッキング調整</label>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="range" id="trackingSlider" min="-50" max="50" value="0" step="1" style="flex: 1;">
-                            <span id="trackingValue" style="min-width: 60px; text-align: right; font-weight: 600;">0px</span>
+                            <input type="range" id="trackingSlider" min="-50" max="50" value="0" step="1"
+                                style="flex: 1;">
+                            <span id="trackingValue"
+                                style="min-width: 60px; text-align: right; font-weight: 600;">0px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- タブ5: パターン一覧 -->
+            <div class="tab-content" id="tabContentPatterns">
+                <div class="controls">
+                    <div class="control-group" style="grid-column: 1 / -1;">
+                        <label for="patternTabPhaseModeSelect">カーニングモード</label>
+                        <select id="patternTabPhaseModeSelect">
+                            <option value="phase0">Phase0（ルールベース）</option>
+                            <option value="phase1">Phase1（学習値）</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="patternTabFontSelect">フォント</label>
+                        <select id="patternTabFontSelect">
+                            <option value="">読み込み中...</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="patternTabFontCustomInput">カスタムフォント名（直接入力可）</label>
+                        <input type="text" id="patternTabFontCustomInput" placeholder="例: フォント名を入力">
+                    </div>
+                    <div class="control-group">
+                        <label for="patternTabStyleSelect">スタイル</label>
+                        <select id="patternTabStyleSelect">
+                            <option value="default">デフォルト</option>
+                            <option value="和モダン">和モダン</option>
+                            <option value="北欧">北欧</option>
+                            <option value="モダン">モダン</option>
+                            <option value="カジュアル">カジュアル</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="patternTabFontSizeInput">フォントサイズ (px)</label>
+                        <input type="number" id="patternTabFontSizeInput" value="64" min="20" max="200">
+                    </div>
+                    <div class="control-group" style="grid-column: 1 / -1;">
+                        <label for="patternTabBeforeKerningGapSlider">カーニング前の文字間（px）</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="range" id="patternTabBeforeKerningGapSlider" min="0" max="100" value="3"
+                                step="1" style="flex: 1;">
+                            <span id="patternTabBeforeKerningGapValue"
+                                style="min-width: 60px; text-align: right; font-weight: 600;">3px</span>
+                        </div>
+                    </div>
+                    <div class="control-group" id="patternTabPhase0WidthAnchorGroup" style="grid-column: 1 / -1;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="patternTabPhase0WidthAnchorCheckbox">
+                            <span>Phase0幅アンカー（カーニング前の幅に合わせる）</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="patternCanvasListContainer" style="margin-top: 16px;">
+                    <div id="patternCanvasList"></div>
+                </div>
+                <div class="details-area" style="margin-top: 16px;">
+                    <div class="accordion" id="patternTabManualAdjustPanel">
+                        <div class="accordion-header" data-accordion="patternManualAdjust">
+                            <span>✍️ 文字間マニュアル調整（font_overrides 対象フォント・一覧）</span>
+                        </div>
+                        <div class="accordion-content expanded">
+                            <div class="accordion-inner">
+                                <div class="info-panel">
+                                    <div class="manual-actions">
+                                        <button class="btn" id="patternTabSaveOverridesBtn"
+                                            type="button">kerning_categories.json をエクスポート</button>
+                                        <span id="patternTabManualStatus" style="font-size:11px;color:#666;"></span>
+                                    </div>
+                                    <div class="manual-scroll">
+                                        <table class="manual-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>ペア</th>
+                                                    <th>Δ(px)</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="patternTabManualTableBody">
+                                                <tr>
+                                                    <td colspan="4" style="color:#666;padding:12px;">
+                                                        パターン一覧タブでフォントを選択し、パターンを読み込むと表示されます。</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -565,12 +689,15 @@
                                         </tr>
                                     </thead>
                                     <tbody id="manualAdjustTableBody">
-                                        <tr><td colspan="6" style="color:#666;padding:12px;">データ準備中…</td></tr>
+                                        <tr>
+                                            <td colspan="6" style="color:#666;padding:12px;">データ準備中…</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <p style="margin-top:10px;font-size:11px;color:#888;line-height:1.6;">
-                                保存単位: <strong>フォント名×文字ペア</strong>。調整値は内部的に <strong>fontSize比率</strong> で保持し、フォントサイズ変更に追従します。
+                                保存単位: <strong>フォント名×文字ペア</strong>。調整値は内部的に <strong>fontSize比率</strong>
+                                で保持し、フォントサイズ変更に追従します。
                             </p>
                         </div>
                     </div>
@@ -626,7 +753,8 @@
                 </div>
                 <div class="accordion-content">
                     <div class="accordion-inner">
-                        <div id="charDetails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                        <div id="charDetails"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
                             <!-- 文字ごとの情報がここに動的に追加されます -->
                         </div>
                     </div>
@@ -669,7 +797,8 @@
                                 <div class="info-item">
                                     <strong>総合評価</strong>
                                     <div style="margin-top: 5px; font-size: 12px; line-height: 1.6;">
-                                        <div>学習済みペア数: <span id="evalLearnedPairs">-</span> / <span id="evalTotalPairs">-</span></div>
+                                        <div>学習済みペア数: <span id="evalLearnedPairs">-</span> / <span
+                                                id="evalTotalPairs">-</span></div>
                                         <div>未学習ペア数: <span id="evalUnlearnedPairs">-</span></div>
                                         <div>ギャップの標準偏差: <span id="evalGapStdDev">-</span>px</div>
                                     </div>
@@ -692,11 +821,11 @@
         // 例: 0.2 ならスライダーを1動かしても実効は0.2pxしか変わらない
         const BEFORE_KERNING_GAP_SCALE = 0.2;
         const MANUAL_KERNING_STORAGE_KEY = "manualKerningAdjustments_v1";
-        
+
         // ============================================
         // Phase0/Phase1 カーニングエンジン実装
         // ============================================
-        
+
         // グローバル状態
         let phaseMode = "phase0";  // "phase0" or "phase1" or "compare"
         let phase0WidthAnchorEnabled = false;  // Phase0幅アンカーの有効/無効（デフォルトOFF）
@@ -732,6 +861,15 @@
         let manualSpinIntervalId = null;
         let manualSpinIsActive = false;
 
+        // パターン一覧タブ用（設定は基本設定と分離）
+        let patternListData = null;  // { groups: [ { name, items: string[] } ] }
+        let patternTabPhaseMode = "phase0";
+        let patternTabBeforeKerningGap = DEFAULT_BEFORE_KERNING_GAP;
+        let patternTabPhase0WidthAnchorEnabled = false;
+        let patternTabGlobalTracking = 0;
+        // 対象フォントの font_overrides 編集用（pairKey -> { delta_norm }）。kerning_categories から読み込み、Save で全体エクスポートに反映
+        let patternTabFontOverrides = null;  // { [pairKey: string]: { delta_norm: number } } または null
+
         function stopManualSpin({ refresh = true } = {}) {
             if (manualSpinHoldTimeoutId) {
                 clearTimeout(manualSpinHoldTimeoutId);
@@ -763,7 +901,7 @@
             "筑紫明朝", "Tsukushi Mincho",
             "源ノ明朝", "Source Han Serif", "Noto Serif CJK JP",
             "08丸三-明朝体",
-            
+
             // 日本語フォント（ゴシック系）
             "游ゴシック", "Yu Gothic", "游ゴシック体",
             "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro",
@@ -776,31 +914,31 @@
             "UD デジタル 教科書体", "UD Digi Kyokasho",
             "BIZ UDゴシック", "BIZ UD Gothic",
             "BIZ UDPゴシック", "BIZ UDP Gothic",
-            
+
             // 日本語フォント（丸ゴシック系）
             "丸ゴシック", "Maru Gothic",
             "ヒラギノ丸ゴ ProN", "Hiragino Maru Gothic ProN",
             "小塚丸ゴシック Pro", "Kozuka Maru Gothic Pro",
             "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R",
-            
+
             // 英語フォント（セリフ）
             "Times New Roman", "Times",
             "Georgia", "Palatino", "Book Antiqua",
             "Garamond", "Baskerville", "Caslon",
-            
+
             // 英語フォント（サンセリフ）
             "Arial", "Helvetica", "Helvetica Neue",
             "Verdana", "Tahoma", "Trebuchet MS",
             "Calibri", "Segoe UI", "Roboto",
             "Open Sans", "Lato", "Montserrat",
-            
+
             // 英語フォント（等幅）
             "Courier New", "Courier", "Monaco",
             "Consolas", "Menlo", "Lucida Console",
-            
+
             // 英語フォント（装飾・その他）
             "Century Gothic", "Futura", "Gill Sans",
-            
+
             // 装飾系・ロゴ風フォント（Design）
             "Comic Sans MS", "Impact", "Arial Black",
             "Cooper Black", "Bauhaus 93", "Stencil",
@@ -812,7 +950,7 @@
             "Papyrus", "Playbill", "Ravie",
             "Showcard Gothic", "Snap ITC", "Stencil Std",
             "Wide Latin", "Wingdings", "Webdings",
-            
+
             // 筆記体・スクリプト系フォント（日本語）
             "HG行書体", "HG Gyoshotai",
             "HG正楷書体-PRO", "HG Seikaishotai PRO",
@@ -839,7 +977,7 @@
             "HGP創英角ﾎﾟｯﾌﾟ体", "HGP Soei Kakupopu",
             "HGS創英角ﾎﾟｯﾌﾟ体", "HGS Soei Kakupopu",
             "HG創英角ﾎﾟｯﾌﾟ体", "HG Soei Kakupopu",
-            
+
             // 筆記体・スクリプト系フォント（英語）
             "Brush Script MT", "Brush Script",
             "Lucida Handwriting", "Lucida Calligraphy",
@@ -864,7 +1002,7 @@
             "Zapfino", "Zapf Chancery",
         ];
 
-        // 2.1 フォントファミリー分類テーブル（拡張版） 
+        // 2.1 フォントファミリー分類テーブル（拡張版）
         const fontFamilyMap = {
             // 明朝系
             "游明朝": "Mincho", "Yu Mincho": "Mincho", "游明朝体": "Mincho",
@@ -879,7 +1017,7 @@
             "08丸三-明朝体": "Mincho",
             "08丸三ー明朝体": "Mincho",  // 長音符版も追加
             "08丸三－明朝体": "Mincho",  // 全角ハイフン版も追加
-            
+
             // ゴシック系
             "游ゴシック": "Gothic", "Yu Gothic": "Gothic", "游ゴシック体": "Gothic",
             "ヒラギノ角ゴ ProN": "Gothic", "Hiragino Kaku Gothic ProN": "Gothic",
@@ -897,13 +1035,13 @@
             "Verdana": "Gothic", "Tahoma": "Gothic", "Trebuchet MS": "Gothic",
             "Calibri": "Gothic", "Segoe UI": "Gothic", "Roboto": "Gothic",
             "Open Sans": "Gothic", "Lato": "Gothic", "Montserrat": "Gothic",
-            
+
             // 丸ゴシック系
             "丸ゴシック": "MaruGothic", "Maru Gothic": "MaruGothic",
             "ヒラギノ丸ゴ ProN": "MaruGothic", "Hiragino Maru Gothic ProN": "MaruGothic",
             "小塚丸ゴシック Pro": "MaruGothic", "Kozuka Maru Gothic Pro": "MaruGothic",
             "UD デジタル 教科書体 NK-R": "MaruGothic", "UD Digi Kyokasho NK-R": "MaruGothic",
-            
+
             // 筆記体・スクリプト系（Brush）
             "HG行書体": "Brush", "HG Gyoshotai": "Brush",
             "HG正楷書体-PRO": "Brush", "HG Seikaishotai PRO": "Brush",
@@ -926,7 +1064,7 @@
             "DFPOP篆書体": "Brush", "DFPOP Tenshotai": "Brush",
             "DFPOP隷書体": "Brush", "DFPOP Reishotai": "Brush",
             "DFPOP古印体": "Brush", "DFPOP Kointai": "Brush",
-            
+
             // アルファベット筆記体・スクリプト系（Script）
             "Brush Script MT": "Script", "Brush Script": "Script",
             "Lucida Handwriting": "Script", "Lucida Calligraphy": "Script",
@@ -949,7 +1087,7 @@
             "Tempus Sans ITC": "Script", "Tempus Sans": "Script",
             "Viner Hand ITC": "Script", "Viner Hand": "Script",
             "Zapfino": "Script", "Zapf Chancery": "Script",
-            
+
             // 装飾系・ロゴ風（Design）
             "Comic Sans MS": "Design", "Impact": "Design", "Arial Black": "Design",
             "Cooper Black": "Design", "Bauhaus 93": "Design", "Stencil": "Design",
@@ -1003,44 +1141,44 @@
         // 文字種を判定（Unicode/文字種ベース）
         function getCharCategory(char) {
             const code = char.charCodeAt(0);
-            
+
             // 漢字（CJK統合漢字）
-            if ((code >= 0x4E00 && code <= 0x9FFF) || 
+            if ((code >= 0x4E00 && code <= 0x9FFF) ||
                 (code >= 0x3400 && code <= 0x4DBF) ||
                 (code >= 0xF900 && code <= 0xFAFF)) {
                 return "KANJI";
             }
-            
+
             // ひらがな
             if (code >= 0x3040 && code <= 0x309F) {
                 return "HIRAGANA";
             }
-            
+
             // カタカナ
             if (code >= 0x30A0 && code <= 0x30FF) {
                 return "KATAKANA";
             }
-            
+
             // 英大文字（半角）
             if (code >= 0x41 && code <= 0x5A) {
                 return "LATIN_UPPER";
             }
-            
+
             // 英小文字（半角）
             if (code >= 0x61 && code <= 0x7A) {
                 return "LATIN_LOWER";
             }
-            
+
             // 全角英大文字（追加）
             if (code >= 0xFF21 && code <= 0xFF3A) {
                 return "LATIN_UPPER";
             }
-            
+
             // 全角英小文字（追加）
             if (code >= 0xFF41 && code <= 0xFF5A) {
                 return "LATIN_LOWER";
             }
-            
+
             // 記号・その他
             return "SYMBOL";
         }
@@ -1050,57 +1188,57 @@
             try {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                
+
                 // フォントを設定（フォント名にハイフンやスペースがある場合は引用符で囲む）
                 ctx.font = `${fontSize}px "${fontId}"`;
-                
+
                 // テキストメトリクスを取得
                 const metrics = ctx.measureText(char);
                 const width = metrics.width;
-                
+
                 // バウンディングボックスを取得（利用可能な場合）
                 const actualBoundingBoxAscent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
                 const actualBoundingBoxDescent = metrics.actualBoundingBoxDescent || fontSize * 0.2;
                 const actualBoundingBoxLeft = metrics.actualBoundingBoxLeft || 0;
                 const actualBoundingBoxRight = metrics.actualBoundingBoxRight || width;
-                
+
                 const height = actualBoundingBoxAscent + actualBoundingBoxDescent;
                 const fullWidth = actualBoundingBoxRight - actualBoundingBoxLeft;
-                
+
                 // Canvasサイズを設定（余白を含む）
                 const padding = Math.max(fontSize * 0.2, 5);
                 const baselineX = padding - actualBoundingBoxLeft;
                 canvas.width = Math.ceil(fullWidth + padding * 2);
                 canvas.height = Math.ceil(height + padding * 2);
-                
+
                 // 背景を白で塗りつぶし
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
+
                 // 文字を描画
                 ctx.font = `${fontSize}px "${fontId}"`;
                 ctx.fillStyle = '#000000';
                 ctx.textBaseline = 'alphabetic';
                 ctx.textAlign = 'left';
-                
+
                 // 描画位置を計算（左の余白とベースライン位置を考慮）
                 const x = padding - actualBoundingBoxLeft;
                 const y = padding + actualBoundingBoxAscent;
                 ctx.fillText(char, x, y);
-                
+
                 // ピクセルデータを取得
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const data = imageData.data;
-                
+
                 // 文字のバウンディングボックス領域を計算（余白を除く）
                 const textLeft = Math.max(0, Math.floor(padding - actualBoundingBoxLeft));
                 const textTop = Math.max(0, Math.floor(padding));
                 const textRight = Math.min(canvas.width, Math.floor(padding - actualBoundingBoxLeft + fullWidth));
                 const textBottom = Math.min(canvas.height, Math.floor(padding + height));
-                
+
                 let inkLeft = -actualBoundingBoxLeft;
                 let inkRight = actualBoundingBoxRight;
-                
+
                 // 有効な領域かチェック
                 if (textRight <= textLeft || textBottom <= textTop) {
                     // 無効な領域の場合はデフォルト値を返す
@@ -1113,13 +1251,13 @@
                         inkRight
                     };
                 }
-                
+
                 // まず、実際に描画されたピクセルの範囲を検出
                 let minY = textBottom;
                 let maxY = textTop;
                 let minX = textRight;
                 let maxX = textLeft;
-                
+
                 // 最初のパス：実際に描画された黒ピクセルの範囲を検出
                 for (let y = textTop; y < textBottom; y++) {
                     for (let x = textLeft; x < textRight; x++) {
@@ -1129,7 +1267,7 @@
                             const g = data[index + 1];
                             const b = data[index + 2];
                             const a = data[index + 3];
-                            
+
                             // 黒っぽいピクセルを判定（閾値: RGB平均 < 200、より緩い判定）
                             const gray = (r + g + b) / 3;
                             if (gray < 200 && a > 100) {
@@ -1142,7 +1280,7 @@
                         }
                     }
                 }
-                
+
                 // 実際に描画されたピクセルの範囲が有効かチェック
                 if (maxY < minY || maxX < minX) {
                     // 黒ピクセルが見つからない場合はデフォルト値
@@ -1155,11 +1293,11 @@
                         inkRight
                     };
                 }
-                
+
                 // 黒密度を計算（実際に描画されたピクセルの範囲内のみを対象）
                 let filledPixels = 0;
                 let totalPixels = 0;
-                
+
                 for (let y = minY; y <= maxY; y++) {
                     for (let x = minX; x <= maxX; x++) {
                         const index = (y * canvas.width + x) * 4;
@@ -1168,7 +1306,7 @@
                             const g = data[index + 1];
                             const b = data[index + 2];
                             const a = data[index + 3];
-                            
+
                             // 黒っぽいピクセルをカウント（閾値: RGB平均 < 200、より緩い判定）
                             const gray = (r + g + b) / 3;
                             if (gray < 200 && a > 100) {
@@ -1178,20 +1316,20 @@
                         }
                     }
                 }
-                
+
                 // 実際に描画されたピクセルの範囲内でのfillRatioを計算
                 const fillRatio = totalPixels > 0 ? filledPixels / totalPixels : 0.4;
-                
+
                 // 実際に描画されたピクセルの範囲から高さと幅を計算
                 inkLeft = minX - baselineX;
                 inkRight = maxX - baselineX;
-                
+
                 const actualHeight = (maxY >= minY) ? (maxY - minY + 1) : height;
                 const actualWidth = Math.max(1, inkRight - inkLeft);
-                
+
                 // 縦横比を計算（実際の描画領域を使用）
                 const aspectRatio = actualWidth / actualHeight;
-                
+
                 return {
                     width: actualWidth, // 実際の描画領域の幅を使用
                     height: actualHeight, // 実際の描画領域の高さを使用
@@ -1235,23 +1373,23 @@
             try {
                 // キャッシュキー
                 const cacheKey = `${fontId}:${char}:${fontSize}`;
-                
+
                 // キャッシュをチェック
                 if (featureCache[cacheKey]) {
                     return featureCache[cacheKey];
                 }
-                
+
                 // 文字種を判定
                 const charCategory = getCharCategory(char);
-                
+
                 // Canvasから形状を分析
                 const shape = analyzeCharWithCanvas(char, fontId, fontSize);
-                
+
                 // shapeが正しく取得できているか確認
                 if (!shape || typeof shape.width === 'undefined') {
                     throw new Error('形状分析に失敗しました');
                 }
-                
+
                 // Canvas APIのactualBoundingBoxを取得（SVGのbboxとの比較用）
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -1261,57 +1399,57 @@
                 const actualBoundingBoxLeft = metrics.actualBoundingBoxLeft || 0;
                 // actualBoundingBoxRightは通常width以上（文字がベースラインの右側に広がっている場合）
                 // フォールバックはmetrics.widthを使用（shape.widthは実際の描画領域の幅で、フォントサイズに近い値になる可能性がある）
-                const actualBoundingBoxRight = metrics.actualBoundingBoxRight !== undefined 
-                    ? metrics.actualBoundingBoxRight 
+                const actualBoundingBoxRight = metrics.actualBoundingBoxRight !== undefined
+                    ? metrics.actualBoundingBoxRight
                     : metrics.width;
-            
-            // 黒密度を判定
-            let density;
-            if (shape.fillRatio > 0.45) {
-                density = "HEAVY";
-            } else if (shape.fillRatio < 0.20) {
-                density = "LIGHT";
-            } else {
-                density = "MEDIUM";
-            }
-            
-            // 文字タイプを判定
-            let charType;
-            
-            if (charCategory === "KANJI") {
-                // 漢字の場合
-                if (shape.aspectRatio < 0.7) {
-                    // 縦長
-                    charType = density === "HEAVY" ? "VERTICAL_HEAVY" : "VERTICAL_LIGHT";
-                } else if (shape.fillRatio > 0.5) {
-                    // 黒密度が高い
-                    charType = "COMPLEX";
+
+                // 黒密度を判定
+                let density;
+                if (shape.fillRatio > 0.45) {
+                    density = "HEAVY";
+                } else if (shape.fillRatio < 0.20) {
+                    density = "LIGHT";
                 } else {
-                    charType = "COMPLEX";
+                    density = "MEDIUM";
                 }
-            } else if (charCategory === "HIRAGANA" || charCategory === "KATAKANA") {
-                // かなの場合
-                if (shape.fillRatio < 0.3 && shape.aspectRatio > 0.8 && shape.aspectRatio < 1.25) {
-                    charType = "CURVE";
-                } else if (shape.aspectRatio > 1.3 || shape.aspectRatio < 0.6) {
-                    // 斜め線が多い可能性
-                    charType = "DIAGONAL";
+
+                // 文字タイプを判定
+                let charType;
+
+                if (charCategory === "KANJI") {
+                    // 漢字の場合
+                    if (shape.aspectRatio < 0.7) {
+                        // 縦長
+                        charType = density === "HEAVY" ? "VERTICAL_HEAVY" : "VERTICAL_LIGHT";
+                    } else if (shape.fillRatio > 0.5) {
+                        // 黒密度が高い
+                        charType = "COMPLEX";
+                    } else {
+                        charType = "COMPLEX";
+                    }
+                } else if (charCategory === "HIRAGANA" || charCategory === "KATAKANA") {
+                    // かなの場合
+                    if (shape.fillRatio < 0.3 && shape.aspectRatio > 0.8 && shape.aspectRatio < 1.25) {
+                        charType = "CURVE";
+                    } else if (shape.aspectRatio > 1.3 || shape.aspectRatio < 0.6) {
+                        // 斜め線が多い可能性
+                        charType = "DIAGONAL";
+                    } else {
+                        charType = "KANA";
+                    }
+                } else if (charCategory === "LATIN_UPPER") {
+                    charType = "LATIN_UPPER";
+                } else if (charCategory === "LATIN_LOWER") {
+                    charType = "LATIN_LOWER";
                 } else {
-                    charType = "KANA";
+                    // その他（記号など）
+                    if (shape.fillRatio > 0.6) {
+                        charType = "CURVE";
+                    } else {
+                        charType = "MIXED";
+                    }
                 }
-            } else if (charCategory === "LATIN_UPPER") {
-                charType = "LATIN_UPPER";
-            } else if (charCategory === "LATIN_LOWER") {
-                charType = "LATIN_LOWER";
-            } else {
-                // その他（記号など）
-                if (shape.fillRatio > 0.6) {
-                    charType = "CURVE";
-                } else {
-                    charType = "MIXED";
-                }
-            }
-            
+
                 // 結果を構築
                 const features = {
                     width: shape.width,
@@ -1329,10 +1467,10 @@
                     inkLeft: shape.inkLeft,
                     inkRight: shape.inkRight
                 };
-                
+
                 // キャッシュに保存
                 featureCache[cacheKey] = features;
-                
+
                 return features;
             } catch (e) {
                 console.error('文字特徴量判定エラー:', e, char, fontId);
@@ -1361,14 +1499,14 @@
             // カーニングカテゴリーから生成されたペアカテゴリ（手動設定）
             // 特別な組み合わせ（より詰める）
             OUTWARD_INWARD: -0.6,  // A|V, A|W, A|Y, T|A, W|A, Y|Aなど
-            
+
             // 同じカテゴリー同士
             OUTWARD_OUTWARD: -0.4,    // A|A
             INWARD_INWARD: -0.5,      // T|T, V|V, W|W, Y|Y
             PARALLEL_PARALLEL: -0.3,   // H|H, I|I, M|M
             ENCLOSED_ENCLOSED: -0.2,   // O|O, B|B
             SIDED_SIDED: -0.3,         // C|C, E|E
-            
+
             // 異なるカテゴリーの組み合わせ（アルファベット順）
             ENCLOSED_INWARD: -0.35,
             ENCLOSED_OUTWARD: -0.3,
@@ -1379,7 +1517,7 @@
             OUTWARD_PARALLEL: -0.35,
             OUTWARD_SIDED: -0.3,
             PARALLEL_SIDED: -0.3,
-            
+
             // 既存の補正値（日本語文字用）
             VERTICAL_VERTICAL: +0.4,
             VERTICAL_CURVE: +0.1,
@@ -1417,7 +1555,7 @@
                     return pairCat;  // 例: "OUTWARD_INWARD", "INWARD_INWARD"など
                 }
             }
-            
+
             // フォールバック: 既存の判定ロジック（日本語文字など）
             const isLatin = (type) => type === "LATIN_UPPER" || type === "LATIN_LOWER";
             const isDiagonal = (type) => type === "DIAGONAL";
@@ -1439,11 +1577,11 @@
         // ============================================
         // カーニングカテゴリーJSON読み込み
         // ============================================
-        
+
         let kerningCategories = null;
         let pairAdjustmentsBase = null;     // kerning_categories.json の pair_adjustments（共通ベース）
         let pairAdjustmentsOverrides = null; // kerning_categories.json の font_overrides（フォント別上書き）
-        
+
         async function loadKerningCategories() {
             try {
                 const response = await fetch('kerning_categories.json');
@@ -1521,14 +1659,15 @@
             delete manualKerningAdjustments[key];
             saveManualKerningAdjustments();
         }
-        function applyManualAdjustmentsToGaps({ gaps, positions, features, chars, fontSize, fontId }) {
-            if (!manualKerningEnabled) return { applied: false, deltasPx: [] };
+        function applyManualAdjustmentsToGaps({ gaps, positions, features, chars, fontSize, fontId }, manualDeltaNormProvider) {
+            const useProvider = typeof manualDeltaNormProvider === 'function';
+            if (!useProvider && !manualKerningEnabled) return { applied: false, deltasPx: [] };
             if (!gaps || gaps.length === 0) return { applied: false, deltasPx: [] };
             const fs = Number.isFinite(fontSize) && fontSize > 0 ? fontSize : 1;
             const deltasPx = [];
             for (let i = 0; i < gaps.length; i++) {
                 const pairKey = `${chars[i]}|${chars[i + 1]}`;
-                const dn = getManualDeltaNorm(fontId, pairKey);
+                const dn = useProvider ? manualDeltaNormProvider(fontId, pairKey) : getManualDeltaNorm(fontId, pairKey);
                 const dp = dn * fs;
                 deltasPx.push(dp);
                 gaps[i] += dp;
@@ -1630,7 +1769,7 @@
                 const spinDir = parseInt(btn.getAttribute("data-spin"), 10) || 0;
                 const pk = btn.getAttribute("data-pairkey");
                 const findInput = () => tbody.querySelector(`input[type="number"][data-pairkey="${pk.replace(/"/g, '\\"')}"]`);
-                
+
                 const applyOnce = () => {
                     const input = findInput();
                     if (!input) return;
@@ -1642,7 +1781,7 @@
                     // ただし既存の更新経路を流用するため updateDisplay() を呼ぶ（manualSpinSuppressPanelUpdate が効く）
                     updateDisplay();
                 };
-                
+
                 btn.addEventListener("pointerdown", (e) => {
                     e.preventDefault();
                     // 既存のスピンがあれば停止（他ボタンの連続を止める）
@@ -1681,11 +1820,11 @@
                 });
             });
         }
-        
+
         // 文字からカテゴリー名を取得
         function getCharKerningCategory(char) {
             if (!kerningCategories || !char) return null;
-            
+
             for (const category of kerningCategories) {
                 if (category.uppercase.includes(char) ||
                     category.lowercase.includes(char) ||
@@ -1696,46 +1835,46 @@
                     return category.name;
                 }
             }
-            
+
             return null;
         }
-        
+
         // 文字の大文字・小文字・数字を判別（JSON配列ベース）
         function getCharCaseType(char) {
             if (!kerningCategories || !char) return null;
-            
+
             for (const category of kerningCategories) {
                 // 大文字かチェック
-                if (category.uppercase.includes(char) || 
+                if (category.uppercase.includes(char) ||
                     category.uppercase_full.includes(char)) {
                     return "UPPERCASE";
                 }
                 // 小文字かチェック
-                if (category.lowercase.includes(char) || 
+                if (category.lowercase.includes(char) ||
                     category.lowercase_full.includes(char)) {
                     return "LOWERCASE";
                 }
                 // 数字かチェック
-                if (category.numbers.includes(char) || 
+                if (category.numbers.includes(char) ||
                     category.numbers_full.includes(char)) {
                     return "NUMBER";
                 }
             }
-            
+
             return null;
         }
-        
+
         // 文字から直接ペアカテゴリを取得（大文字・小文字を考慮）
         function getPairCategoryFromChars(leftChar, rightChar) {
             const catA = getCharKerningCategory(leftChar);
             const catB = getCharKerningCategory(rightChar);
-            
+
             if (!catA || !catB) return null;
-            
+
             // 大文字・小文字を判定
             const leftCase = getCharCaseType(leftChar);
             const rightCase = getCharCaseType(rightChar);
-            
+
             // 特別な組み合わせ: Outward（A）と Inward（T, V, W, Y）の組み合わせ → より詰める
             if ((catA === "Outward" && catB === "Inward") ||
                 (catA === "Inward" && catB === "Outward")) {
@@ -1743,19 +1882,19 @@
                 const caseSuffix = getCaseSuffix(leftCase, rightCase);
                 return `OUTWARD_INWARD${caseSuffix}`;
             }
-            
+
             // 同じカテゴリー同士
             if (catA === catB) {
                 const caseSuffix = getCaseSuffix(leftCase, rightCase);
                 return `${catA.toUpperCase()}_${catB.toUpperCase()}${caseSuffix}`;
             }
-            
+
             // その他の組み合わせ（アルファベット順で統一）
             const sorted = [catA, catB].sort();
             const caseSuffix = getCaseSuffix(leftCase, rightCase);
             return `${sorted[0].toUpperCase()}_${sorted[1].toUpperCase()}${caseSuffix}`;
         }
-        
+
         // 大文字・小文字の組み合わせからサフィックスを生成
         function getCaseSuffix(leftCase, rightCase) {
             if (leftCase === "UPPERCASE" && rightCase === "UPPERCASE") {
@@ -1771,53 +1910,53 @@
                 return "";
             }
         }
-        
+
         // JSONからペア補正値を取得
         function getPairAdjustmentsForFont(fontName) {
             if (!pairAdjustmentsOverrides || !fontName) return null;
-            
+
             // 優先順位:
             // 1) フォント名そのまま
             // 2) 長音符/全角ハイフンの表記揺れを正規化したフォント名
             // 3) フォントファミリー（Mincho/Gothic/...）キー
             const direct = pairAdjustmentsOverrides[fontName];
             if (direct && typeof direct === 'object') return direct.pair_adjustments || null;
-            
+
             const normalizedName = fontName.replace(/ー/g, '-').replace(/－/g, '-');
             if (normalizedName !== fontName) {
                 const normalized = pairAdjustmentsOverrides[normalizedName];
                 if (normalized && typeof normalized === 'object') return normalized.pair_adjustments || null;
             }
-            
+
             // normalizeFontName は既に Phase1 側で使っているので流用
             const familyKey = normalizeFontName(fontName);
             const byFamily = pairAdjustmentsOverrides[familyKey];
             if (byFamily && typeof byFamily === 'object') return byFamily.pair_adjustments || null;
-            
+
             return null;
         }
-        
+
         // JSONからペア補正値を取得（ベース＋フォント別上書き対応）
         function getPairAdjustmentFromJSON(pairCat, fontName) {
             if (!pairCat) return null;
-            
+
             // ペアカテゴリ名からベース名とケース情報を分離
             const basePairCat = pairCat.replace(/_UPPER_UPPER|_LOWER_LOWER|_UPPER_LOWER|_LOWER_UPPER$/, "");
             const hasCaseSuffix = basePairCat !== pairCat;
-          
+
             // 参照元（フォント別上書き → ベース）の順で探す
             const sources = [];
             const fontAdjustments = fontName ? getPairAdjustmentsForFont(fontName) : null;
             if (fontAdjustments) sources.push(fontAdjustments);
             if (pairAdjustmentsBase) sources.push(pairAdjustmentsBase);
-            
+
             for (const source of sources) {
                 if (!source || typeof source !== 'object') continue;
                 if (!source[basePairCat]) continue;
-                
+
                 const adj = source[basePairCat];
                 let adjustment = null;
-                
+
                 // ケース情報に応じた補正値を取得
                 if (hasCaseSuffix) {
                     if (pairCat.includes("_UPPER_UPPER")) {
@@ -1833,20 +1972,20 @@
                     // ケース情報がない場合は、大文字同士をデフォルトとして使用
                     adjustment = adj.uppercase_uppercase;
                 }
-                
+
                 // 補正値が見つかった場合は返す（nullでも明示的に定義されている）
                 if (adjustment !== undefined) {
                     return adjustment;
                 }
             }
-            
+
             return null;
         }
-        
+
         // ============================================
         // Phase1モデル読み込み
         // ============================================
-        // 
+        //
         // Phase1モデルの構造:
         // {
         //   "フォント名": {  // フォント固有の学習データ（最優先）
@@ -1863,17 +2002,17 @@
         //   "Gothic": { ... },
         //   "MaruGothic": { ... }
         // }
-        // 
+        //
         // 検索優先順位:
         // 1. フォント名で直接検索（フォント固有のデータ）
         // 2. 長音符をハイフンに変換して検索（表記揺れ対応）
         // 3. 正規化されたカテゴリで検索（カテゴリごとのデータ）
-        // 
+        //
         // 学習データ生成時の推奨事項:
         // - フォント固有のデータがある場合は、フォント名をキーとして保存
         // - 複数のフォントで共通のデータを使用する場合は、カテゴリ名をキーとして保存
         // - 両方保存することで、フォント固有のデータがない場合でもカテゴリごとのデータを使用可能
-        
+
         async function loadPhase1Model() {
             try {
                 const response = await fetch("/assets/phase1_model.json");
@@ -1883,26 +2022,26 @@
                 const data = await response.json();
                 phase1Model = data;
                 console.log("Phase1モデルを読み込みました", phase1Model);
-                
+
                 // デバッグ: モデルに含まれるキーを表示
                 const keys = Object.keys(phase1Model);
                 const fontSpecificKeys = keys.filter(k => !["Mincho", "Gothic", "MaruGothic", "Brush", "Script", "Design"].includes(k));
                 if (fontSpecificKeys.length > 0) {
                     console.log("フォント固有の学習データ:", fontSpecificKeys);
                 }
-                
+
                 // 学習済みペアのgap_norm_avgの平均値を計算（未学習ペア用）
                 let sumGapNorm = 0;
                 let countGapNorm = 0;
-                
+
                 for (const fontKey in phase1Model) {
                     const fontData = phase1Model[fontKey];
                     if (typeof fontData !== 'object' || fontData === null) continue;
-                    
+
                     for (const pairKey in fontData) {
                         const pairData = fontData[pairKey];
                         if (typeof pairData !== 'object' || pairData === null) continue;
-                        
+
                         const gapNormAvg = pairData.gap_norm_avg;
                         if (gapNormAvg !== undefined && gapNormAvg !== null && typeof gapNormAvg === 'number') {
                             sumGapNorm += gapNormAvg;
@@ -1910,7 +2049,7 @@
                         }
                     }
                 }
-                
+
                 if (countGapNorm > 0) {
                     phase1ModelAverage = sumGapNorm / countGapNorm;
                     console.log(`学習済みペアの平均gap_norm_avg: ${phase1ModelAverage.toFixed(4)} (${countGapNorm}ペア)`);
@@ -1918,7 +2057,7 @@
                     phase1ModelAverage = null;
                     console.warn("学習済みペアの平均値を計算できませんでした");
                 }
-                
+
                 // Phase0のルールベースで計算した平均値を推定（係数計算用）
                 // 学習済みペアと同じペアに対してPhase0で計算した場合の平均値を計算
                 // 実際のペアデータを使ってPhase0で計算するのは複雑なので、
@@ -1932,19 +2071,19 @@
                 phase1ModelAverage = null;
             }
         }
-        
+
         // ============================================
         // 半角文字を全角文字に変換する関数
         // ============================================
-        
+
         function convertHalfToFullWidth(text) {
             if (!text) return text;
-            
+
             let result = '';
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
                 const code = char.charCodeAt(0);
-                
+
                 // 半角大文字 A-Z (0x41-0x5A) を全角大文字 Ａ-Ｚ (0xFF21-0xFF3A) に変換
                 if (code >= 0x41 && code <= 0x5A) {
                     result += String.fromCharCode(code - 0x41 + 0xFF21);
@@ -1960,20 +2099,20 @@
             }
             return result;
         }
-        
+
         // ============================================
         // フォント名正規化関数
         // ============================================
-        
+
         function normalizeFontName(fontName) {
             if (!fontName) return "Gothic";
-            
+
             // fontFamilyMapを使用してカテゴリを取得
             const normalized = fontFamilyMap[fontName];
             if (normalized) {
                 return normalized;
             }
-            
+
             // 長音符（ー）とハイフン（-）の違いを考慮
             // 「08丸三ー明朝体」と「08丸三-明朝体」の両方に対応
             const normalizedName = fontName.replace(/ー/g, '-').replace(/－/g, '-');
@@ -1983,60 +2122,60 @@
                     return normalizedFromMap;
                 }
             }
-            
+
             // 部分一致で判定
             const fontLower = fontName.toLowerCase();
-            
+
             // 明朝系
-            if (fontLower.includes("mincho") || fontLower.includes("明朝") || 
+            if (fontLower.includes("mincho") || fontLower.includes("明朝") ||
                 fontLower.includes("serif") || fontLower.includes("times")) {
                 return "Mincho";
             }
-            
+
             // 丸ゴシック系
             if (fontLower.includes("maru") || fontLower.includes("丸") ||
-                fontLower.includes("round") || fontLower.includes("ゴシック")){
+                fontLower.includes("round") || fontLower.includes("ゴシック")) {
                 return "MaruGothic";
             }
-            
+
             // 筆記体・スクリプト系
             if (fontLower.includes("brush") || fontLower.includes("script") ||
                 fontLower.includes("行書") || fontLower.includes("楷書") ||
                 fontLower.includes("毛筆") || fontLower.includes("勘亭流")) {
                 return "Brush";
             }
-            
+
             // 装飾系・ロゴ風
             if (fontLower.includes("design") || fontLower.includes("impact") ||
                 fontLower.includes("comic") || fontLower.includes("stencil")) {
                 return "Design";
             }
-            
+
             // デフォルトはGothic
             return "Gothic";
         }
-        
+
         // ============================================
         // Phase0カーニング関数
         // ============================================
-        
+
         // テスト用フラグ: 文字幅の違いを考慮しない（フォントサイズ基準で計算）
         const TEST_IGNORE_CHAR_WIDTH = true;  // true: 文字幅を無視, false: 通常の計算
-        
+
         function getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, styleId = "default", globalTracking = 0, beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP) {
             // 既存のcomputeKerningPositionsロジックを使用
             // 2文字のペアに対してカーニング値を計算
             const fontFamily = fontFamilyMap[fontName] || "Gothic";
-            let base = baseTracking[fontFamily]?.[styleId] || 
-                       baseTracking[fontFamily]?.default || 0;
-            
+            let base = baseTracking[fontFamily]?.[styleId] ||
+                baseTracking[fontFamily]?.default || 0;
+
             // 文字の特徴量を取得
             const leftFeatures = getCharFeatures(leftChar, fontName, baseWidthPx);
             const rightFeatures = getCharFeatures(rightChar, fontName, baseWidthPx);
-            
+
             // 平均文字幅を計算
             const avgWidth = (leftFeatures.width + rightFeatures.width) / 2;
-            
+
             // base（基準ギャップ）の決め方
             // - baseTrackingが設定されていればそれを使う
             // - 0の場合は Phase1学習データの平均（約0.35）を基準とする
@@ -2076,28 +2215,28 @@
             //     const scaleFactor = beforeKerningGap / defaultBeforeKerningGap;
             //     base = base * scaleFactor;
             // }
-            
+
             // ペアカテゴリ補正（カテゴリーJSONを使用）
             const pairCat = getPairCategory(leftFeatures.charType, rightFeatures.charType, leftChar, rightChar);
-            
+
             // まずJSONから補正値を取得を試みる
             let pairAdj = getPairAdjustmentFromJSON(pairCat, fontName);
-            
+
             // JSONから取得できない場合は、既存のpairCategoryAdjustを使用（フォールバック）
             if (pairAdj === null || pairAdj === undefined) {
                 // サフィックスを削除して既存のテーブルを検索
                 const basePairCat = pairCat.replace(/_UPPER_UPPER|_LOWER_LOWER|_UPPER_LOWER|_LOWER_UPPER$/, "");
                 pairAdj = pairCategoryAdjust[basePairCat] || pairCategoryAdjust[pairCat] || 0;
             }
-            
+
             // 黒密度補正
             const densityKey = leftFeatures.density + "-" + rightFeatures.density;
             const densAdj = 0;  // 密度補正を無効化
             // const densAdj = densityAdjust[densityKey] || 0;  // 元のコードをコメントアウト
-            
+
             // デバッグログ（WAVE文字列の場合）
-            if (leftChar === 'W' && rightChar === 'A' || 
-                leftChar === 'A' && rightChar === 'V' || 
+            if (leftChar === 'W' && rightChar === 'A' ||
+                leftChar === 'A' && rightChar === 'V' ||
                 leftChar === 'V' && rightChar === 'E') {
                 console.log(`[Phase0] ${leftChar}|${rightChar}:`);
                 console.log(`  fontFamily: ${fontFamily}, styleId: ${styleId}`);
@@ -2105,13 +2244,13 @@
                 console.log(`  avgWidth: ${avgWidth.toFixed(2)}px, baseWidthPx: ${baseWidthPx}, globalTracking: ${globalTracking}`);
                 console.log(`  gap計算前: ${base.toFixed(4)} * ${baseWidthPx} + ${pairAdj} * ${avgWidth.toFixed(2)} + ${densAdj} * ${avgWidth.toFixed(2)} + ${globalTracking}`);
             }
-            
+
             // デバッグログ（W|A, A|V, V|Aの場合 - 半角・全角両対応）
-            if ((leftChar === 'W' && rightChar === 'A') || 
-                (leftChar === 'A' && rightChar === 'V') || 
+            if ((leftChar === 'W' && rightChar === 'A') ||
+                (leftChar === 'A' && rightChar === 'V') ||
                 (leftChar === 'V' && rightChar === 'A') ||
-                (leftChar === 'Ｗ' && rightChar === 'Ａ') || 
-                (leftChar === 'Ａ' && rightChar === 'Ｖ') || 
+                (leftChar === 'Ｗ' && rightChar === 'Ａ') ||
+                (leftChar === 'Ａ' && rightChar === 'Ｖ') ||
                 (leftChar === 'Ｖ' && rightChar === 'Ａ')) {
                 console.log(`[Phase0] ${leftChar}|${rightChar}:`);
                 console.log(`  fontFamily: ${fontFamily}, styleId: ${styleId}`);
@@ -2128,7 +2267,7 @@
                     console.log(`  gap計算式: ${base.toFixed(4)} * ${baseWidthPx} + (${pairAdj} + ${densAdj}) * ${avgWidth.toFixed(2)} + ${globalTracking}`);
                 }
             }
-            
+
             // 最終ギャップ
             // baseはfontSizeに対する比率、pairAdjとdensAdjは文字幅に対する比率として扱う
             // globalTrackingはpx単位
@@ -2140,27 +2279,27 @@
                 // 通常の計算（文字幅を考慮）
                 gap = base * baseWidthPx + (pairAdj + densAdj) * avgWidth + globalTracking;
             }
-            
+
             // 最小・最大のガード
             const minGap = -0.2 * baseWidthPx;
             const maxGap = 0.8 * baseWidthPx;
             const gapBeforeClamp = gap;
             if (gap < minGap) gap = minGap;
             if (gap > maxGap) gap = maxGap;
-            
+
             // デバッグログ（WAVE文字列の場合）
-            if (leftChar === 'W' && rightChar === 'A' || 
-                leftChar === 'A' && rightChar === 'V' || 
+            if (leftChar === 'W' && rightChar === 'A' ||
+                leftChar === 'A' && rightChar === 'V' ||
                 leftChar === 'V' && rightChar === 'E') {
                 console.log(`  gap計算後: ${gapBeforeClamp.toFixed(3)}px`);
             }
-            
+
             // デバッグログ（W|A, A|V, V|Aの場合 - 計算後、半角・全角両対応）
-            if ((leftChar === 'W' && rightChar === 'A') || 
-                (leftChar === 'A' && rightChar === 'V') || 
+            if ((leftChar === 'W' && rightChar === 'A') ||
+                (leftChar === 'A' && rightChar === 'V') ||
                 (leftChar === 'V' && rightChar === 'A') ||
-                (leftChar === 'Ｗ' && rightChar === 'Ａ') || 
-                (leftChar === 'Ａ' && rightChar === 'Ｖ') || 
+                (leftChar === 'Ｗ' && rightChar === 'Ａ') ||
+                (leftChar === 'Ａ' && rightChar === 'Ｖ') ||
                 (leftChar === 'Ｖ' && rightChar === 'Ａ')) {
                 console.log(`  gap計算後: ${gapBeforeClamp.toFixed(3)}px`);
                 console.log(`  minGap: ${minGap.toFixed(3)}px, maxGap: ${maxGap.toFixed(3)}px`);
@@ -2168,22 +2307,22 @@
                 const visualGap = gap + (leftFeatures.inkRight !== undefined ? leftFeatures.inkRight : 0) + (rightFeatures.inkLeft !== undefined ? rightFeatures.inkLeft : 0);
                 console.log(`  視覚的な間隔（gap + inkRight + inkLeft）: ${visualGap.toFixed(3)}px`);
             }
-            
+
             return gap;
         }
-        
+
         // ============================================
         // Phase1カーニング関数
         // ============================================
-        
+
         function getKerningPhase1(leftChar, rightChar, fontName, baseWidthPx, globalTracking = 0, beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP) {
             if (!phase1Model) {
                 return null;
             }
-            
+
             // ペアキーを生成
             const pairKey = leftChar + "|" + rightChar;
-            
+
             // フォント固有のデータを優先的に検索
             // 優先順位:
             // 1. フォント名で直接検索（フォント固有の学習データ - 最優先）
@@ -2192,7 +2331,7 @@
             let record = null;
             let usedKey = null;
             let dataSource = null; // "font-specific", "font-normalized", "category"
-            
+
             if (phase1Model[fontName] && phase1Model[fontName][pairKey]) {
                 record = phase1Model[fontName][pairKey];
                 usedKey = fontName;
@@ -2214,12 +2353,12 @@
                     }
                 }
             }
-            
+
             // レコードが見つからない場合の処理（選択されたアルゴリズムに応じて）
             if (!record) {
                 // デバッグ: 未学習ペアの処理
                 console.log(`[getKerningPhase1] 未学習ペア: ${pairKey}, アルゴリズム: ${unlearnedPairAlgorithm}`);
-                
+
                 if (unlearnedPairAlgorithm === "average") {
                     // アルゴリズム1: 未学習ペアに学習済みペアの平均値を使用
                     if (phase1ModelAverage !== null && phase1ModelAverage !== undefined) {
@@ -2242,17 +2381,17 @@
                     // アルゴリズム3: Phase0のルールベース × 係数（文字列全体の幅に応じた調整）
                     // Phase0で計算したgapを取得
                     const phase0Gap = getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, "default", 0, beforeKerningGap);
-                    
+
                     // 係数を計算（文字列全体の幅に応じたバランス調整）
                     // 文字列全体の幅を考慮して、学習済みデータとPhase0のバランスを取る
                     let scaleFactor = 1.0;
-                    
+
                     if (phase1ModelAverage !== null && phase1ModelAverage !== undefined && currentTextInfo !== null) {
                         // 文字列全体の幅を考慮した係数を計算
                         // Phase0で計算した文字列全体の幅と、学習済みデータから推定される文字列全体の幅を比較
                         const phase0TotalWidth = currentTextInfo.phase0TotalWidth;
                         const estimatedPhase1TotalWidth = currentTextInfo.estimatedPhase1TotalWidth;
-                        
+
                         if (phase0TotalWidth > 0 && estimatedPhase1TotalWidth > 0) {
                             // 文字列全体の幅の比率を係数として使用
                             // これにより、文字列全体のバランスを保ちながら調整される
@@ -2262,7 +2401,7 @@
                             const leftFeatures = getCharFeatures(leftChar, fontName, baseWidthPx);
                             const rightFeatures = getCharFeatures(rightChar, fontName, baseWidthPx);
                             const avgWidth = (leftFeatures.width + rightFeatures.width) / 2;
-                            
+
                             if (avgWidth > 0) {
                                 const phase0GapNorm = phase0Gap / avgWidth;
                                 if (phase0GapNorm !== 0 && Math.abs(phase0GapNorm) > 0.001) {
@@ -2271,7 +2410,7 @@
                             }
                         }
                     }
-                    
+
                     // Phase0のgapに係数をかける
                     // 係数が極端な値にならないように制限（0.1 ～ 10.0）
                     scaleFactor = Math.max(0.1, Math.min(10.0, scaleFactor));
@@ -2280,144 +2419,144 @@
                     console.log(`[getKerningPhase1] Phase0スケールアルゴリズム: phase0Gap = ${phase0Gap.toFixed(3)}px, scaleFactor = ${scaleFactor.toFixed(3)}, gapPx = ${gapPx.toFixed(3)}px`);
                     return gapPx;
                 }
-                
+
                 // デフォルト: nullを返してPhase0にフォールバック
                 console.log(`[getKerningPhase1] デフォルト: nullを返す`);
                 return null;
             }
-            
+
             // デバッグ: N|Iペアの場合のみ詳細ログを出力
             if (leftChar === 'N' && rightChar === 'I') {
                 console.log(`[getKerningPhase1] ${pairKey} ペア:`);
                 console.log(`  フォント名: ${fontName}`);
                 console.log(`  使用されたキー: ${usedKey} (${dataSource})`);
             }
-            
+
             // gap_normからpx単位に変換
             // 平均文字幅で正規化したgap_norm_avgを優先使用（学習時とカーニング計算時の基準を一致）
             let gapNorm = record.gap_norm_avg;
-            
+
             // 後方互換性: gap_norm_avgがない場合は左右の平均を使用
             if (gapNorm === undefined || gapNorm === null) {
                 const gapNormLeft = record.gap_norm_left_avg;
                 const gapNormRight = record.gap_norm_right_avg;
-                
+
                 if (gapNormLeft === undefined || gapNormLeft === null ||
                     gapNormRight === undefined || gapNormRight === null) {
                     return null;
                 }
-                
+
                 // 左右の平均を取る（旧方式）
                 gapNorm = (gapNormLeft + gapNormRight) / 2;
             }
-            
+
             // 案1: 学習時のgap_actual_avgを文字幅の比率で調整
             // Canvas APIのmeasureTextとSVGのbboxの差を考慮して、文字幅の比率で補正
             const learnedFontSize = record.font_size_avg;
             const gapActualAvg = record.gap_actual_avg;
-            
-            if (learnedFontSize !== undefined && learnedFontSize !== null && 
+
+            if (learnedFontSize !== undefined && learnedFontSize !== null &&
                 gapActualAvg !== undefined && gapActualAvg !== null) {
                 // 現在のフォントサイズで文字幅を測定
                 const leftFeatures = getCharFeatures(leftChar, fontName, baseWidthPx);
                 const rightFeatures = getCharFeatures(rightChar, fontName, baseWidthPx);
-                
+
                 // 学習時のフォントサイズで文字幅を測定
                 const leftFeaturesLearned = getCharFeatures(leftChar, fontName, learnedFontSize);
                 const rightFeaturesLearned = getCharFeatures(rightChar, fontName, learnedFontSize);
-                
+
                 // SVGのbboxとCanvas APIのmeasureText().widthの差を補正
                 // 学習データでは、SVGのbboxを使用してgap_actualを計算
                 // gap_actual = next.min_x - current.max_x
                 // Canvas APIでは、measureText().widthを使用して文字幅を測定
-                // 
+                //
                 // 重要な点: gap_actualはSVGのbboxで計算されているため、
                 // Canvas APIで再現するには、SVGのbboxとCanvas APIのmeasureText().widthの比率を考慮する必要がある
-                // 
+                //
                 // 学習データから:
                 // - SVG bbox: N=36.72px, I=17.08px, 平均=26.90px
                 // - Canvas API measureText: N=約31px, I=約15px, 平均=約23px
                 // - 比率: Canvas API / SVG bbox = 23 / 26.90 ≈ 0.855
-                // 
+                //
                 // gap_actualは文字間の実際の距離なので、文字幅に比例する
                 // したがって、Canvas APIで再現するには:
                 // gapPx = gap_actual * (currentFontSize / learnedFontSize) * (Canvas API / SVG bbox の比率)
-                
+
                 // 現在のフォントサイズでのmeasureText().width
                 const currentLeftWidth = leftFeatures.width; // measureText().width
                 const currentRightWidth = rightFeatures.width; // measureText().width
                 const currentAvgWidth = (currentLeftWidth + currentRightWidth) / 2;
-                
+
                 // 学習時のフォントサイズでのmeasureText().width
                 const learnedLeftWidth = leftFeaturesLearned.width; // measureText().width
                 const learnedRightWidth = rightFeaturesLearned.width; // measureText().width
                 const learnedAvgWidth = (learnedLeftWidth + learnedRightWidth) / 2;
-                
+
                 // 根本的な問題の再考:
                 // SVGのbbox: N.max_x = 340.05px, I.min_x = 348.67px, gap_actual = 8.615px
                 // Canvas API: fillText(x, y)のx座標はベースラインの左端
-                // 
+                //
                 // 重要な理解:
                 // gap_actualは「Iの左端（SVG bbox）からNの右端（SVG bbox）までの距離」
                 // Canvas APIで再現するには、この距離をCanvas APIの座標系に変換する必要がある
-                // 
+                //
                 // しかし、SVGのbboxとCanvas APIのmeasureText().widthの比率は約0.86
                 // これは文字幅の比率なので、gap_actualにも同じ比率を適用する必要がある
-                // 
+                //
                 // しかし、gap_actualは「距離」なので、文字幅の比率をそのまま適用するのは正しくない
                 // gap_actualは文字間の「空白」の距離なので、文字幅に比例する
-                // 
+                //
                 // したがって、gap_actualをCanvas APIで再現するには:
                 // gapPx = gap_actual * (currentFontSize / learnedFontSize) * (Canvas API measureText / SVG bbox の比率)
-                // 
+                //
                 // しかし、この比率は文字幅の比率なので、gap_actualにも同じ比率を適用する必要がある
-                // 
+                //
                 // より正確には:
                 // gap_actualは文字間の距離なので、文字幅に比例する
                 // したがって、gap_actualをCanvas APIで再現するには、文字幅の比率を適用する必要がある
-                // 
+                //
                 // しかし、試行1では「計算値は正しいが、視覚的に広い」という結果だった
                 // これは、計算値が正しいのに視覚的に広く見えるという矛盾
-                // 
+                //
                 // 本当の問題は、位置計算の基準点が異なることかもしれない
                 // SVG: bboxのmin_x/max_xで配置
                 // Canvas API: fillText(x, y)のx座標がベースラインの左端
-                // 
+                //
                 // したがって、位置計算でactualBoundingBoxRightとactualBoundingBoxLeftを使用することで、
                 // SVGのbboxを基準にした位置計算ができるはず
-                // 
+                //
                 // しかし、actualBoundingBoxRightとactualBoundingBoxLeftが正しく取得できているかどうかが問題
-                // 
+                //
                 // より確実なアプローチ:
                 // gap_actualはSVGのbboxで計算されているので、Canvas APIで再現するには、
                 // SVGのbboxとCanvas APIのmeasureText().widthの比率を考慮する必要がある
-                // 
+                //
                 // 学習データから: N|Iペアの場合
                 // - SVG bbox平均: 26.90px
                 // - Canvas API measureText平均: 約23px（学習時のフォントサイズ45pxで測定）
                 // - 比率: Canvas API / SVG bbox = 23 / 26.90 ≈ 0.855
-                // 
+                //
                 // 重要な理解:
                 // gap_actualはSVGのbbox基準で計算されている（I.min_x - N.max_x）
                 // 位置計算でactualBoundingBoxRightとactualBoundingBoxLeftを使用している場合、
                 // gap_actualはそのまま使用し、フォントサイズでスケールするだけ
                 // なぜなら、actualBoundingBoxRightとactualBoundingBoxLeftは既にCanvas APIの座標系に変換されているから
-                // 
+                //
                 // しかし、SVGのbboxとCanvas APIのactualBoundingBoxの比率を考慮する必要がある
                 // 学習データから: N|Iペアの場合
                 // - SVG bbox: N=36.72px, I=17.08px
                 // - Canvas API actualBoundingBox: N=約45px, I=約30px（フォントサイズ45pxで測定）
-                // 
+                //
                 // 実際には、位置計算でactualBoundingBoxRightとactualBoundingBoxLeftを使用しているため、
                 // gap_actualをそのまま使用し、フォントサイズでスケールするだけ
                 const fontSizeScale = baseWidthPx / learnedFontSize;
                 let gapPx = gapActualAvg * fontSizeScale;
-                
+
                 // Phase1の学習値に対して、Phase0のLATIN_PAIR補正を追加で適用
                 // （Phase1の学習値が広すぎる場合の補正として機能）
                 // leftFeaturesとrightFeaturesは既に1437-1438行目で宣言されているため、それを使用
                 const pairCat = getPairCategory(leftFeatures.charType, rightFeatures.charType, leftChar, rightChar);
-                
+
                 // LATIN_PAIRの場合、Phase0の補正を追加で適用
                 if (pairCat === "LATIN_PAIR") {
                     const avgWidth = (leftFeatures.width + rightFeatures.width) / 2;
@@ -2425,7 +2564,7 @@
                     const pairAdjustment = pairAdj * avgWidth;
                     gapPx += pairAdjustment;
                 }
-                
+
                 // デバッグ情報をコンソールに出力
                 if (leftChar === 'N' && rightChar === 'I') {
                     console.log('N|I カーニング計算（SVG bbox基準）:');
@@ -2437,21 +2576,21 @@
                     console.log('  現在のNの幅（measureText）:', currentLeftWidth.toFixed(2), 'px');
                     console.log('  現在のIの幅（measureText）:', currentRightWidth.toFixed(2), 'px');
                 }
-                
+
                 // Phase0と同じ方法（px単位で直接加算）
                 return gapPx + globalTracking;
             }
-            
+
             // フォールバック: gap_normを使用（旧方式）
-            const fontSizeToUse = (learnedFontSize !== undefined && learnedFontSize !== null) 
-                ? learnedFontSize 
+            const fontSizeToUse = (learnedFontSize !== undefined && learnedFontSize !== null)
+                ? learnedFontSize
                 : baseWidthPx;
-            
+
             const leftFeaturesFallback = getCharFeatures(leftChar, fontName, fontSizeToUse);
             const rightFeaturesFallback = getCharFeatures(rightChar, fontName, fontSizeToUse);
             const avgWidth = (leftFeaturesFallback.width + rightFeaturesFallback.width) / 2;
             let gapPx = gapNorm * avgWidth;
-            
+
             // Phase1の学習値に対して、Phase0のLATIN_PAIR補正を追加で適用
             // （Phase1の学習値が広すぎる場合の補正として機能）
             const pairCat = getPairCategory(leftFeaturesFallback.charType, rightFeaturesFallback.charType, leftChar, rightChar);
@@ -2460,23 +2599,23 @@
                 const pairAdjustment = pairAdj * avgWidth;
                 gapPx += pairAdjustment;
             }
-            
+
             // Phase0と同じ方法（px単位で直接加算）
             return gapPx + globalTracking;
         }
-        
+
         // ============================================
         // モードに応じたラッパー関数
         // ============================================
-        
+
         function getKerning(leftChar, rightChar, fontName, baseWidthPx, styleId = "default", globalTracking = 0, beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP) {
             // Phase0の値を常に計算（ブレンドに必要）
             const phase0Gap = getKerningPhase0(leftChar, rightChar, fontName, baseWidthPx, styleId, globalTracking, beforeKerningGap);
-            
+
             // Phase1モードでモデルがロード済みの場合
             if (phaseMode === "phase1" && phase1Model) {
                 const phase1Gap = getKerningPhase1(leftChar, rightChar, fontName, baseWidthPx, globalTracking, beforeKerningGap);
-                
+
                 // Phase1の値が見つかった場合（学習済みペア、または未学習ペアの処理方法で計算された値）
                 if (phase1Gap !== null) {
                     // Phase1モードでは、blendRatioが0でもPhase1の値（未学習ペアの処理方法を含む）を使用
@@ -2491,7 +2630,7 @@
                         return (1.0 - blendRatio) * phase0Gap + blendRatio * phase1Gap;
                     }
                 }
-                
+
                 // Phase1で値が見つからない場合（未学習ペアで、unlearnedPairAlgorithm === "phase0"の場合のみ）
                 // この場合、getKerningPhase1はnullを返すので、Phase0にフォールバック
                 // ブレンド比率が0の場合はPhase0のみ
@@ -2503,19 +2642,19 @@
                     return phase0Gap;
                 }
             }
-            
+
             // Phase0モードまたはモデル未ロードの場合はPhase0を使用
             return phase0Gap;
         }
-        
+
         // ============================================
         // Phase0カーニング位置計算（既存関数を保持）
         // ============================================
-        
+
         // ============================================
         // Phase2: 重心補正（Center of Mass Adjustment）
         // ============================================
-        
+
         /**
          * 文字列の視覚的重心を中央に寄せるためにギャップを調整
          * @param {Array<number>} gaps - ギャップ配列（変更される）
@@ -2529,14 +2668,14 @@
             if (!gaps || gaps.length === 0 || !positions || !features || features.length === 0) {
                 return { adjusted: false, deltaCenter: 0, centerOfMass: 0, textCenter: 0 };
             }
-            
+
             // 各文字の重みを計算（黒密度 × 文字幅）
             const weights = features.map(f => {
                 const fillRatio = f.fillRatio || 0.4;  // デフォルト0.4
                 const width = f.width || fontSize * 0.6;  // デフォルト幅
                 return fillRatio * width;
             });
-            
+
             // 各文字の重心位置を計算（文字の中心）
             const getInkLeft = (feature) => {
                 if (feature && Number.isFinite(feature.inkLeft)) return feature.inkLeft;
@@ -2549,13 +2688,13 @@
                 if (feature && Number.isFinite(feature.width)) return feature.width;
                 return fontSize * 0.6;
             };
-            
+
             const charCenters = positions.map((pos, i) => {
                 const inkLeft = getInkLeft(features[i]);
                 const inkRight = getInkRight(features[i]);
                 return pos + (inkLeft + inkRight) / 2;  // 文字の中心位置
             });
-            
+
             // 全体の重心を計算
             let totalWeightedPosition = 0;
             let totalWeight = 0;
@@ -2563,42 +2702,42 @@
                 totalWeightedPosition += charCenters[i] * weights[i];
                 totalWeight += weights[i];
             }
-            
+
             if (totalWeight === 0) {
                 return { adjusted: false, deltaCenter: 0, centerOfMass: 0, textCenter: 0 };
             }
-            
+
             const centerOfMass = totalWeightedPosition / totalWeight;
-            
+
             // 文字列全体の中心を計算（最初の文字の左端から最後の文字の右端まで）
             const firstInkLeft = getInkLeft(features[0]);
             const lastInkRight = getInkRight(features[features.length - 1]);
             const textLeft = positions[0] + firstInkLeft;
             const textRight = positions[positions.length - 1] + lastInkRight;
             const textCenter = (textLeft + textRight) / 2;
-            
+
             // 重心と文字列中心の差分
             const deltaCenter = textCenter - centerOfMass;
-            
+
             // 差分が小さい場合は調整しない
             if (Math.abs(deltaCenter) < 0.1) {
                 return { adjusted: false, deltaCenter, centerOfMass, textCenter };
             }
-            
+
             // ギャップを調整して重心を中央に寄せる
             // 左寄り（deltaCenter > 0、重心が左にある）なら右側のギャップを広げ、左側を詰める
             // 右寄り（deltaCenter < 0、重心が右にある）なら左側のギャップを広げ、右側を詰める
-            
+
             // 調整量を計算（重心の差分に基づく）
             // 文字列全体の幅に対する比率で調整量を決定
             const textWidth = textRight - textLeft;
             if (textWidth <= 0) {
                 return { adjusted: false, deltaCenter, centerOfMass, textCenter };
             }
-            
+
             // 調整量は文字列幅に対する比率で計算（より適切なスケーリング）
             const adjustmentRatio = (deltaCenter / textWidth) * strength;
-            
+
             // 各ギャップに調整を適用（左から右へ線形に変化）
             // 左寄り（deltaCenter > 0）の場合：
             //   - 左側のギャップを詰める（負の調整）
@@ -2615,37 +2754,37 @@
                 const adjustment = adjustmentRatio * textWidth * (2 * positionRatio - 1);
                 gapAdjustments.push(adjustment);
             }
-            
+
             // ギャップを調整（最初の文字の位置は変更しない）
             for (let i = 0; i < gaps.length; i++) {
                 gaps[i] += gapAdjustments[i];
-                
+
                 // ギャップが最小・最大の範囲内に収まるように制限
                 const minGap = -0.2 * fontSize;
                 const maxGap = 0.8 * fontSize;
                 if (gaps[i] < minGap) gaps[i] = minGap;
                 if (gaps[i] > maxGap) gaps[i] = maxGap;
             }
-            
+
             // 調整後の位置を再計算（最初の文字の位置は保持）
             // positions[0]は変更しない（文字列全体の位置を保持）
             const firstPos = positions[0];  // 最初の文字の位置を保持
             let x = firstPos;
-            
+
             for (let i = 0; i < gaps.length; i++) {
                 const currentInkRight = getInkRight(features[i]);
                 const nextInkLeft = getInkLeft(features[i + 1]);
                 x = x + currentInkRight + gaps[i] - nextInkLeft;
                 positions[i + 1] = x;
             }
-            
+
             return { adjusted: true, deltaCenter, centerOfMass, textCenter };
         }
-        
+
         // ============================================
         // Phase2: 標準偏差補正（Gap Distribution Smoothing）
         // ============================================
-        
+
         /**
          * ギャップのばらつきを均すためにスムージングを適用
          * @param {Array<number>} gaps - ギャップ配列（変更される）
@@ -2659,65 +2798,65 @@
             if (!gaps || gaps.length === 0) {
                 return { adjusted: false, stdDevBefore: 0, stdDevAfter: 0 };
             }
-            
+
             // ギャップの平均値を計算
             const gapAvg = gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
-            
+
             // 標準偏差を計算
             const variance = gaps.reduce((sum, gap) => sum + Math.pow(gap - gapAvg, 2), 0) / gaps.length;
             const stdDev = Math.sqrt(variance);
-            
+
             // 標準偏差が閾値を超えない場合は調整しない
             if (stdDev <= threshold) {
                 return { adjusted: false, stdDevBefore: stdDev, stdDevAfter: stdDev };
             }
-            
+
             // スムージングを適用（移動平均フィルタ）
             // 3点移動平均を使用（前後のギャップの平均値に近づける）
             const smoothedGaps = [...gaps];
             const windowSize = 3;  // 前後1つずつを含む3点移動平均
-            
+
             for (let i = 0; i < gaps.length; i++) {
                 // ウィンドウ内のギャップの平均値を計算
                 let sum = 0;
                 let count = 0;
-                
+
                 for (let j = Math.max(0, i - 1); j <= Math.min(gaps.length - 1, i + 1); j++) {
                     sum += gaps[j];
                     count++;
                 }
-                
+
                 const windowAvg = sum / count;
-                
+
                 // 現在のギャップをウィンドウ平均に近づける（スムージング強度に応じて）
                 // ただし、意図的な調整（例：縦線×縦線は広げる）は維持するため、
                 // 完全に平均化せず、smoothingStrengthの割合だけ平均に近づける
                 smoothedGaps[i] = gaps[i] * (1 - smoothingStrength) + windowAvg * smoothingStrength;
             }
-            
+
             // 調整後の標準偏差を計算
             const smoothedGapAvg = smoothedGaps.reduce((sum, gap) => sum + gap, 0) / smoothedGaps.length;
             const smoothedVariance = smoothedGaps.reduce((sum, gap) => sum + Math.pow(gap - smoothedGapAvg, 2), 0) / smoothedGaps.length;
             const smoothedStdDev = Math.sqrt(smoothedVariance);
-            
+
             // 元の配列を更新
             for (let i = 0; i < gaps.length; i++) {
                 gaps[i] = smoothedGaps[i];
-                
+
                 // ギャップが最小・最大の範囲内に収まるように制限
                 const minGap = -0.2 * fontSize;
                 const maxGap = 0.8 * fontSize;
                 if (gaps[i] < minGap) gaps[i] = minGap;
                 if (gaps[i] > maxGap) gaps[i] = maxGap;
             }
-            
+
             return { adjusted: true, stdDevBefore: stdDev, stdDevAfter: smoothedStdDev };
         }
-        
+
         // ============================================
         // Phase2: Triplet補正（3文字以上の連続パターン調整）
         // ============================================
-        
+
         /**
          * 3文字以上の連続パターンに特別な調整を適用
          * @param {Array<number>} gaps - ギャップ配列（変更される）
@@ -2731,14 +2870,14 @@
             if (!gaps || gaps.length === 0 || !features || !chars || features.length < 2) {
                 return { adjusted: false, adjustedTriplets: [] };
             }
-            
+
             const adjustedTriplets = [];
-            
+
             // 連続パターンを検出する関数
             const isVertical = (charType) => charType === "VERTICAL_HEAVY" || charType === "VERTICAL_LIGHT";
             const isCurve = (charType) => charType === "CURVE";
             const isBrush = (family) => family === "Brush";
-            
+
             // 2文字ペアの連続パターンを検出（T|A、W|Aのような同じペアカテゴリが連続）
             for (let i = 0; i < gaps.length - 1 && i + 2 < features.length; i++) {
                 const leftChar1 = chars[i];
@@ -2746,12 +2885,12 @@
                 const rightChar2 = chars[i + 2];
                 const pair1 = getPairCategory(features[i]?.charType, features[i + 1]?.charType, leftChar1, rightChar1);
                 const pair2 = getPairCategory(features[i + 1]?.charType, features[i + 2]?.charType, rightChar1, rightChar2);
-                
+
                 // 同じペアカテゴリが連続する場合
                 if (pair1 && pair2 && pair1 === pair2) {
                     let pattern = null;
                     let adjustment = 0;
-                    
+
                     // ペアカテゴリに応じた補正値を適用
                     if (pair1 === "LATIN_PAIR") {
                         pattern = "LATIN_PAIR_SEQUENCE";
@@ -2763,7 +2902,7 @@
                         pattern = "CURVE_CURVE_SEQUENCE";
                         adjustment = ADJUST_TRIPLET_CURVE_SEQUENCE;  // 少し締める
                     }
-                    
+
                     if (pattern && adjustment !== 0) {
                         // 連続する2つのギャップに調整を適用
                         if (i < gaps.length) {
@@ -2774,7 +2913,7 @@
                             gaps[i + 1] += adjustment;
                             adjustedTriplets.push({ index: i + 1, pattern, adjustment });
                         }
-                        
+
                         // ギャップが最小・最大の範囲内に収まるように制限
                         const minGap = -0.2 * fontSize;
                         const maxGap = 0.8 * fontSize;
@@ -2787,18 +2926,18 @@
                     }
                 }
             }
-            
+
             // 3文字以上の連続パターンを検出（既存のロジック）
             for (let i = 0; i <= chars.length - 3; i++) {
                 const charType1 = features[i]?.charType;
                 const charType2 = features[i + 1]?.charType;
                 const charType3 = features[i + 2]?.charType;
-                
+
                 if (!charType1 || !charType2 || !charType3) continue;
-                
+
                 let pattern = null;
                 let adjustment = 0;
-                
+
                 // パターン1: 縦線 × 縦線 × 縦線
                 if (isVertical(charType1) && isVertical(charType2) && isVertical(charType3)) {
                     pattern = "VERTICAL_VERTICAL_VERTICAL";
@@ -2815,7 +2954,7 @@
                     pattern = "BRUSH_SEQUENCE";
                     adjustment = ADJUST_TRIPLET_BRUSH;  // 緩くする（正の値）
                 }
-                
+
                 if (pattern && adjustment !== 0) {
                     // 連続する2つのギャップに調整を適用
                     // 3文字連続の場合、2つのギャップ（文字1-2間、文字2-3間）を調整
@@ -2827,7 +2966,7 @@
                         gaps[i + 1] += adjustment;
                         adjustedTriplets.push({ index: i + 1, pattern, adjustment });
                     }
-                    
+
                     // ギャップが最小・最大の範囲内に収まるように制限
                     const minGap = -0.2 * fontSize;
                     const maxGap = 0.8 * fontSize;
@@ -2839,21 +2978,21 @@
                     }
                 }
             }
-            
+
             return {
                 adjusted: adjustedTriplets.length > 0,
                 adjustedTriplets: adjustedTriplets
             };
         }
-        
+
         // カーニング前の幅を計算（bboxベース + 文字間調整）
         function calculateWidthWithoutKerning(text, fontId, fontSize, beforeKerningGapPx = DEFAULT_BEFORE_KERNING_GAP) {
             const chars = Array.from(text);
             const startX = 50;
-            
+
             // 各文字の特徴量を取得（inkLeft/inkRightを含む）
             const features = chars.map(ch => getCharFeatures(ch, fontId, fontSize));
-            
+
             // inkLeft/inkRightを取得する関数
             const getInkLeft = (feature) => {
                 if (feature && Number.isFinite(feature.inkLeft)) return feature.inkLeft;
@@ -2870,13 +3009,13 @@
                 if (feature && Number.isFinite(feature.width)) return feature.width;
                 return fontSize * 0.6;
             };
-            
+
             // 最初の文字をstartXに揃える（inkLeftを考慮）
             let x = startX;
             if (features.length > 0) {
                 x = startX - getInkLeft(features[0]);
             }
-            
+
             // bboxベース（inkLeft/inkRight）で位置を計算
             chars.forEach((char, i) => {
                 if (i < chars.length - 1) {
@@ -2885,7 +3024,7 @@
                     x = x + currentInkRight + beforeKerningGapPx - nextInkLeft;
                 }
             });
-            
+
             // 文字列全体の幅を計算（最後の文字のinkRightまでの距離）
             let totalWidth = 0;
             if (features.length > 0) {
@@ -2893,14 +3032,14 @@
                 const lastInkRight = getInkRight(features[features.length - 1]);
                 totalWidth = (x + lastInkRight) - (startX - firstInkLeft);
             }
-            
+
             return totalWidth;
         }
-        
-        function computeKerningPositions(text, fontId, fontSize, styleId, globalTracking = 0) {
+
+        function computeKerningPositions(text, fontId, fontSize, styleId, globalTracking = 0, manualDeltaNormProvider = null, startX = 50) {
             const fontFamily = fontFamilyMap[fontId] || "Gothic";
-            const base = baseTracking[fontFamily]?.[styleId] || 
-                        baseTracking[fontFamily]?.default || 0;
+            const base = baseTracking[fontFamily]?.[styleId] ||
+                baseTracking[fontFamily]?.default || 0;
 
             // Phase1モードでphase0_scaledアルゴリズムが選択されている場合、
             // 事前にPhase0の幅を計算してcurrentTextInfoを設定
@@ -2909,11 +3048,11 @@
                 const originalPhaseMode = phaseMode;
                 isComputingPhase0Width = true;
                 phaseMode = "phase0";
-                const phase0Result = computeKerningPositions(text, fontId, fontSize, styleId, globalTracking);
+                const phase0Result = computeKerningPositions(text, fontId, fontSize, styleId, globalTracking, manualDeltaNormProvider, startX);
                 const phase0TotalWidth = phase0Result.totalWidth || 0;
                 phaseMode = originalPhaseMode;
                 isComputingPhase0Width = false;
-                
+
                 // estimatedPhase1TotalWidthは、実際のPhase1計算後に更新されるため、
                 // ここでは一時的にphase0TotalWidthと同じ値に設定
                 // （後でcomputeKerningPositionsの最後で更新される）
@@ -2930,8 +3069,7 @@
             const chars = Array.from(text);
             const features = chars.map(ch => getCharFeatures(ch, fontId, fontSize));
 
-            // 位置計算
-            const startX = 50;
+            // 位置計算（startX: 左端の余白。パターン一覧タブでは小さめにしてはみ出しを防ぐ）
             const getInkLeft = (feature) => {
                 if (feature && Number.isFinite(feature.inkLeft)) return feature.inkLeft;
                 if (feature && Number.isFinite(feature.actualBoundingBoxLeft)) {
@@ -2997,7 +3135,7 @@
                 // Phase0とPhase1のギャップを個別に計算（評価用）
                 const phase0Gap = getKerningPhase0(leftChar, rightChar, fontId, fontSize, styleId, globalTracking, beforeKerningGap);
                 phase0Gaps.push(phase0Gap);
-                
+
                 let phase1GapValue = phase0Gap;  // デフォルトはPhase0
                 if (phaseMode === "phase1" && phase1Model) {
                     const phase1Gap = getKerningPhase1(leftChar, rightChar, fontId, fontSize, globalTracking, beforeKerningGap);
@@ -3010,7 +3148,7 @@
 
                 // getKerning関数を使用（Phase0/Phase1自動切り替え、ブレンド適用済み）
                 let gap = getKerning(leftChar, rightChar, fontId, fontSize, styleId, globalTracking, beforeKerningGap);
-                
+
                 // 最小・最大のガード
                 const minGap = -0.2 * fontSize;
                 const maxGap = 0.8 * fontSize;
@@ -3024,10 +3162,10 @@
                 const currentRightEdge = prevX + getInkRight(A);
                 const nextLeftEdge = currentRightEdge + gap;
                 x = nextLeftEdge - getInkLeft(B);
-                
+
                 positions.push(x);
                 gaps.push(gap);
-                
+
                 // デバッグ情報（Phase0の計算値も保持）
                 const pairCat = getPairCategory(A.charType, B.charType, leftChar, rightChar);
                 // 表示用の「ペア補正」は、実際に参照される順序（JSON→フォールバック）で取得
@@ -3041,7 +3179,7 @@
                 pairAdjusts.push(pairAdj);
                 densityAdjusts.push(densAdj);
                 pairCategories.push(pairCat);
-                
+
             }
 
             // 文字列全体の幅を計算（最後の文字の右端までの距離）
@@ -3062,19 +3200,19 @@
                 const firstInkLeft = getInkLeft(features[0]);
                 const lastInkRight = getInkRight(lastFeature);
                 totalWidth = (lastPos + lastInkRight) - (startX - firstInkLeft);
-                
+
                 // 【元のコード（参考用）】最初の文字のinkLeftを考慮していない計算方法
                 // totalWidth = lastPos + getInkRight(lastFeature) - startX;
             }
-            
+
             // カーニング前の幅を計算（bboxベース + 文字間調整）
             const widthWithoutKerning = calculateWidthWithoutKerning(text, fontId, fontSize, beforeKerningGap);
-            
+
             // Phase0で計算した文字列全体の幅を保存
             // Phase1モードの場合、実際に計算した文字列全体の幅も保存
             let phase0TotalWidth = totalWidth;
             let phase1TotalWidth = totalWidth;
-            
+
             // Phase1モードの場合、Phase0で計算した幅も取得するため、
             // Phase0モードで一度計算して幅を取得（無限ループ防止のためフラグをチェック）
             if (phaseMode === "phase1" && !isComputingPhase0Width) {
@@ -3084,14 +3222,14 @@
                 const originalPhaseMode = phaseMode;
                 isComputingPhase0Width = true;
                 phaseMode = "phase0";
-                const phase0Result = computeKerningPositions(text, fontId, fontSize, styleId, globalTracking);
+                const phase0Result = computeKerningPositions(text, fontId, fontSize, styleId, globalTracking, manualDeltaNormProvider, startX);
                 phase0TotalWidth = phase0Result.totalWidth || totalWidth;
                 phaseMode = originalPhaseMode;
                 isComputingPhase0Width = false;
-                
+
                 // Phase1で実際に計算した文字列全体の幅を使用
                 phase1TotalWidth = totalWidth;
-                
+
                 // ============================================
                 // 幅アンカー（全ギャップ均等割り）の適用
                 // ============================================
@@ -3100,73 +3238,73 @@
                 // 「未学習ペアに平均値を使用」と「Phase0 × 係数」の場合のみ適用
                 // ただし、幅アンカーが無効化されている場合は適用しない
                 const shouldApplyWidthAnchor = phase1WidthAnchorEnabled && unlearnedPairAlgorithm !== "phase0";
-                
+
                 if (shouldApplyWidthAnchor) {
                     // Phase1のカーニング後の幅をカーニング前の幅に合わせる
                     const deltaW = widthWithoutKerning - phase1TotalWidth;
-                    
+
                     // ギャップ数が0より大きい場合のみ適用
                     if (gaps.length > 0 && Math.abs(deltaW) > 0.001) {
-                    // 比例按分: 各ギャップの現在の値に比例して調整値を按分
-                    // 全ギャップの絶対値の合計を計算
-                    const totalGapSum = gaps.reduce((sum, gap) => sum + Math.abs(gap), 0);
-                    
-                    // デバッグ: 調整前のギャップ値を記録
-                    const gapsBefore = [...gaps];
-                    
-                    if (totalGapSum > 0.001) {
-                        // 比例按分: 各ギャップの現在の値に比例して調整
-                        for (let i = 0; i < gaps.length; i++) {
-                            const gapRatio = Math.abs(gaps[i]) / totalGapSum;
-                            gaps[i] += deltaW * gapRatio;
-                            
-                            // 調整後のギャップが最小・最大の範囲内に収まるように制限
-                            const minGap = -0.2 * fontSize;
-                            const maxGap = 0.8 * fontSize;
-                            if (gaps[i] < minGap) gaps[i] = minGap;
-                            if (gaps[i] > maxGap) gaps[i] = maxGap;
+                        // 比例按分: 各ギャップの現在の値に比例して調整値を按分
+                        // 全ギャップの絶対値の合計を計算
+                        const totalGapSum = gaps.reduce((sum, gap) => sum + Math.abs(gap), 0);
+
+                        // デバッグ: 調整前のギャップ値を記録
+                        const gapsBefore = [...gaps];
+
+                        if (totalGapSum > 0.001) {
+                            // 比例按分: 各ギャップの現在の値に比例して調整
+                            for (let i = 0; i < gaps.length; i++) {
+                                const gapRatio = Math.abs(gaps[i]) / totalGapSum;
+                                gaps[i] += deltaW * gapRatio;
+
+                                // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                                const minGap = -0.2 * fontSize;
+                                const maxGap = 0.8 * fontSize;
+                                if (gaps[i] < minGap) gaps[i] = minGap;
+                                if (gaps[i] > maxGap) gaps[i] = maxGap;
+                            }
+                        } else {
+                            // 全ギャップが0に近い場合は均等按分にフォールバック
+                            const adjustPerGap = deltaW / gaps.length;
+                            for (let i = 0; i < gaps.length; i++) {
+                                gaps[i] += adjustPerGap;
+
+                                // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                                const minGap = -0.2 * fontSize;
+                                const maxGap = 0.8 * fontSize;
+                                if (gaps[i] < minGap) gaps[i] = minGap;
+                                if (gaps[i] > maxGap) gaps[i] = maxGap;
+                            }
                         }
-                    } else {
-                        // 全ギャップが0に近い場合は均等按分にフォールバック
-                        const adjustPerGap = deltaW / gaps.length;
-                    for (let i = 0; i < gaps.length; i++) {
-                        gaps[i] += adjustPerGap;
-                        
-                        // 調整後のギャップが最小・最大の範囲内に収まるように制限
-                        const minGap = -0.2 * fontSize;
-                        const maxGap = 0.8 * fontSize;
-                        if (gaps[i] < minGap) gaps[i] = minGap;
-                        if (gaps[i] > maxGap) gaps[i] = maxGap;
+
+                        // 調整後のギャップで位置を再計算
+                        x = startX;
+                        if (features.length > 0) {
+                            x = startX - getInkLeft(features[0]);
                         }
-                    }
-                    
-                    // 調整後のギャップで位置を再計算
-                    x = startX;
-                    if (features.length > 0) {
-                        x = startX - getInkLeft(features[0]);
-                    }
-                    positions[0] = x;
-                    
-                    for (let i = 0; i < chars.length - 1; i++) {
-                        const A = features[i];
-                        const B = features[i + 1];
-                        const prevX = x;
-                        const currentRightEdge = prevX + getInkRight(A);
-                        const nextLeftEdge = currentRightEdge + gaps[i];
-                        x = nextLeftEdge - getInkLeft(B);
-                        positions[i + 1] = x;
-                    }
-                    
-                    // 調整後の文字列全体の幅を再計算
-                    // カーニング前と同じ計算方法を使用: (最後の文字の位置 + 最後の文字のinkRight) - (startX - 最初の文字のinkLeft)
-                    if (positions.length > 0 && features.length > 0) {
-                        const lastPos = positions[positions.length - 1];
-                        const lastFeature = features[features.length - 1];
-                        const firstInkLeft = getInkLeft(features[0]);
-                        const lastInkRight = getInkRight(lastFeature);
-                        phase1TotalWidth = (lastPos + lastInkRight) - (startX - firstInkLeft);
-                    }
-                    
+                        positions[0] = x;
+
+                        for (let i = 0; i < chars.length - 1; i++) {
+                            const A = features[i];
+                            const B = features[i + 1];
+                            const prevX = x;
+                            const currentRightEdge = prevX + getInkRight(A);
+                            const nextLeftEdge = currentRightEdge + gaps[i];
+                            x = nextLeftEdge - getInkLeft(B);
+                            positions[i + 1] = x;
+                        }
+
+                        // 調整後の文字列全体の幅を再計算
+                        // カーニング前と同じ計算方法を使用: (最後の文字の位置 + 最後の文字のinkRight) - (startX - 最初の文字のinkLeft)
+                        if (positions.length > 0 && features.length > 0) {
+                            const lastPos = positions[positions.length - 1];
+                            const lastFeature = features[features.length - 1];
+                            const firstInkLeft = getInkLeft(features[0]);
+                            const lastInkRight = getInkRight(lastFeature);
+                            phase1TotalWidth = (lastPos + lastInkRight) - (startX - firstInkLeft);
+                        }
+
                     }
                 } else {
                     // 「Phase0のルールベースにフォールバック」の場合は幅アンカーを適用しない
@@ -3175,29 +3313,29 @@
                 // Phase0モードの場合、または既にPhase0の幅計算中の場合
                 phase0TotalWidth = totalWidth;
                 phase1TotalWidth = totalWidth;
-                
+
                 // Phase0モードで、カーニング後の幅をカーニング前の幅に合わせる
                 if (phaseMode === "phase0" && !isComputingPhase0Width && phase0WidthAnchorEnabled) {
                     const kerningTotalWidth = totalWidth; // カーニング後の幅
-                    
+
                     // ギャップ数が0より大きい場合のみ適用
                     if (gaps.length > 0 && kerningTotalWidth > 0.001 && Math.abs(widthWithoutKerning - kerningTotalWidth) > 0.001) {
                         // 【修正】幅の差分を計算（カーニング前の幅 - カーニング後の幅）
                         const deltaW = widthWithoutKerning - kerningTotalWidth;
-                        
+
                         // 比例按分: 各ギャップの現在の値に比例して調整値を按分
                         // 全ギャップの絶対値の合計を計算
                         const totalGapSum = gaps.reduce((sum, gap) => sum + Math.abs(gap), 0);
-                        
+
                         const minGap = -0.2 * fontSize;
                         const maxGap = 0.8 * fontSize;
-                        
+
                         if (totalGapSum > 0.001) {
                             // 比例按分: 各ギャップの現在の値に比例して調整（文字間隔を決めるアルゴリズムは変えない）
                             for (let i = 0; i < gaps.length; i++) {
                                 const gapRatio = Math.abs(gaps[i]) / totalGapSum;
                                 gaps[i] += deltaW * gapRatio;
-                                
+
                                 // 調整後のギャップが最小・最大の範囲内に収まるように制限
                                 if (gaps[i] < minGap) {
                                     gaps[i] = minGap;
@@ -3208,18 +3346,18 @@
                         } else {
                             // 全ギャップが0に近い場合は均等按分にフォールバック
                             const adjustPerGap = deltaW / gaps.length;
-                        for (let i = 0; i < gaps.length; i++) {
-                            gaps[i] += adjustPerGap;
-                            
-                            // 調整後のギャップが最小・最大の範囲内に収まるように制限
-                            if (gaps[i] < minGap) {
-                                gaps[i] = minGap;
-                            } else if (gaps[i] > maxGap) {
-                                gaps[i] = maxGap;
+                            for (let i = 0; i < gaps.length; i++) {
+                                gaps[i] += adjustPerGap;
+
+                                // 調整後のギャップが最小・最大の範囲内に収まるように制限
+                                if (gaps[i] < minGap) {
+                                    gaps[i] = minGap;
+                                } else if (gaps[i] > maxGap) {
+                                    gaps[i] = maxGap;
                                 }
                             }
                         }
-                        
+
                         // 調整後のギャップで位置を再計算
                         const getInkLeft = (feature) => {
                             if (feature && Number.isFinite(feature.inkLeft)) return feature.inkLeft;
@@ -3236,13 +3374,13 @@
                             if (feature && Number.isFinite(feature.width)) return feature.width;
                             return fontSize * 0.6;
                         };
-                        
+
                         x = startX;
                         if (features.length > 0) {
                             x = startX - getInkLeft(features[0]);
                         }
                         positions[0] = x;
-                        
+
                         for (let i = 0; i < chars.length - 1; i++) {
                             const A = features[i];
                             const B = features[i + 1];
@@ -3252,7 +3390,7 @@
                             x = nextLeftEdge - getInkLeft(B);
                             positions[i + 1] = x;
                         }
-                        
+
                         // 調整後の文字列全体の幅を再計算
                         // カーニング前の幅計算と同じ方法を使用: (x + lastInkRight) - (startX - firstInkLeft)
                         if (positions.length > 0 && features.length > 0) {
@@ -3268,10 +3406,10 @@
                     }
                 }
             }
-            
+
             // グローバル変数に文字列全体の情報を保存（アルゴリズム3用）
             // phase0_scaledアルゴリズムでは、幅アンカー適用前のPhase1の幅を使用
-            const estimatedPhase1Width = (phaseMode === "phase1" && unlearnedPairAlgorithm === "phase0_scaled") 
+            const estimatedPhase1Width = (phaseMode === "phase1" && unlearnedPairAlgorithm === "phase0_scaled")
                 ? totalWidth  // 幅アンカー適用前の幅
                 : phase1TotalWidth;  // 幅アンカー適用後の幅（またはPhase0モード時）
             currentTextInfo = {
@@ -3281,22 +3419,22 @@
                 fontId: fontId,
                 fontSize: fontSize
             };
-            
+
             // 評価データを準備
             const shouldApplyWidthAnchor = (phaseMode === "phase1" && phase1WidthAnchorEnabled && unlearnedPairAlgorithm !== "phase0") || (phaseMode === "phase0" && phase0WidthAnchorEnabled);
-            const deltaW = phaseMode === "phase1" ? (widthWithoutKerning - phase1TotalWidth) : 
-                          phaseMode === "phase0" ? (widthWithoutKerning - phase0TotalWidth) : 0;
-            const adjustPerGap = shouldApplyWidthAnchor && gaps.length > 0 && Math.abs(deltaW) > 0.001 ? 
+            const deltaW = phaseMode === "phase1" ? (widthWithoutKerning - phase1TotalWidth) :
+                phaseMode === "phase0" ? (widthWithoutKerning - phase0TotalWidth) : 0;
+            const adjustPerGap = shouldApplyWidthAnchor && gaps.length > 0 && Math.abs(deltaW) > 0.001 ?
                 (deltaW / gaps.length) : 0;
             const widthAnchorApplied = shouldApplyWidthAnchor && Math.abs(deltaW) > 0.001;
-            
+
             // ============================================
             // Phase2: 重心補正の適用
             // ============================================
             let centerOfMassAdjustmentResult = null;
             if (phase2Enabled && centerOfMassAdjustmentEnabled && gaps.length > 0) {
                 centerOfMassAdjustmentResult = adjustCenterOfMass(gaps, positions, features, fontSize, CENTER_OF_MASS_ADJUSTMENT_STRENGTH);
-                
+
                 // 調整後の文字列全体の幅を再計算
                 if (centerOfMassAdjustmentResult.adjusted && positions.length > 0 && features.length > 0) {
                     const getInkRight = (feature) => {
@@ -3311,14 +3449,14 @@
                     phase1TotalWidth = lastPos + getInkRight(lastFeature) - startX;
                 }
             }
-            
+
             // ============================================
             // Phase2: 標準偏差補正の適用
             // ============================================
             let stdDevSmoothingResult = null;
             if (phase2Enabled && stdDevSmoothingEnabled && gaps.length > 0) {
                 stdDevSmoothingResult = smoothGapDistribution(gaps, features, fontSize, STD_DEV_THRESHOLD, SMOOTHING_STRENGTH);
-                
+
                 // 調整後の位置を再計算（標準偏差補正でギャップが変更された場合）
                 if (stdDevSmoothingResult.adjusted && positions.length > 0 && features.length > 0) {
                     const getInkLeft = (feature) => {
@@ -3332,11 +3470,11 @@
                         if (feature && Number.isFinite(feature.width)) return feature.width;
                         return fontSize * 0.6;
                     };
-                    
+
                     // 最初の文字の位置を保持
                     const firstPos = positions[0];
                     let x = firstPos;
-                    
+
                     // 各ギャップに基づいて位置を再計算
                     for (let i = 0; i < gaps.length; i++) {
                         const currentInkRight = getInkRight(features[i]);
@@ -3344,7 +3482,7 @@
                         x = x + currentInkRight + gaps[i] - nextInkLeft;
                         positions[i + 1] = x;
                     }
-                    
+
                     // 調整後の文字列全体の幅を再計算
                     const lastPos = positions[positions.length - 1];
                     const lastFeature = features[features.length - 1];
@@ -3352,14 +3490,14 @@
                     phase1TotalWidth = lastPos + getInkRight(lastFeature) - startX;
                 }
             }
-            
+
             // ============================================
             // Phase2: Triplet補正の適用
             // ============================================
             let tripletAdjustmentResult = null;
             if (phase2Enabled && tripletAdjustmentEnabled && gaps.length > 0 && chars.length >= 3) {
                 tripletAdjustmentResult = applyTripletAdjustment(gaps, features, chars, fontFamily, fontSize);
-                
+
                 // 調整後の位置を再計算（Triplet補正でギャップが変更された場合）
                 if (tripletAdjustmentResult.adjusted && positions.length > 0 && features.length > 0) {
                     const getInkLeft = (feature) => {
@@ -3373,11 +3511,11 @@
                         if (feature && Number.isFinite(feature.width)) return feature.width;
                         return fontSize * 0.6;
                     };
-                    
+
                     // 最初の文字の位置を保持
                     const firstPos = positions[0];
                     let x = firstPos;
-                    
+
                     // 各ギャップに基づいて位置を再計算
                     for (let i = 0; i < gaps.length; i++) {
                         const currentInkRight = getInkRight(features[i]);
@@ -3385,7 +3523,7 @@
                         x = x + currentInkRight + gaps[i] - nextInkLeft;
                         positions[i + 1] = x;
                     }
-                    
+
                     // 調整後の文字列全体の幅を再計算
                     const lastPos = positions[positions.length - 1];
                     const lastFeature = features[features.length - 1];
@@ -3404,7 +3542,7 @@
                 chars,
                 fontSize,
                 fontId
-            });
+            }, manualDeltaNormProvider);
             // マニュアル適用後の幅を再計算
             if (manualResult.applied && positions.length > 0 && features.length > 0) {
                 const getInkRight = (feature) => {
@@ -3418,7 +3556,7 @@
                 const startX = positions[0] - (features[0].inkLeft || features[0].actualBoundingBoxLeft || 0);
                 phase1TotalWidth = lastPos + getInkRight(lastFeature) - startX;
             }
-            
+
             return {
                 positions,
                 gaps,
@@ -3447,7 +3585,7 @@
                     centerOfMassAdjustment: centerOfMassAdjustmentResult,
                     stdDevSmoothing: stdDevSmoothingResult,
                     tripletAdjustment: tripletAdjustmentResult
-                    ,manualKerning: {
+                    , manualKerning: {
                         enabled: manualKerningEnabled,
                         applied: manualResult.applied,
                         deltasPx: manualResult.deltasPx
@@ -3465,14 +3603,14 @@
             ctx.fillStyle = '#2c3e50';
             ctx.font = `${fontSize}px "${fontId}"`;
             ctx.textBaseline = 'middle';
-            
+
             const chars = Array.from(text);
             const y = ctx.canvas.height / 2;
             const startX = 50;
-            
+
             // 各文字の特徴量を取得（inkLeft/inkRightを含む）
             const features = chars.map(ch => getCharFeatures(ch, fontId, fontSize));
-            
+
             // inkLeft/inkRightを取得する関数
             const getInkLeft = (feature) => {
                 if (feature && Number.isFinite(feature.inkLeft)) return feature.inkLeft;
@@ -3489,17 +3627,17 @@
                 if (feature && Number.isFinite(feature.width)) return feature.width;
                 return fontSize * 0.6;
             };
-            
+
             // 最初の文字をstartXに揃える（inkLeftを考慮）
             let x = startX;
             if (features.length > 0) {
                 x = startX - getInkLeft(features[0]);
             }
-            
+
             // bboxベース（inkLeft/inkRight）で文字を描画
             chars.forEach((char, i) => {
                 ctx.fillText(char, x, y);
-                
+
                 // 次の文字の位置を計算（inkRight + 文字間 - 次の文字のinkLeft）
                 if (i < chars.length - 1) {
                     const currentInkRight = getInkRight(features[i]);
@@ -3507,7 +3645,7 @@
                     x = x + currentInkRight + beforeKerningGapPx - nextInkLeft;
                 }
             });
-            
+
             // 文字列全体の幅を計算（最後の文字のinkRightまでの距離）
             let totalWidth = 0;
             if (features.length > 0) {
@@ -3515,7 +3653,7 @@
                 const lastInkRight = getInkRight(features[features.length - 1]);
                 totalWidth = (x + lastInkRight) - (startX - firstInkLeft);
             }
-            
+
             return totalWidth;  // 文字列幅を返す
         }
 
@@ -3524,7 +3662,7 @@
             ctx.fillStyle = '#2c3e50';
             ctx.font = `${fontSize}px "${fontId}"`;
             ctx.textBaseline = 'middle';
-            
+
             const chars = Array.from(text);
             const y = ctx.canvas.height / 2;
 
@@ -3535,17 +3673,17 @@
             chars.forEach((char, i) => {
                 const x = result.positions[i];
                 ctx.fillText(char, x, y);
-                
+
                 // 未学習ペアの文字間に線を描画（Phase1モード時かつ可視化がONの場合のみ）
                 if (shouldShowUnlearned && i < chars.length - 1 && result.isLearned[i] === false) {
                     const nextX = result.positions[i + 1];
-                    
+
                     // 文字の右端と次の文字の左端の間に線を引く
                     const metrics = ctx.measureText(char);
                     const charRight = x + (metrics.actualBoundingBoxRight || metrics.width * 0.5);
                     const nextMetrics = ctx.measureText(chars[i + 1]);
                     const nextCharLeft = nextX - (nextMetrics.actualBoundingBoxLeft || 0);
-                    
+
                     // 未学習ペアの間隔を示す線を描画（半透明の赤色）
                     ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
                     ctx.lineWidth = 2;
@@ -3555,7 +3693,7 @@
                     ctx.moveTo(nextCharLeft, y - fontSize * 0.4);
                     ctx.lineTo(nextCharLeft, y + fontSize * 0.4);
                     ctx.stroke();
-                    
+
                     // 間隔の中央に点線を引く（オプション）
                     ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)';
                     ctx.setLineDash([3, 3]);
@@ -3577,17 +3715,17 @@
             try {
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
-                
+
                 // 基準フォント（確実に存在するフォント）で測定
                 const baseFont = 'monospace';
                 const testString = 'mmmmmmmmmmlli';
                 context.font = `72px ${baseFont}`;
                 const baseWidth = context.measureText(testString).width;
-                
+
                 // テストフォントで測定
                 context.font = `72px "${fontName}", ${baseFont}`;
                 const testWidth = context.measureText(testString).width;
-                
+
                 // 幅が異なればフォントが利用可能
                 // さらに、日本語フォントの場合は日本語文字でもテスト
                 if (baseWidth === testWidth && /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(fontName)) {
@@ -3598,7 +3736,7 @@
                     const testWidthJP = context.measureText(japaneseTest).width;
                     return baseWidthJP !== testWidthJP;
                 }
-                
+
                 return baseWidth !== testWidth;
             } catch (e) {
                 return false;
@@ -3626,11 +3764,11 @@
         // フォントセレクトボックスを更新する関数
         function updateFontSelect(availableFonts, defaultFonts) {
             const fontSelect = document.getElementById('fontSelect');
-            
+
             // セレクトボックスを更新（利用可能なフォントが見つかった場合のみ）
             if (availableFonts.length > 0) {
                 fontSelect.innerHTML = '';
-                
+
                 // フォントをファミリーごとに分類
                 const fontsByFamily = {
                     "Mincho": [],
@@ -3640,7 +3778,7 @@
                     "Script": [],
                     "Design": []
                 };
-                
+
                 availableFonts.forEach(font => {
                     try {
                         // 未知のフォント名も含めて分類できるように正規化関数を使用
@@ -3654,10 +3792,10 @@
                         fontsByFamily["Gothic"].push(font);
                     }
                 });
-                
+
                 // ファミリーの順序を定義
                 const familyOrder = ["Mincho", "Gothic", "MaruGothic", "Brush", "Script", "Design"];
-                
+
                 // optgroupを作成して追加
                 familyOrder.forEach(family => {
                     const fonts = fontsByFamily[family];
@@ -3673,24 +3811,25 @@
                         fontSelect.appendChild(optgroup);
                     }
                 });
-                
+
                 // デフォルト値を設定
-                if (defaultFonts.find(f => f.name === "08丸三-明朝体") && 
+                if (defaultFonts.find(f => f.name === "08丸三-明朝体") &&
                     availableFonts.find(f => f.name === "08丸三-明朝体")) {
                     fontSelect.value = "08丸三-明朝体";
                 } else if (availableFonts.length > 0) {
                     fontSelect.value = availableFonts[0].name;
                 }
-                
+
                 // 表示を更新
                 updateDisplay();
+                syncPatternTabFontSelect();
             }
         }
 
         // 利用可能なフォントを検出してセレクトボックスに追加
         async function populateFontSelect() {
             const fontSelect = document.getElementById('fontSelect');
-            
+
             // デフォルトのフォントを追加
             const defaultFonts = [
                 { name: "08丸三-明朝体", display: "08丸三-明朝体" },
@@ -3701,7 +3840,7 @@
                 { name: "メイリオ", display: "メイリオ" },
                 { name: "Arial", display: "Arial" },
             ];
-            
+
             // まずデフォルトフォントを即座に表示（フォント検出を待たない）
             fontSelect.innerHTML = '';
             defaultFonts.forEach(font => {
@@ -3715,7 +3854,8 @@
             }
             setFontLoadStatus('フォント一覧を取得中…');
             updateDisplay();
-            
+            syncPatternTabFontSelect();
+
             // 可能であれば Local Font Access API で「インストール済みフォント（ファミリー）」を列挙
             // 注意: isSecureContext（https/localhost）かつユーザー許可が必要。file:// では使えないケースが多い。
             if (typeof window.queryLocalFonts === 'function') {
@@ -3725,7 +3865,7 @@
                     try {
                         setFontLoadStatus('インストール済みフォントを取得するため、ブラウザの許可を確認してください…');
                         const localFonts = await window.queryLocalFonts();
-                        
+
                         // family を重複排除してセレクトに入れる（style 単位の選択はUIが無いので今回は family で統一）
                         const familySet = new Set();
                         for (const f of localFonts || []) {
@@ -3733,9 +3873,9 @@
                                 familySet.add(f.family.trim());
                             }
                         }
-                        
+
                         const families = Array.from(familySet).sort((a, b) => a.localeCompare(b, 'ja'));
-                        
+
                         // デフォルト + ローカルフォントをマージ
                         const mergedFonts = [...defaultFonts];
                         const defaultNameSet = new Set(defaultFonts.map(f => f.name));
@@ -3744,7 +3884,7 @@
                                 mergedFonts.push({ name: fam, display: fam });
                             }
                         }
-                        
+
                         updateFontSelect(mergedFonts, defaultFonts);
                         setFontLoadStatus(`インストール済みフォント（ファミリー）を取得しました: ${families.length}件`);
                         return;
@@ -3757,12 +3897,12 @@
             } else {
                 setFontLoadStatus('Local Font Access API未対応のため、フォールバック検出を使用します。');
             }
-            
+
             // フォールバック: 非同期でフォントをチェック（バックグラウンドで実行）
             setTimeout(() => {
                 try {
                     const availableFonts = [];
-                    
+
                     // デフォルトフォントを先にチェック
                     defaultFonts.forEach(font => {
                         try {
@@ -3774,17 +3914,17 @@
                             availableFonts.push(font);
                         }
                     });
-                    
+
                     // すべてのフォントをバッチ処理でチェック
                     if (typeof commonFonts !== 'undefined' && Array.isArray(commonFonts)) {
                         // バッチサイズ（一度にチェックするフォント数）
                         const batchSize = 10;
                         let currentIndex = 0;
-                        
+
                         // バッチ処理関数
                         const processBatch = () => {
                             const endIndex = Math.min(currentIndex + batchSize, commonFonts.length);
-                            
+
                             for (let i = currentIndex; i < endIndex; i++) {
                                 const fontName = commonFonts[i];
                                 try {
@@ -3798,9 +3938,9 @@
                                     // エラーは無視して続行
                                 }
                             }
-                            
+
                             currentIndex = endIndex;
-                            
+
                             // まだ処理するフォントがある場合
                             if (currentIndex < commonFonts.length) {
                                 // UIをブロックしないように、次のバッチを非同期で処理
@@ -3811,7 +3951,7 @@
                                 setFontLoadStatus(`フォールバック検出で利用可能フォントを更新しました: ${availableFonts.length}件`);
                             }
                         };
-                        
+
                         // 最初のバッチを開始
                         processBatch();
                     } else {
@@ -3830,21 +3970,21 @@
         // ============================================
         // UI更新関数
         // ============================================
-        
+
         // ============================================
         // 評価パネルの更新
         // ============================================
-        
+
         function updateEvaluationPanel(result) {
             const panel = document.getElementById('evaluationPanel');
             if (!panel) return;
-            
+
             // Phase1モードの時のみ表示
             if (phaseMode === "phase1" && phase1Model) {
                 panel.style.display = 'block';
-                
+
                 const evalData = result.evaluationData || {};
-                
+
                 // 幅アンカーの評価
                 if (evalData.phase0TotalWidth !== undefined) {
                     document.getElementById('evalPhase0Width').textContent = evalData.phase0TotalWidth.toFixed(2);
@@ -3867,25 +4007,25 @@
                     adjustElement.textContent = `${adjust > 0 ? '+' : ''}${adjust.toFixed(3)}`;
                     adjustElement.style.color = Math.abs(adjust) > 0.01 ? (adjust > 0 ? '#e74c3c' : '#27ae60') : '#7f8c8d';
                 }
-                document.getElementById('evalWidthAnchorApplied').textContent = 
+                document.getElementById('evalWidthAnchorApplied').textContent =
                     evalData.widthAnchorApplied ? '適用済み' : '未適用';
-                
+
                 // ブレンド効果の評価
                 const blendPercent = (blendRatio * 100).toFixed(0);
                 document.getElementById('evalBlendRatio').textContent = `${blendPercent}%`;
-                
+
                 // Phase0とPhase1のギャップを計算
-                if (evalData.phase0Gaps && evalData.phase0Gaps.length > 0 && 
+                if (evalData.phase0Gaps && evalData.phase0Gaps.length > 0 &&
                     evalData.phase1Gaps && evalData.phase1Gaps.length > 0) {
                     const avgPhase0Gap = evalData.phase0Gaps.reduce((a, b) => a + b, 0) / evalData.phase0Gaps.length;
                     const avgPhase1Gap = evalData.phase1Gaps.reduce((a, b) => a + b, 0) / evalData.phase1Gaps.length;
-                    const avgBlendedGap = evalData.blendedGaps ? 
+                    const avgBlendedGap = evalData.blendedGaps ?
                         (evalData.blendedGaps.reduce((a, b) => a + b, 0) / evalData.blendedGaps.length) : avgPhase1Gap;
-                    
+
                     document.getElementById('evalAvgPhase0Gap').textContent = avgPhase0Gap.toFixed(2);
                     document.getElementById('evalAvgPhase1Gap').textContent = avgPhase1Gap.toFixed(2);
                     document.getElementById('evalAvgBlendedGap').textContent = avgBlendedGap.toFixed(2);
-                    
+
                     // ギャップ変化率（Phase0からブレンド後への変化）
                     if (avgPhase0Gap !== 0) {
                         const changeRate = ((avgBlendedGap - avgPhase0Gap) / avgPhase0Gap * 100);
@@ -3895,7 +4035,7 @@
                     } else {
                         document.getElementById('evalGapChangeRate').textContent = '-';
                     }
-                    
+
                     // 標準偏差
                     if (evalData.blendedGaps && evalData.blendedGaps.length > 0) {
                         const mean = avgBlendedGap;
@@ -3912,7 +4052,7 @@
                     document.getElementById('evalGapChangeRate').textContent = '-';
                     document.getElementById('evalGapStdDev').textContent = '-';
                 }
-                
+
                 // 総合評価
                 if (evalData.isLearned && evalData.isLearned.length > 0) {
                     const learnedCount = evalData.isLearned.filter(x => x).length;
@@ -3936,7 +4076,7 @@
             text = convertHalfToFullWidth(text);
             const fontSelect = document.getElementById('fontSelect');
             const fontCustomInput = document.getElementById('fontCustomInput');
-            
+
             // カスタムフォント入力がある場合はそれを優先、なければセレクトボックスの値を使用
             let fontId = fontSelect.value;
             if (fontCustomInput && fontCustomInput.value.trim()) {
@@ -3945,7 +4085,7 @@
             if (!fontId) {
                 return; // フォントが選択されていない場合は何もしない
             }
-            
+
             const styleId = document.getElementById('styleSelect').value;
             const fontSize = parseInt(document.getElementById('fontSizeInput').value) || 64;
             const globalTracking = parseFloat(document.getElementById('trackingSlider').value) || 0;
@@ -3955,29 +4095,29 @@
             const canvasAfter = document.getElementById('canvasAfter');
             const ctxBefore = canvasBefore.getContext('2d');
             const ctxAfter = canvasAfter.getContext('2d');
-            
+
             // モードに応じてラベルを更新
             const canvasBeforeLabel = document.getElementById('canvasBeforeLabel');
             const canvasAfterLabel = document.getElementById('canvasAfterLabel');
-            
+
             if (currentPhaseMode === "compare") {
                 // 比較モード：左=Phase0、右=Phase1
                 canvasBeforeLabel.textContent = "Phase0（ルールベース）";
                 canvasAfterLabel.textContent = "Phase1（学習値）";
-                
+
                 // Phase0で描画
                 phaseMode = "phase0";
                 const resultPhase0 = computeKerningPositions(text, fontId, fontSize, styleId, globalTracking);
                 drawTextWithKerning(ctxBefore, text, fontId, fontSize, styleId, resultPhase0);
-                
+
                 // Phase1で描画
                 phaseMode = "phase1";
                 const resultPhase1 = computeKerningPositions(text, fontId, fontSize, styleId, globalTracking);
                 drawTextWithKerning(ctxAfter, text, fontId, fontSize, styleId, resultPhase1);
-                
+
                 // 情報パネルはPhase1の結果を表示
                 updateInfoPanel(resultPhase1, text);
-                
+
                 // 評価パネル更新（Phase1の結果を使用）
                 updateEvaluationPanel(resultPhase1);
 
@@ -3985,7 +4125,7 @@
                 if (!manualSpinSuppressPanelUpdate) {
                     updateManualAdjustPanel(resultPhase1, text, fontId, fontSize);
                 }
-                
+
                 // モードを元に戻す
                 phaseMode = currentPhaseMode;
             } else {
@@ -3993,9 +4133,9 @@
                 canvasBeforeLabel.textContent = "カーニング前（固定トラッキング）";
                 const modeLabel = currentPhaseMode === "phase1" ? "Phase1（学習値）" : "Phase0（ルールベース）";
                 canvasAfterLabel.textContent = `カーニング後（${modeLabel}）`;
-                
+
                 phaseMode = currentPhaseMode;
-                
+
                 // カーニング前（bboxベース + 文字間調整）
                 drawTextWithoutKerning(ctxBefore, text, fontId, fontSize, beforeKerningGap);
 
@@ -4005,10 +4145,10 @@
 
                 // 情報パネル更新
                 updateInfoPanel(result, text);
-                
+
                 // 評価パネル更新
                 updateEvaluationPanel(result);
-                
+
                 // マニュアル調整パネル更新
                 if (!manualSpinSuppressPanelUpdate) {
                     updateManualAdjustPanel(result, text, fontId, fontSize);
@@ -4018,16 +4158,16 @@
 
         function updateInfoPanel(result, text) {
             document.getElementById('infoFontFamily').textContent = result.fontFamily;
-            document.getElementById('infoBaseTracking').textContent = 
+            document.getElementById('infoBaseTracking').textContent =
                 `${result.base.toFixed(2)}px (${result.fontFamily} × ${document.getElementById('styleSelect').value})`;
 
-            const charTypes = result.features.map((f, i) => 
+            const charTypes = result.features.map((f, i) =>
                 `${text[i]}: ${f.charType} (${f.density})`
             ).join(', ');
             document.getElementById('infoCharTypes').textContent = charTypes;
 
-            const pairInfo = result.pairCategories.map((cat, i) => 
-                `${text[i]}-${text[i+1]}: ${cat} (${result.pairAdjusts[i].toFixed(2)})`
+            const pairInfo = result.pairCategories.map((cat, i) =>
+                `${text[i]}-${text[i + 1]}: ${cat} (${result.pairAdjusts[i].toFixed(2)})`
             ).join(', ');
             document.getElementById('infoPairAdjusts').textContent = pairInfo || '-';
 
@@ -4037,21 +4177,21 @@
             }).join(', ');
             document.getElementById('infoDensityAdjusts').textContent = densityInfo || '-';
 
-            const gapsInfo = result.gaps.map((gap, i) => 
-                `${text[i]}-${text[i+1]}: ${gap.toFixed(2)}px`
+            const gapsInfo = result.gaps.map((gap, i) =>
+                `${text[i]}-${text[i + 1]}: ${gap.toFixed(2)}px`
             ).join(', ');
             document.getElementById('infoFinalGaps').textContent = gapsInfo || '-';
-            
+
             // 文字ごとの詳細情報を表示（デバッグ用）
             const charDetailsContainer = document.getElementById('charDetails');
             charDetailsContainer.innerHTML = '';
-            
+
             result.features.forEach((feature, i) => {
                 const char = text[i];
                 const detailDiv = document.createElement('div');
                 detailDiv.className = 'info-item';
                 detailDiv.style.cssText = 'background: white; padding: 15px; border-radius: 4px; border-left: 3px solid #3498db;';
-                
+
                 detailDiv.innerHTML = `
                     <strong style="display: block; font-size: 14px; color: #2c3e50; margin-bottom: 10px;">文字: "${char}"</strong>
                     <div style="font-size: 12px; line-height: 1.8;">
@@ -4064,7 +4204,7 @@
                         <div><strong>高さ:</strong> ${(feature.height || 0).toFixed(2)}px</div>
                     </div>
                 `;
-                
+
                 charDetailsContainer.appendChild(detailDiv);
             });
         }
@@ -4072,32 +4212,45 @@
         // ============================================
         // タブ切り替え機能
         // ============================================
-        
+
         function initTabs() {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
-            
+
             tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     if (this.disabled) return; // 無効化されたタブはクリック不可
-                    
+
                     const targetTab = this.getAttribute('data-tab');
-                    
+
                     // すべてのタブボタンとコンテンツからactiveクラスを削除
                     tabButtons.forEach(btn => btn.classList.remove('active'));
                     tabContents.forEach(content => content.classList.remove('active'));
-                    
+
                     // クリックされたタブをアクティブに
                     this.classList.add('active');
-                    
+
                     // タブコンテンツのIDをマッピング
                     const tabIdMap = {
                         'basic': 'tabContentBasic',
                         'phase1': 'tabContentPhase1',
                         'phase2': 'tabContentPhase2',
-                        'advanced': 'tabContentAdvanced'
+                        'advanced': 'tabContentAdvanced',
+                        'patterns': 'tabContentPatterns'
                     };
-                    
+                    const isPatternTab = targetTab === 'patterns';
+                    const canvasArea = document.querySelector('.canvas-area');
+                    const basicManualArea = document.getElementById('manualAdjustPanel') && document.getElementById('manualAdjustPanel').closest('.details-area');
+                    if (canvasArea) canvasArea.style.display = isPatternTab ? 'none' : '';
+                    if (basicManualArea) basicManualArea.style.display = isPatternTab ? 'none' : '';
+                    if (isPatternTab) {
+                        if (patternListData === null) {
+                            loadPatternList().then(function () { window.refreshPatternTab && window.refreshPatternTab(); });
+                        } else {
+                            window.refreshPatternTab && window.refreshPatternTab();
+                        }
+                    }
+
                     const targetContentId = tabIdMap[targetTab];
                     if (targetContentId) {
                         const targetContent = document.getElementById(targetContentId);
@@ -4108,13 +4261,282 @@
                 });
             });
         }
-        
+
+        // ============================================
+        // パターン一覧タブ
+        // ============================================
+        const PATTERN_LIST_JSON = 'pattern_list.json';
+
+        async function loadPatternList() {
+            try {
+                const res = await fetch(PATTERN_LIST_JSON);
+                const data = await res.json();
+                if (data.groups && Array.isArray(data.groups)) {
+                    patternListData = data;
+                } else if (Array.isArray(data.items)) {
+                    patternListData = { groups: [{ name: '一覧', items: data.items }] };
+                } else {
+                    patternListData = null;
+                }
+                return patternListData;
+            } catch (e) {
+                console.warn('パターン一覧の読み込みに失敗しました:', e);
+                patternListData = null;
+                return null;
+            }
+        }
+
+        function getPatternTabFontId() {
+            const custom = document.getElementById('patternTabFontCustomInput');
+            if (custom && custom.value && custom.value.trim()) return custom.value.trim();
+            const sel = document.getElementById('patternTabFontSelect');
+            return (sel && sel.value) ? sel.value : '';
+        }
+
+        function getPatternTabStyleId() {
+            const sel = document.getElementById('patternTabStyleSelect');
+            return (sel && sel.value) ? sel.value : 'default';
+        }
+
+        function getPatternTabFontSize() {
+            const inp = document.getElementById('patternTabFontSizeInput');
+            const v = inp ? parseInt(inp.value, 10) : 64;
+            return Number.isFinite(v) && v >= 20 && v <= 200 ? v : 64;
+        }
+
+        function getPatternTabOverridesForFont(fontId) {
+            if (!fontId) return null;
+            const key = normalizeFontKeyForManual(fontId);
+            if (patternTabFontOverrides === null || patternTabFontOverridesKey !== key) {
+                const fromJson = getPairAdjustmentsForFont(fontId);
+                patternTabFontOverrides = (fromJson && typeof fromJson === 'object') ? JSON.parse(JSON.stringify(fromJson)) : {};
+                patternTabFontOverridesKey = key;
+            }
+            return patternTabFontOverrides;
+        }
+        let patternTabFontOverridesKey = null;  // 現在 patternTabFontOverrides がどのフォント用か
+
+        function refreshPatternTab() {
+            const container = document.getElementById('patternCanvasList');
+            const tbody = document.getElementById('patternTabManualTableBody');
+            const statusEl = document.getElementById('patternTabManualStatus');
+            if (!container) return;
+
+            const fontId = getPatternTabFontId();
+            const styleId = getPatternTabStyleId();
+            const fontSize = getPatternTabFontSize();
+
+            if (!patternListData || !patternListData.groups || patternListData.groups.length === 0) {
+                container.innerHTML = '<p style="color:#666;padding:12px;">' + (patternListData === null ? 'pattern_list.json を読み込んでいます…' : 'pattern_list.json に groups がありません。') + '</p>';
+                if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="color:#666;padding:12px;">パターンを読み込むと表示されます。</td></tr>';
+                return;
+            }
+
+            const savedPhaseMode = phaseMode;
+            const savedBeforeKerningGap = beforeKerningGap;
+            const savedPhase0WidthAnchor = phase0WidthAnchorEnabled;
+            phaseMode = patternTabPhaseMode;
+            beforeKerningGap = patternTabBeforeKerningGap;
+            phase0WidthAnchorEnabled = patternTabPhase0WidthAnchorEnabled;
+
+            const overrides = fontId ? getPatternTabOverridesForFont(fontId) : null;
+            const getDeltaNorm = (fid, pairKey) => {
+                if (!overrides || !overrides[pairKey]) return 0;
+                const rec = overrides[pairKey];
+                const dn = rec && typeof rec.delta_norm === 'number' ? rec.delta_norm : 0;
+                return Number.isFinite(dn) ? dn : 0;
+            };
+
+            const allPairs = new Set();
+            container.innerHTML = '';
+            patternListData.groups.forEach((group, gi) => {
+                const groupTitle = document.createElement('h3');
+                groupTitle.className = 'pattern-group-title';
+                groupTitle.style.cssText = 'margin:16px 0 8px 0; font-size:14px; color:#2c3e50; border-bottom:1px solid #ddd; padding-bottom:4px;';
+                groupTitle.textContent = group.name;
+                container.appendChild(groupTitle);
+                const groupBox = document.createElement('div');
+                groupBox.className = 'pattern-group-box';
+                groupBox.style.cssText = 'display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:16px;';
+                const items = Array.isArray(group.items) ? group.items : [];
+                items.forEach((text, ii) => {
+                    for (let i = 0; i < (text || '').length - 1; i++) {
+                        allPairs.add((text[i] || '') + '|' + (text[i + 1] || ''));
+                    }
+                    const box = document.createElement('div');
+                    box.style.cssText = 'border:1px solid #ddd; border-radius:6px; padding:8px; background:#fafafa;';
+                    const label = document.createElement('div');
+                    label.style.cssText = 'font-size:11px; color:#666; margin-bottom:4px;';
+                    label.textContent = text || '(空)';
+                    const can = document.createElement('canvas');
+                    can.width = 520;
+                    can.height = 80;
+                    can.style.width = '100%';
+                    can.style.height = 'auto';
+                    can.dataset.patternText = text;
+                    box.appendChild(label);
+                    box.appendChild(can);
+                    groupBox.appendChild(box);
+                    const ctx = can.getContext('2d');
+                    if (fontId && text) {
+                        const result = computeKerningPositions(text, fontId, fontSize, styleId, patternTabGlobalTracking, getDeltaNorm, 8);
+                        drawTextWithKerning(ctx, text, fontId, fontSize, styleId, result);
+                    } else {
+                        ctx.fillStyle = '#999';
+                        ctx.font = '14px sans-serif';
+                        ctx.fillText('フォントを選択してください', 10, 40);
+                    }
+                });
+                container.appendChild(groupBox);
+            });
+
+            phaseMode = savedPhaseMode;
+            beforeKerningGap = savedBeforeKerningGap;
+            phase0WidthAnchorEnabled = savedPhase0WidthAnchor;
+
+            if (tbody && fontId) {
+                const sortedPairs = Array.from(allPairs).sort();
+                const fs = fontSize;
+                const rows = sortedPairs.map((pairKey, idx) => {
+                    const dn = overrides && overrides[pairKey] ? (overrides[pairKey].delta_norm || 0) : 0;
+                    const dp = dn * fs;
+                    return `<tr>
+                        <td>${idx + 1}</td>
+                        <td style="font-weight:700;">${pairKey.replace(/"/g, '&quot;')}</td>
+                        <td><div class="spin-control"><button class="btn spin-btn" type="button" data-spin="-1" data-pairkey="${pairKey.replace(/"/g, '&quot;')}">−</button>
+                            <input type="number" data-pairkey="${pairKey.replace(/"/g, '&quot;')}" value="${Number.isFinite(dp) ? dp.toFixed(2).replace(/\.?0+$/, '') : '0'}" step="0.1" />
+                            <button class="btn spin-btn" type="button" data-spin="1" data-pairkey="${pairKey.replace(/"/g, '&quot;')}">＋</button></div></td>
+                        <td><button class="btn btn-danger" type="button" data-reset="${pairKey.replace(/"/g, '&quot;')}">リセット</button></td>
+                    </tr>`;
+                });
+                tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="4" style="color:#666;">ペアがありません。</td></tr>';
+
+                tbody.querySelectorAll('input[type="number"][data-pairkey]').forEach(inp => {
+                    inp.addEventListener('input', () => {
+                        const pk = inp.getAttribute('data-pairkey');
+                        const v = parseFloat(inp.value);
+                        if (!patternTabFontOverrides) patternTabFontOverrides = {};
+                        patternTabFontOverridesKey = normalizeFontKeyForManual(fontId);
+                        const fs = getPatternTabFontSize();
+                        const deltaNorm = (Number.isFinite(v) ? v : 0) / (fs > 0 ? fs : 1);
+                        if (Math.abs(deltaNorm) < 1e-6) delete patternTabFontOverrides[pk];
+                        else patternTabFontOverrides[pk] = { delta_norm: deltaNorm };
+                        refreshPatternTab();
+                    });
+                });
+                tbody.querySelectorAll('button[data-reset]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const pk = btn.getAttribute('data-reset');
+                        if (patternTabFontOverrides && pk) delete patternTabFontOverrides[pk];
+                        refreshPatternTab();
+                    });
+                });
+                tbody.querySelectorAll('button[data-spin]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const pk = btn.getAttribute('data-pairkey');
+                        const dir = parseInt(btn.getAttribute('data-spin'), 10) || 0;
+                        const inp = tbody.querySelector(`input[data-pairkey="${pk.replace(/"/g, '\\"')}"]`);
+                        if (!inp || !patternTabFontOverrides) return;
+                        const cur = parseFloat(inp.value) || 0;
+                        const step = 0.1;
+                        const next = cur + dir * step;
+                        inp.value = next.toFixed(2).replace(/\.?0+$/, '');
+                        const fs = getPatternTabFontSize();
+                        const deltaNorm = next / (fs > 0 ? fs : 1);
+                        if (Math.abs(deltaNorm) < 1e-6) delete patternTabFontOverrides[pk];
+                        else patternTabFontOverrides[pk] = { delta_norm: deltaNorm };
+                        refreshPatternTab();
+                    });
+                });
+            }
+            if (statusEl) statusEl.textContent = fontId ? `フォント: ${fontId} / ペア数: ${(overrides && Object.keys(patternTabFontOverrides || {}).length) || 0}` : 'フォントを選択してください';
+        }
+
+        window.refreshPatternTab = refreshPatternTab;
+
+        document.getElementById('patternTabSaveOverridesBtn').addEventListener('click', async () => {
+            const fontId = getPatternTabFontId();
+            if (!fontId) {
+                alert('対象フォントを選択してください。');
+                return;
+            }
+            try {
+                const res = await fetch('kerning_categories.json');
+                const data = await res.json();
+                data.font_overrides = data.font_overrides || {};
+                const existing = data.font_overrides[fontId] || {};
+                data.font_overrides[fontId] = { ...existing, pair_adjustments: patternTabFontOverrides ? { ...patternTabFontOverrides } : {} };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'kerning_categories.json';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            } catch (e) {
+                console.error(e);
+                alert('エクスポートに失敗しました: ' + e.message);
+            }
+        });
+
+        function initPatternTabControls() {
+            const fontSelect = document.getElementById('fontSelect');
+            const patternFontSelect = document.getElementById('patternTabFontSelect');
+            if (fontSelect && patternFontSelect) {
+                patternFontSelect.innerHTML = fontSelect.innerHTML;
+                patternFontSelect.value = fontSelect.value || '';
+            }
+            const patternTabPhaseModeSelect = document.getElementById('patternTabPhaseModeSelect');
+            if (patternTabPhaseModeSelect) {
+                patternTabPhaseModeSelect.addEventListener('change', function () {
+                    patternTabPhaseMode = this.value;
+                    refreshPatternTab();
+                });
+            }
+            const gapSlider = document.getElementById('patternTabBeforeKerningGapSlider');
+            const gapVal = document.getElementById('patternTabBeforeKerningGapValue');
+            if (gapSlider) {
+                const scale = (Number.isFinite(BEFORE_KERNING_GAP_SCALE) && BEFORE_KERNING_GAP_SCALE > 0) ? BEFORE_KERNING_GAP_SCALE : 1;
+                gapSlider.value = String(patternTabBeforeKerningGap / scale);
+                gapSlider.addEventListener('input', function () {
+                    patternTabBeforeKerningGap = (parseFloat(this.value) || 0) * scale;
+                    if (gapVal) gapVal.textContent = patternTabBeforeKerningGap.toFixed(0) + 'px';
+                    refreshPatternTab();
+                });
+            }
+            if (gapVal) gapVal.textContent = patternTabBeforeKerningGap + 'px';
+            const anchorCb = document.getElementById('patternTabPhase0WidthAnchorCheckbox');
+            if (anchorCb) {
+                anchorCb.checked = patternTabPhase0WidthAnchorEnabled;
+                anchorCb.addEventListener('change', function () {
+                    patternTabPhase0WidthAnchorEnabled = this.checked;
+                    refreshPatternTab();
+                });
+            }
+            ['patternTabFontSelect', 'patternTabFontCustomInput', 'patternTabStyleSelect', 'patternTabFontSizeInput'].forEach(function (id) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('change', refreshPatternTab);
+                    el.addEventListener('input', refreshPatternTab);
+                }
+            });
+        }
+
+        // フォント選択肢の同期（メインのフォントリスト変更時に呼ぶ）
+        function syncPatternTabFontSelect() {
+            const fontSelect = document.getElementById('fontSelect');
+            const patternFontSelect = document.getElementById('patternTabFontSelect');
+            if (fontSelect && patternFontSelect && patternFontSelect.options.length !== fontSelect.options.length) {
+                patternFontSelect.innerHTML = fontSelect.innerHTML;
+                patternFontSelect.value = fontSelect.value || '';
+            }
+        }
+
         // タブの表示/非表示を制御
         function updateTabVisibility() {
             const tabPhase1 = document.getElementById('tabPhase1');
             const tabPhase2 = document.getElementById('tabPhase2');
             const tabAdvanced = document.getElementById('tabAdvanced');
-            
+
             if (phaseMode === "phase0") {
                 // Phase0モード: Phase1とPhase2タブを無効化
                 if (tabPhase1) {
@@ -4158,7 +4580,7 @@
                     tabAdvanced.style.opacity = '0.5';
                 }
             }
-            
+
             // 無効化されたタブがアクティブな場合、基本設定タブに切り替え
             const activeTab = document.querySelector('.tab-button.active');
             if (activeTab && activeTab.disabled) {
@@ -4168,19 +4590,19 @@
                 }
             }
         }
-        
+
         // ============================================
         // アコーディオン機能
         // ============================================
-        
+
         function initAccordions() {
             const accordionHeaders = document.querySelectorAll('.accordion-header');
-            
+
             accordionHeaders.forEach(header => {
-                header.addEventListener('click', function() {
+                header.addEventListener('click', function () {
                     const accordion = this.closest('.accordion');
                     const content = accordion.querySelector('.accordion-content');
-                    
+
                     if (content.classList.contains('expanded')) {
                         // 折りたたむ
                         content.classList.remove('expanded');
@@ -4199,7 +4621,7 @@
         // ============================================
 
         document.getElementById('textInput').addEventListener('input', updateDisplay);
-        document.getElementById('fontSelect').addEventListener('change', function() {
+        document.getElementById('fontSelect').addEventListener('change', function () {
             // セレクトボックスが変更されたら、カスタム入力欄をクリア（存在する場合）
             const fontCustomInput = document.getElementById('fontCustomInput');
             if (fontCustomInput) {
@@ -4207,11 +4629,11 @@
             }
             updateDisplay();
         });
-        
+
         // カスタムフォント入力フィールドが存在する場合のみイベントリスナーを追加
         const fontCustomInput = document.getElementById('fontCustomInput');
         if (fontCustomInput) {
-            fontCustomInput.addEventListener('input', function() {
+            fontCustomInput.addEventListener('input', function () {
                 // カスタム入力がある場合は、セレクトボックスの選択をクリア
                 if (this.value.trim()) {
                     document.getElementById('fontSelect').value = '';
@@ -4221,9 +4643,9 @@
         }
         document.getElementById('styleSelect').addEventListener('change', updateDisplay);
         document.getElementById('fontSizeInput').addEventListener('input', updateDisplay);
-        
+
         // Phaseモード切り替え
-        document.getElementById('phaseModeSelect').addEventListener('change', function() {
+        document.getElementById('phaseModeSelect').addEventListener('change', function () {
             phaseMode = this.value;
             // Phase1モードの時のみ未学習ペアアルゴリズムのセレクトボックスと可視化チェックボックス、ブレンド比率スライダーを表示
             const unlearnedPairAlgorithmGroup = document.getElementById('unlearnedPairAlgorithmGroup');
@@ -4266,47 +4688,47 @@
             updateTabVisibility();
             updateDisplay();
         });
-        
+
         // 未学習ペアアルゴリズムの選択
         const unlearnedPairAlgorithmSelect = document.getElementById('unlearnedPairAlgorithmSelect');
         if (unlearnedPairAlgorithmSelect) {
-            unlearnedPairAlgorithmSelect.addEventListener('change', function() {
+            unlearnedPairAlgorithmSelect.addEventListener('change', function () {
                 unlearnedPairAlgorithm = this.value;
                 updateDisplay();
             });
         }
-        
+
         // Phase0幅アンカーの有効/無効
         const phase0WidthAnchorCheckbox = document.getElementById('phase0WidthAnchorCheckbox');
         if (phase0WidthAnchorCheckbox) {
-            phase0WidthAnchorCheckbox.addEventListener('change', function() {
+            phase0WidthAnchorCheckbox.addEventListener('change', function () {
                 phase0WidthAnchorEnabled = this.checked;
                 updateDisplay();
             });
         }
-        
+
         // Phase1幅アンカーの有効/無効
         const phase1WidthAnchorCheckbox = document.getElementById('phase1WidthAnchorCheckbox');
         if (phase1WidthAnchorCheckbox) {
-            phase1WidthAnchorCheckbox.addEventListener('change', function() {
+            phase1WidthAnchorCheckbox.addEventListener('change', function () {
                 phase1WidthAnchorEnabled = this.checked;
                 updateDisplay();
             });
         }
-        
+
         // 未学習ペアの可視化のOn/Off
         const showUnlearnedPairsCheckbox = document.getElementById('showUnlearnedPairsCheckbox');
         if (showUnlearnedPairsCheckbox) {
-            showUnlearnedPairsCheckbox.addEventListener('change', function() {
+            showUnlearnedPairsCheckbox.addEventListener('change', function () {
                 showUnlearnedPairs = this.checked;
                 updateDisplay();
             });
         }
-        
+
         // Phase2の有効化チェックボックス
         const phase2EnabledCheckbox = document.getElementById('phase2EnabledCheckbox');
         if (phase2EnabledCheckbox) {
-            phase2EnabledCheckbox.addEventListener('change', function() {
+            phase2EnabledCheckbox.addEventListener('change', function () {
                 phase2Enabled = this.checked;
                 const centerOfMassGroup = document.getElementById('centerOfMassGroup');
                 if (centerOfMassGroup) {
@@ -4325,48 +4747,48 @@
                 updateDisplay();
             });
         }
-        
+
         // 重心補正の有効化チェックボックス
         const centerOfMassCheckbox = document.getElementById('centerOfMassCheckbox');
         if (centerOfMassCheckbox) {
-            centerOfMassCheckbox.addEventListener('change', function() {
+            centerOfMassCheckbox.addEventListener('change', function () {
                 centerOfMassAdjustmentEnabled = this.checked;
                 updateDisplay();
             });
         }
-        
+
         // 標準偏差補正の有効化チェックボックス
         const stdDevSmoothingCheckbox = document.getElementById('stdDevSmoothingCheckbox');
         if (stdDevSmoothingCheckbox) {
-            stdDevSmoothingCheckbox.addEventListener('change', function() {
+            stdDevSmoothingCheckbox.addEventListener('change', function () {
                 stdDevSmoothingEnabled = this.checked;
                 updateDisplay();
             });
         }
-        
+
         // Triplet補正の有効化チェックボックス
         const tripletAdjustmentCheckbox = document.getElementById('tripletAdjustmentCheckbox');
         if (tripletAdjustmentCheckbox) {
-            tripletAdjustmentCheckbox.addEventListener('change', function() {
+            tripletAdjustmentCheckbox.addEventListener('change', function () {
                 tripletAdjustmentEnabled = this.checked;
                 updateDisplay();
             });
         }
-        
+
         // 全体トラッキング調整スライドバー
         const trackingSlider = document.getElementById('trackingSlider');
         const trackingValue = document.getElementById('trackingValue');
-        
-        trackingSlider.addEventListener('input', function() {
+
+        trackingSlider.addEventListener('input', function () {
             const value = parseFloat(this.value);
             trackingValue.textContent = value > 0 ? `+${value}px` : `${value}px`;
             updateDisplay();
         });
-        
+
         // カーニング前の文字間調整スライドバー
         const beforeKerningGapSlider = document.getElementById('beforeKerningGapSlider');
         const beforeKerningGapValue = document.getElementById('beforeKerningGapValue');
-        
+
         if (beforeKerningGapSlider && beforeKerningGapValue) {
             // スライダーの初期値を設定（実効pxが DEFAULT_BEFORE_KERNING_GAP になるように逆算）
             const scale = (Number.isFinite(BEFORE_KERNING_GAP_SCALE) && BEFORE_KERNING_GAP_SCALE > 0) ? BEFORE_KERNING_GAP_SCALE : 1;
@@ -4374,8 +4796,8 @@
             beforeKerningGapSlider.value = String(initialSliderValue);
             beforeKerningGap = DEFAULT_BEFORE_KERNING_GAP;
             beforeKerningGapValue.textContent = `${DEFAULT_BEFORE_KERNING_GAP}px`;
-            
-            beforeKerningGapSlider.addEventListener('input', function() {
+
+            beforeKerningGapSlider.addEventListener('input', function () {
                 const raw = parseFloat(this.value);
                 const scale = (Number.isFinite(BEFORE_KERNING_GAP_SCALE) && BEFORE_KERNING_GAP_SCALE > 0) ? BEFORE_KERNING_GAP_SCALE : 1;
                 const px = (Number.isFinite(raw) ? raw : 0) * scale;
@@ -4386,12 +4808,12 @@
                 updateDisplay();
             });
         }
-        
+
         // Phase0とのブレンド比率スライダー
         const blendRatioSlider = document.getElementById('blendRatioSlider');
         const blendRatioValue = document.getElementById('blendRatioValue');
         const blendRatioDescription = document.getElementById('blendRatioDescription');
-        
+
         if (blendRatioSlider && blendRatioValue && blendRatioDescription) {
             // ブレンド比率の説明文を更新する関数
             function updateBlendRatioDescription(ratio) {
@@ -4405,13 +4827,13 @@
                     blendRatioDescription.textContent = `Phase0: ${phase0Percent}% + Phase1: ${phase1Percent}% でブレンド`;
                 }
             }
-            
+
             // スライダーの初期値を設定（定数から）
             blendRatioSlider.value = DEFAULT_BLEND_RATIO_PERCENT;
             blendRatioValue.textContent = `${DEFAULT_BLEND_RATIO_PERCENT}%`;
             updateBlendRatioDescription(DEFAULT_BLEND_RATIO_PERCENT);
-            
-            blendRatioSlider.addEventListener('input', function() {
+
+            blendRatioSlider.addEventListener('input', function () {
                 const value = parseFloat(this.value);
                 blendRatio = value / 100.0;  // 0.0～1.0の範囲に変換
                 blendRatioValue.textContent = `${value}%`;
@@ -4419,19 +4841,20 @@
                 updateDisplay();
             });
         }
-        
+
         // 初期表示
         trackingValue.textContent = '0px';
 
         // ページ読み込み時にPhase1モデルを読み込み、フォント検出を実行
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // カーニングカテゴリーJSONを読み込む
             loadKerningCategories();
-            
+
             // タブとアコーディオンの初期化
             initTabs();
             initAccordions();
-            
+            initPatternTabControls();
+
             // 初期表示時に未学習ペアアルゴリズムのセレクトボックスと可視化チェックボックス、ブレンド比率スライダーの表示/非表示を設定
             const unlearnedPairAlgorithmGroup = document.getElementById('unlearnedPairAlgorithmGroup');
             if (unlearnedPairAlgorithmGroup) {
@@ -4453,10 +4876,10 @@
             if (phase0WidthAnchorGroup) {
                 phase0WidthAnchorGroup.style.display = (phaseMode === "phase0") ? "flex" : "none";
             }
-            
+
             // タブの表示/非表示を初期化
             updateTabVisibility();
-            
+
             loadPhase1Model().then(() => {
                 populateFontSelect();
             }).catch(() => {
@@ -4468,14 +4891,14 @@
             const manualEnabled = document.getElementById('manualKerningEnabledCheckbox');
             if (manualEnabled) {
                 manualEnabled.checked = manualKerningEnabled;
-                manualEnabled.addEventListener('change', function() {
+                manualEnabled.addEventListener('change', function () {
                     manualKerningEnabled = this.checked;
                     updateDisplay();
                 });
             }
             const resetAllBtn = document.getElementById('manualResetAllBtn');
             if (resetAllBtn) {
-                resetAllBtn.addEventListener('click', function() {
+                resetAllBtn.addEventListener('click', function () {
                     const fontSelect = document.getElementById('fontSelect');
                     const fontCustomInput = document.getElementById('fontCustomInput');
                     let fontId = fontSelect ? fontSelect.value : '';
@@ -4486,7 +4909,7 @@
             }
             const exportBtn = document.getElementById('manualExportBtn');
             if (exportBtn) {
-                exportBtn.addEventListener('click', function() {
+                exportBtn.addEventListener('click', function () {
                     try {
                         const json = JSON.stringify(manualKerningAdjustments, null, 2);
                         navigator.clipboard?.writeText(json);
@@ -4499,7 +4922,7 @@
             }
             const importBtn = document.getElementById('manualImportBtn');
             if (importBtn) {
-                importBtn.addEventListener('click', function() {
+                importBtn.addEventListener('click', function () {
                     const raw = prompt('インポートするJSONを貼り付けてください');
                     if (!raw) return;
                     try {
@@ -4513,7 +4936,7 @@
                     }
                 });
             }
-            
+
             // キャンバスエリアがファーストビューで見えるようにスクロール（必要に応じて）
             setTimeout(() => {
                 const canvasArea = document.querySelector('.canvas-area');
@@ -4526,7 +4949,7 @@
                 }
             }, 100);
         });
-        
+
         // 既にDOMが読み込まれている場合のフォールバック
         if (document.readyState === 'loading') {
             // DOMContentLoadedを待つ
@@ -4534,11 +4957,12 @@
             // 既に読み込み済み
             // カーニングカテゴリーJSONを読み込む
             loadKerningCategories();
-            
+
             // タブとアコーディオンの初期化
             initTabs();
             initAccordions();
-            
+            initPatternTabControls();
+
             // 初期表示時に未学習ペアアルゴリズムのセレクトボックスと可視化チェックボックスの表示/非表示を設定
             const unlearnedPairAlgorithmGroup = document.getElementById('unlearnedPairAlgorithmGroup');
             if (unlearnedPairAlgorithmGroup) {
@@ -4552,10 +4976,10 @@
             if (phase1WidthAnchorGroup) {
                 phase1WidthAnchorGroup.style.display = (phaseMode === "phase1") ? "flex" : "none";
             }
-            
+
             // タブの表示/非表示を初期化
             updateTabVisibility();
-            
+
             loadPhase1Model().then(() => {
                 populateFontSelect();
             }).catch(() => {
@@ -4567,14 +4991,14 @@
             const manualEnabled = document.getElementById('manualKerningEnabledCheckbox');
             if (manualEnabled) {
                 manualEnabled.checked = manualKerningEnabled;
-                manualEnabled.addEventListener('change', function() {
+                manualEnabled.addEventListener('change', function () {
                     manualKerningEnabled = this.checked;
                     updateDisplay();
                 });
             }
             const resetAllBtn = document.getElementById('manualResetAllBtn');
             if (resetAllBtn) {
-                resetAllBtn.addEventListener('click', function() {
+                resetAllBtn.addEventListener('click', function () {
                     const fontSelect = document.getElementById('fontSelect');
                     const fontCustomInput = document.getElementById('fontCustomInput');
                     let fontId = fontSelect ? fontSelect.value : '';
@@ -4585,7 +5009,7 @@
             }
             const exportBtn = document.getElementById('manualExportBtn');
             if (exportBtn) {
-                exportBtn.addEventListener('click', function() {
+                exportBtn.addEventListener('click', function () {
                     try {
                         const json = JSON.stringify(manualKerningAdjustments, null, 2);
                         navigator.clipboard?.writeText(json);
@@ -4598,7 +5022,7 @@
             }
             const importBtn = document.getElementById('manualImportBtn');
             if (importBtn) {
-                importBtn.addEventListener('click', function() {
+                importBtn.addEventListener('click', function () {
                     const raw = prompt('インポートするJSONを貼り付けてください');
                     if (!raw) return;
                     try {
@@ -4612,7 +5036,7 @@
                     }
                 });
             }
-            
+
             // キャンバスエリアがファーストビューで見えるようにスクロール（必要に応じて）
             setTimeout(() => {
                 const canvasArea = document.querySelector('.canvas-area');
@@ -4627,5 +5051,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>

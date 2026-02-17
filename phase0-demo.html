@@ -892,7 +892,6 @@
         let manualKerningAdjustments = {};
         // マニュアル調整のスピン（＋/－）長押し制御
         let manualSpinSuppressPanelUpdate = false; // 押下中にテーブルを再描画するとpointerupを取り逃すため抑制
-        let manualInputSuppressPanelUpdate = false; // キーボード入力中はテーブル再描画を抑制（スクロール・入力がリセットされないように）
         let manualSpinHoldTimeoutId = null;
         let manualSpinIntervalId = null;
         let manualSpinIsActive = false;
@@ -1808,17 +1807,12 @@
                 status.textContent = `フォント: ${key} / 保存済み調整: ${count}件`;
             }
 
-            // 入力イベント（委譲）。キー入力中はパネル再描画を抑制し、blur で 1 回だけ更新
+            // 入力イベント（委譲）
             tbody.querySelectorAll('input[type="number"][data-pairkey]').forEach(inp => {
                 inp.addEventListener("input", (e) => {
-                    manualInputSuppressPanelUpdate = true;
                     const pk = e.target.getAttribute("data-pairkey");
                     const v = parseFloat(e.target.value);
                     setManualDeltaPx(fontId, pk, v, fontSize);
-                    updateDisplay();
-                });
-                inp.addEventListener("blur", () => {
-                    manualInputSuppressPanelUpdate = false;
                     updateDisplay();
                 });
             });
@@ -4171,7 +4165,7 @@
                 updateEvaluationPanel(resultPhase1);
 
                 // マニュアル調整パネル更新（Phase1の結果を使用）
-                if (!manualSpinSuppressPanelUpdate && !manualInputSuppressPanelUpdate) {
+                if (!manualSpinSuppressPanelUpdate) {
                     updateManualAdjustPanel(resultPhase1, text, fontId, fontSize);
                 }
 
@@ -4199,7 +4193,7 @@
                 updateEvaluationPanel(result);
 
                 // マニュアル調整パネル更新
-                if (!manualSpinSuppressPanelUpdate && !manualInputSuppressPanelUpdate) {
+                if (!manualSpinSuppressPanelUpdate) {
                     updateManualAdjustPanel(result, text, fontId, fontSize);
                 }
             }
@@ -4366,44 +4360,6 @@
         }
         let patternTabFontOverridesKey = null;  // 現在 patternTabFontOverrides がどのフォント用か
 
-        /** パターン一覧のキャンバスのみ再描画（テーブルは触らない。入力・スクロールがリセットされない） */
-        function redrawPatternTabCanvases() {
-            const container = document.getElementById('patternCanvasList');
-            if (!container) return;
-            const fontId = getPatternTabFontId();
-            const styleId = getPatternTabStyleId();
-            const fontSize = getPatternTabFontSize();
-            const overrides = fontId ? getPatternTabOverridesForFont(fontId) : null;
-            const getDeltaNorm = (fid, pairKey) => {
-                if (!overrides || !overrides[pairKey]) return 0;
-                const rec = overrides[pairKey];
-                const dn = rec && typeof rec.delta_norm === 'number' ? rec.delta_norm : 0;
-                return Number.isFinite(dn) ? dn : 0;
-            };
-            const savedPhaseMode = phaseMode;
-            const savedBeforeKerningGap = beforeKerningGap;
-            const savedPhase0WidthAnchor = phase0WidthAnchorEnabled;
-            phaseMode = patternTabPhaseMode;
-            beforeKerningGap = patternTabBeforeKerningGap;
-            phase0WidthAnchorEnabled = patternTabPhase0WidthAnchorEnabled;
-            const canvases = container.querySelectorAll('canvas[data-pattern-text]');
-            canvases.forEach(function (can) {
-                const text = can.dataset.patternText;
-                const ctx = can.getContext('2d');
-                if (fontId && text) {
-                    const result = computeKerningPositions(text, fontId, fontSize, styleId, patternTabGlobalTracking, getDeltaNorm, 8);
-                    drawTextWithKerning(ctx, text, fontId, fontSize, styleId, result);
-                } else {
-                    ctx.fillStyle = '#999';
-                    ctx.font = '14px sans-serif';
-                    ctx.fillText('フォントを選択してください', 10, 40);
-                }
-            });
-            phaseMode = savedPhaseMode;
-            beforeKerningGap = savedBeforeKerningGap;
-            phase0WidthAnchorEnabled = savedPhase0WidthAnchor;
-        }
-
         async function refreshPatternTab() {
             const container = document.getElementById('patternCanvasList');
             const tbody = document.getElementById('patternTabManualTableBody');
@@ -4500,16 +4456,23 @@
             phase0WidthAnchorEnabled = savedPhase0WidthAnchor;
 
             if (tbody && fontId) {
-                const sortedPairs = Array.from(allPairs).sort();
+                // 大文字小文字を区別せずグループ化（A と a は同じ「a ではじまるペア」にまとめる）
+                const leftKey = (pk) => (pk.indexOf('|') >= 0 ? pk.split('|')[0] : '').toLowerCase();
+                const sortedPairs = Array.from(allPairs).sort(function (a, b) {
+                    const ka = leftKey(a), kb = leftKey(b);
+                    if (ka !== kb) return ka.localeCompare(kb);
+                    return a.localeCompare(b);
+                });
                 const fs = fontSize;
                 var rowIndex = 0;
                 var lastFirst = '';
                 var parts = [];
                 sortedPairs.forEach(function(pairKey) {
                     var leftChar = pairKey.indexOf('|') >= 0 ? pairKey.split('|')[0] : '';
-                    if (leftChar !== lastFirst) {
-                        lastFirst = leftChar;
-                        var label = leftChar ? '"' + leftChar + '" ではじまるペア' : 'その他';
+                    var groupKey = leftChar.toLowerCase();
+                    if (groupKey !== lastFirst) {
+                        lastFirst = groupKey;
+                        var label = groupKey ? '"' + groupKey + '" ではじまるペア' : 'その他';
                         parts.push('<tr class="manual-group-header" data-group><td colspan="4">' + label + '</td></tr>');
                     }
                     rowIndex += 1;
@@ -4538,17 +4501,14 @@
                         const deltaNorm = (Number.isFinite(v) ? v : 0) / (fs > 0 ? fs : 1);
                         if (Math.abs(deltaNorm) < 1e-6) delete patternTabFontOverrides[pk];
                         else patternTabFontOverrides[pk] = { delta_norm: deltaNorm };
-                        redrawPatternTabCanvases();
+                        refreshPatternTab();
                     });
-                    inp.addEventListener('change', () => { redrawPatternTabCanvases(); });
                 });
                 tbody.querySelectorAll('button[data-reset]').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const pk = btn.getAttribute('data-reset');
-                        const inp = tbody.querySelector(`input[data-pairkey="${pk.replace(/"/g, '\\"')}"]`);
                         if (patternTabFontOverrides && pk) delete patternTabFontOverrides[pk];
-                        if (inp) inp.value = '0';
-                        redrawPatternTabCanvases();
+                        refreshPatternTab();
                     });
                 });
                 tbody.querySelectorAll('button[data-spin]').forEach(btn => {
@@ -4565,7 +4525,7 @@
                         const deltaNorm = next / (fs > 0 ? fs : 1);
                         if (Math.abs(deltaNorm) < 1e-6) delete patternTabFontOverrides[pk];
                         else patternTabFontOverrides[pk] = { delta_norm: deltaNorm };
-                        redrawPatternTabCanvases();
+                        refreshPatternTab();
                     });
                 });
             }

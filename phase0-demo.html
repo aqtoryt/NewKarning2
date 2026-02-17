@@ -328,6 +328,13 @@
             transform: translateY(1px);
         }
 
+        /* パターン一覧のラベル：選択・コピー可能にする */
+        #patternCanvasList .pattern-item-label {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            cursor: text;
+        }
+
         .manual-actions {
             display: flex;
             flex-wrap: wrap;
@@ -4404,16 +4411,31 @@
                     }
                     const box = document.createElement('div');
                     box.style.cssText = 'border:1px solid #ddd; border-radius:6px; padding:8px; background:#fafafa;';
-                    const label = document.createElement('div');
-                    label.style.cssText = 'font-size:11px; color:#666; margin-bottom:4px;';
+                    const labelRow = document.createElement('div');
+                    labelRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;';
+                    const label = document.createElement('span');
+                    label.className = 'pattern-item-label';
+                    label.style.cssText = 'font-size:11px; color:#666; flex:1; min-width:0;';
                     label.textContent = text || '(空)';
+                    const copyBtn = document.createElement('button');
+                    copyBtn.type = 'button';
+                    copyBtn.className = 'btn';
+                    copyBtn.style.cssText = 'font-size:10px; padding:2px 6px; flex-shrink:0; min-width:3.2em; min-height:22px; box-sizing:border-box;';
+                    copyBtn.textContent = 'コピー';
+                    copyBtn.addEventListener('click', function () {
+                        const t = (text || '').toString();
+                        if (!t) return;
+                        navigator.clipboard.writeText(t).then(function () { copyBtn.textContent = 'OK'; setTimeout(function () { copyBtn.textContent = 'コピー'; }, 800); }).catch(function () { copyBtn.textContent = '失敗'; setTimeout(function () { copyBtn.textContent = 'コピー'; }, 800); });
+                    });
+                    labelRow.appendChild(label);
+                    labelRow.appendChild(copyBtn);
+                    box.appendChild(labelRow);
                     const can = document.createElement('canvas');
                     can.width = 520;
                     can.height = 80;
                     can.style.width = '100%';
                     can.style.height = 'auto';
                     can.dataset.patternText = text;
-                    box.appendChild(label);
                     box.appendChild(can);
                     groupBox.appendChild(box);
                     const ctx = can.getContext('2d');

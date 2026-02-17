@@ -365,6 +365,24 @@
             border-radius: 6px;
         }
 
+        /* マニュアル調整：グループ見出し行・見やすさ */
+        .manual-table tr.manual-group-header td {
+            background: #e8eef4;
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 6px 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .manual-table tbody tr.manual-row:hover {
+            background: #f8fafc;
+        }
+        .manual-table .manual-pair-cell {
+            font-family: ui-monospace, monospace;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+        }
+
         @media (max-width: 768px) {
             .canvas-container {
                 grid-template-columns: 1fr;
@@ -616,7 +634,17 @@
                                             type="button">kerning_categories.json をエクスポート</button>
                                         <span id="patternTabManualStatus" style="font-size:11px;color:#666;"></span>
                                     </div>
-                                    <div class="manual-scroll">
+                                    <div class="manual-filter-row" style="display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:10px;">
+                                        <label style="display:flex; align-items:center; gap:6px; font-size:12px;">
+                                            <span>ペアで絞り込み:</span>
+                                            <input type="text" id="patternTabPairFilter" placeholder="例: a または a|i" style="width:140px; padding:6px 8px; border:1px solid #ddd; border-radius:4px; font-size:12px;">
+                                        </label>
+                                        <label style="display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer;">
+                                            <input type="checkbox" id="patternTabOnlyAdjusted">
+                                            <span>補正ありのみ表示</span>
+                                        </label>
+                                    </div>
+                                    <div class="manual-scroll" id="patternTabManualScroll" style="max-height:420px;">
                                         <table class="manual-table">
                                             <thead>
                                                 <tr>
@@ -4304,6 +4332,7 @@
             return Number.isFinite(v) && v >= 20 && v <= 200 ? v : 64;
         }
 
+        /** パターン一覧タブ用。補正値は kerning_categories.json の font_overrides のみから取得（LocalStorage は使わない）。 */
         function getPatternTabOverridesForFont(fontId) {
             if (!fontId) return null;
             const key = normalizeFontKeyForManual(fontId);
@@ -4316,11 +4345,13 @@
         }
         let patternTabFontOverridesKey = null;  // 現在 patternTabFontOverrides がどのフォント用か
 
-        function refreshPatternTab() {
+        async function refreshPatternTab() {
             const container = document.getElementById('patternCanvasList');
             const tbody = document.getElementById('patternTabManualTableBody');
             const statusEl = document.getElementById('patternTabManualStatus');
             if (!container) return;
+            // パターン一覧タブは補正値を JSON のみから取得するため、未読なら先に読み込む
+            if (!pairAdjustmentsOverrides) await loadKerningCategories();
 
             const fontId = getPatternTabFontId();
             const styleId = getPatternTabStyleId();
@@ -4397,19 +4428,31 @@
             if (tbody && fontId) {
                 const sortedPairs = Array.from(allPairs).sort();
                 const fs = fontSize;
-                const rows = sortedPairs.map((pairKey, idx) => {
-                    const dn = overrides && overrides[pairKey] ? (overrides[pairKey].delta_norm || 0) : 0;
-                    const dp = dn * fs;
-                    return `<tr>
-                        <td>${idx + 1}</td>
-                        <td style="font-weight:700;">${pairKey.replace(/"/g, '&quot;')}</td>
-                        <td><div class="spin-control"><button class="btn spin-btn" type="button" data-spin="-1" data-pairkey="${pairKey.replace(/"/g, '&quot;')}">−</button>
-                            <input type="number" data-pairkey="${pairKey.replace(/"/g, '&quot;')}" value="${Number.isFinite(dp) ? dp.toFixed(2).replace(/\.?0+$/, '') : '0'}" step="0.1" />
-                            <button class="btn spin-btn" type="button" data-spin="1" data-pairkey="${pairKey.replace(/"/g, '&quot;')}">＋</button></div></td>
-                        <td><button class="btn btn-danger" type="button" data-reset="${pairKey.replace(/"/g, '&quot;')}">リセット</button></td>
-                    </tr>`;
+                var rowIndex = 0;
+                var lastFirst = '';
+                var parts = [];
+                sortedPairs.forEach(function(pairKey) {
+                    var leftChar = pairKey.indexOf('|') >= 0 ? pairKey.split('|')[0] : '';
+                    if (leftChar !== lastFirst) {
+                        lastFirst = leftChar;
+                        var label = leftChar ? '"' + leftChar + '" ではじまるペア' : 'その他';
+                        parts.push('<tr class="manual-group-header" data-group><td colspan="4">' + label + '</td></tr>');
+                    }
+                    rowIndex += 1;
+                    var dn = overrides && overrides[pairKey] ? (overrides[pairKey].delta_norm || 0) : 0;
+                    var dp = dn * fs;
+                    var hasAdj = Math.abs(dn) >= 1e-6;
+                    var pairLower = pairKey.toLowerCase();
+                    var safeKey = pairKey.replace(/"/g, '&quot;');
+                    parts.push('<tr class="manual-row" data-pair-lower="' + pairLower.replace(/"/g, '&quot;') + '" data-has-adjustment="' + (hasAdj ? '1' : '0') + '">' +
+                        '<td>' + rowIndex + '</td>' +
+                        '<td class="manual-pair-cell" style="font-weight:700;">' + safeKey + '</td>' +
+                        '<td><div class="spin-control"><button class="btn spin-btn" type="button" data-spin="-1" data-pairkey="' + safeKey + '">−</button>' +
+                        '<input type="number" data-pairkey="' + safeKey + '" value="' + (Number.isFinite(dp) ? dp.toFixed(2).replace(/\.?0+$/, '') : '0') + '" step="0.1" />' +
+                        '<button class="btn spin-btn" type="button" data-spin="1" data-pairkey="' + safeKey + '">＋</button></div></td>' +
+                        '<td><button class="btn btn-danger" type="button" data-reset="' + safeKey + '">リセット</button></td></tr>');
                 });
-                tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="4" style="color:#666;">ペアがありません。</td></tr>';
+                tbody.innerHTML = parts.length ? parts.join('') : '<tr><td colspan="4" style="color:#666;">ペアがありません。</td></tr>';
 
                 tbody.querySelectorAll('input[type="number"][data-pairkey]').forEach(inp => {
                     inp.addEventListener('input', () => {
@@ -4450,6 +4493,45 @@
                 });
             }
             if (statusEl) statusEl.textContent = fontId ? `フォント: ${fontId} / ペア数: ${(overrides && Object.keys(patternTabFontOverrides || {}).length) || 0}` : 'フォントを選択してください';
+
+            applyPatternTabManualFilter();
+            var filterInp = document.getElementById('patternTabPairFilter');
+            var onlyAdjCb = document.getElementById('patternTabOnlyAdjusted');
+            if (filterInp) filterInp.oninput = applyPatternTabManualFilter;
+            if (onlyAdjCb) {
+                onlyAdjCb.onchange = applyPatternTabManualFilter;
+            }
+        }
+
+        function applyPatternTabManualFilter() {
+            var tbody = document.getElementById('patternTabManualTableBody');
+            var filterInp = document.getElementById('patternTabPairFilter');
+            var onlyAdjCb = document.getElementById('patternTabOnlyAdjusted');
+            if (!tbody) return;
+            var filterLower = (filterInp && filterInp.value) ? filterInp.value.trim().toLowerCase() : '';
+            var onlyAdjusted = onlyAdjCb && onlyAdjCb.checked;
+            var rows = tbody.querySelectorAll('tr.manual-row');
+            var headers = tbody.querySelectorAll('tr.manual-group-header');
+            rows.forEach(function(tr) {
+                var pairLower = tr.getAttribute('data-pair-lower') || '';
+                var hasAdj = tr.getAttribute('data-has-adjustment') === '1';
+                var matchFilter = !filterLower || pairLower.indexOf(filterLower) >= 0;
+                var matchAdj = !onlyAdjusted || hasAdj;
+                tr.style.display = (matchFilter && matchAdj) ? '' : 'none';
+            });
+            headers.forEach(function(tr) {
+                var next = tr.nextElementSibling;
+                var visible = false;
+                while (next) {
+                    if (next.classList.contains('manual-group-header')) break;
+                    if (next.classList.contains('manual-row') && next.style.display !== 'none') {
+                        visible = true;
+                        break;
+                    }
+                    next = next.nextElementSibling;
+                }
+                tr.style.display = visible ? '' : 'none';
+            });
         }
 
         window.refreshPatternTab = refreshPatternTab;

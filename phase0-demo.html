@@ -4636,8 +4636,23 @@
                         if (v && typeof v.delta_norm === 'number' && Number.isFinite(v.delta_norm)) merged[pk] = { delta_norm: v.delta_norm };
                     });
                 }
+                function toFullWidthPairKey(s) {
+                    if (!s) return s;
+                    var r = '';
+                    for (var i = 0; i < s.length; i++) {
+                        var c = s[i], code = c.charCodeAt(0);
+                        if (code >= 0x30 && code <= 0x39) r += String.fromCharCode(0xFF10 + code - 0x30);
+                        else if (code >= 0x41 && code <= 0x5A) r += String.fromCharCode(0xFF21 + code - 0x41);
+                        else if (code >= 0x61 && code <= 0x7A) r += String.fromCharCode(0xFF41 + code - 0x61);
+                        else if (code === 0x7C) r += '\uFF5C';
+                        else r += c;
+                    }
+                    return r;
+                }
+                var pairAdjustmentsFull = {};
+                Object.keys(merged).forEach(function (pk) { pairAdjustmentsFull[toFullWidthPairKey(pk)] = merged[pk]; });
                 var exportObj = {};
-                exportObj[keyForJson] = { pair_adjustments: merged };
+                exportObj[keyForJson] = { pair_adjustments: pairAdjustmentsFull };
                 var jsonStr = JSON.stringify(exportObj, null, 2);
                 var blob = new Blob([jsonStr], { type: 'application/json' });
                 var a = document.createElement('a');

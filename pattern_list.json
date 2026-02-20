@@ -47,6 +47,22 @@
         "PAPIPUPEPOP",
         "PaPiPuPePoP"
       ]
+    },
+    {
+      "name": "拗音（ヘボン式）",
+      "items": [
+        "kyakyukyok", "shashushosh", "chachuchoch", "nyanyunyon", "hyahyuhyoh", "myamyumyom", "ryaryuryor", "gyagyugyog", "jajujoj", "byabyubyob", "pyapyupyop",
+        "KYAKYUKYOK", "SHASHUSHOSH", "CHACHUCHOCH", "NYANYUNYON", "HYAHYUHYOH", "MYAMYUMYOM", "RYARYURYOR", "GYAGYUGYOG", "JAJUJOJ", "BYABYUBYOB", "PYAPYUPYOP",
+        "KyaKyuKyoK", "ShaShuShoSh", "ChaChuChoCh", "NyaNyuNyoN", "HyaHyuHyoH", "MyaMyuMyoM", "RyaRyuRyoR", "GyaGyuGyoG", "JaJuJoJ", "ByaByuByoB", "PyaPyuPyoP"
+      ]
+    },
+    {
+      "name": "拗音（訓令式）",
+      "items": [
+        "kyakyukyok", "syasyusyos", "cyacyucyoc", "nyanyunyon", "hyahyuhyoh", "myamyumyom", "ryaryuryor", "gyagyugyog", "zyazyuzyoz", "byabyubyob", "pyapyupyop",
+        "KYAKYUKYOK", "SYASYUSYOS", "CYACYUCYOC", "NYANYUNYON", "HYAHYUHYOH", "MYAMYUMYOM", "RYARYURYOR", "GYAGYUGYOG", "ZYAZYUZYOZ", "BYABYUBYOB", "PYAPYUPYOP",
+        "KyaKyuKyoK", "SyaSyuSyoS", "CyaCyuCyoC", "NyaNyuNyoN", "HyaHyuHyoH", "MyaMyuMyoM", "RyaRyuRyoR", "GyaGyuGyoG", "ZyaZyuZyoZ", "ByaByuByoB", "PyaPyuPyoP"
+      ]
     }
   ]
 }
